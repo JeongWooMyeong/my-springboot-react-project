@@ -1,0 +1,1120 @@
+/* ----------------------------------------------------
+Basic Style Sheet   
+
+version: 1.1
+author:  �덉닔��
+e-mail:  de5000@hanmail.net
+-----------------------------------------------------*/
+body{
+	background-attachment: fixed;
+	}
+
+/*
+.ui-layout-pane { 
+	background:#fff;
+	padding: 10px; 
+	overflow: auto;
+	z-index:10000;
+} 
+
+.ui-layout-resizer { 	
+	border-bottom: 3px solid #1179b8; 
+} 
+*/
+
+/*롯데백화점 적용 */
+.ui-layout-pane { 
+	padding: 10px;  
+	overflow: auto;
+	z-index:10000;	
+} 
+
+.ui-layout-resizer { /* all 'resizer-bars' */ 		
+	border-bottom: 0px; 
+} 
+/*롯데백화점 적용 */
+
+.ui-layout-toggler { /* all 'toggler-buttons' */ 
+	background:url('../images/bg/bg_toggle.gif') no-repeat bottom center; 
+} 
+.ui-layout-south{
+	padding:0;		
+	background:url('../images/bg/bg_footer_lotteDep.jpg') repeat-x top left;
+	}
+
+.ui-layout-center{
+	padding:0;
+	}
+
+
+/* 濡쒓렇�몃�遺�*/
+#login_wrap{	
+	position:relative;
+	width:100%;
+	height:100%;	
+	}
+	
+.copy {clear:both;overflow:hidden;position: absolute;
+left: 0;
+bottom: 0;
+width: 100%;
+height: 30px;
+background: url('../images/bg/bg_login_footer.jpg') repeat-x top left;
+text-indent: -1000px;
+}
+ 
+.copy li.logo {
+	float:left;
+display:inline-block;width:15%;height:30px;background: url('../images/bg/bg_login_logo01.jpg') no-repeat top left;}
+.copy li.img {
+	float:left;
+display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg_hyundai_call.jpg') no-repeat top center;}
+.copy li.other {
+	float:right;
+	display:inline-block;
+	width:15%;
+	height:30px;
+	background: url('../images/bg/bg_login_logo02.jpg') no-repeat top right;
+	}
+.copy li:after {clear:both;content:'';display:block;}
+/*	
+.copy{
+	position:absolute;
+	left:0;
+	bottom:0;
+	width:100%;
+	height:30px;
+	background:url('../images/bg/bg_login_footer.jpg') repeat-x top left;
+	text-indent:-1000px;
+	}
+.copy li{
+	height:30px;
+	background:url('../images/bg/bg_login_logo.jpg') no-repeat top left;
+	}
+*/
+.login_box{
+	margin:0 auto;
+	position:relative;
+	width:499px;
+	height:500px;
+	background:url('../images/bg/bg_login_box.png') no-repeat bottom center;
+	}
+.login_idpw{
+	position:absolute;
+	left:186px;
+	bottom:88px;
+	}
+.login_idpw li{
+	height:26px;
+	}
+.login_btn{
+	position:absolute;
+	right:121px;
+	bottom:122px;
+	}
+.login_btn_bottom{
+	position:absolute;
+	left:124px;
+	bottom:33px;
+	}
+.login_btn_bottom li{
+	float:left;
+	width:128px;
+	}
+.login_message{
+	position:absolute;
+	top:395px;
+	left:0px;
+	width:510px;
+	font-size:11px;
+	color:#c7c8ca;
+	}
+.login_message ul{
+	margin:0 auto;
+	padding:10px 0;
+	width:300px;
+	text-align:center;
+	/*border-top:1px dotted #939393;
+	border-bottom:1px dotted #939393;*/
+	}
+.login_message li{
+	line-height:18px;
+	}
+
+/* 롯데백화점 */
+.login_box_lotteDep{
+	margin:0 auto;
+	position:relative;
+	width:620px;
+	height:730px;
+	background:url('../images/bg/bg_login_box_lottedDep.png') no-repeat bottom left;
+	}
+.login_idpw_lotteDep{
+	position:absolute;
+	left:180px;
+	top:400px;
+	}
+.login_idpw_lotteDep li{
+	height:26px;
+	}
+.login_btn_lotteDep{
+	position:absolute;
+	right:125px;
+	top:400px;
+	}
+.login_btn_lotteDep2{
+	position:absolute;
+	right:110px;
+	top:534px;
+	}
+.login_message_lotteDep{
+	position:absolute;
+	top:395px;
+	left:0px;
+	width:510px;
+	font-size:11px;
+	color:#c7c8ca;
+	}
+.login_message_lotteDep ul{
+	margin:0 auto;
+	padding:10px 0;
+	width:300px;
+	text-align:center;
+	/*border-top:1px dotted #939393;
+	border-bottom:1px dotted #939393;*/
+	}
+.login_message_lotteDep li{
+	line-height:18px;
+	}
+/* 롯데백화점 */
+
+
+/* 硫붿씤遺�텇 */
+#wrap{	
+	width:100%;
+	height:100%;
+	}
+.part{	
+	float:left;
+	width:100%;
+	}
+.w_left{	
+	width:100%;
+	height:100%;	
+	}
+.w_left a{
+	color:#57869d;
+	}
+.w_left_in{
+	margin:0 auto;
+	width:95%;	
+	padding:0;
+	}
+.w_left_in ul{
+	padding:0;
+	margin:0 0 10px 0;
+	}
+.w_left_in .dep2{
+	padding:8px 0 6px 26px;
+	background:url('../images/bg/bg_left_title.png') no-repeat top left;
+	font-weight:bold;
+	color:#97b22c;
+	margin:0 0 7px 0;
+	}
+.w_left_in .dep2 a{	
+	color:#0d6fa2;
+	}
+/*.w_left_in .dep2{
+	padding:8px 0 7px 15px;
+	font-weight:bold;
+	color:#fff;
+	background-color: #6a98af;
+	margin:0 0 5px 0;	
+	border:1px solid #628697;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;	
+	background: #4b7b93;
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#7ea8bd) to(#4b7b93)); 
+    background: -webkit-linear-gradient(#7ea8bd, #4b7b93);
+    background: -moz-linear-gradient(#7ea8bd, #4b7b93); 
+    background: -ms-linear-gradient(#7ea8bd, #4b7b93); 
+    background: -o-linear-gradient(#7ea8bd, #4b7b93); 
+    background: linear-gradient(#7ea8bd, #4b7b93); 
+    -pie-background: linear-gradient(#7ea8bd, #4b7b93);
+	behavior:url(../../css/PIE.htc); 
+	}
+*/
+.w_left_in .dep3{
+	padding:0px 0 8px 27px;
+	color:#406a7e;
+	font-size:11px;
+	background:url('../images/etc/blt_arrow_small.png') no-repeat top left;
+	}
+.w_right{
+	width:100%;
+	min-width: 1000px; 
+	_width: 1000px;
+	}
+
+#main_wrap{	
+	position:relative;
+	width:100%;
+	height:100%;
+	}
+
+
+/*롯데백화점*/
+.main_wrap_lotteDep{	
+	position:relative;
+	width:100%;
+	height:650px;
+	}
+.main_board01_lotteDep{
+	position:absolute;
+	top:80px;
+	left:115px;
+	width:425px;
+	height:100px;
+	padding:87px 0 0 16px;
+	background:url('../images/bg/bg_main_board01_lotteDep.png')  top left no-repeat;
+	}
+.main_board02_lotteDep{
+	position:absolute;
+	top:340px;
+	left:115px;
+	width:425px;
+	height:100px;
+	padding:87px 0 0 16px;
+	background:url('../images/bg/bg_main_board02_lotteDep.png')  top left no-repeat;
+	}
+.main_board_line_lotteDep{
+	width:380px;
+	font-size:12px;
+	color:#828282;
+	text-align:center;
+	border-collapse: collapse;
+	}
+.main_board_line_lotteDep td{
+	height:22px;
+	padding:3px 0 2px 0;
+	border-bottom:1px dotted #ddd;
+	}
+.main_board_line_lotteDep .title{
+	width:285px;
+	color:#000000;
+	border-bottom:1px dotted #ddd;
+	padding:3px 0 2px 15px;
+	text-align:left;
+	background:url('../images/bg/bg_main_line.png')  center left no-repeat;
+	}
+.main_board_line_lotteDep a{
+	color:#4d4d4d;
+	}
+.main_board_line_lotteDep a:hover{    
+	color:#04b6b4;
+	}
+.main_copy_lotteDep{  
+	position:absolute;
+	left:600px; 
+	top:600px;
+	width:600px;
+	height:50px;	
+	background:url('../images/bg/copy_lotteDep.png')  center right no-repeat;
+	}
+
+/*롯데백화점*/
+
+
+.main_board01{
+	position:absolute;
+	top:167px;
+	left:420px;
+	width:500px;
+	height:105px;
+	}
+.main_board02{
+	position:absolute;
+	top:305px;
+	left:378px;
+	width:245px;
+	height:105px;
+	}
+.main_board_line{
+	width:480px;
+	font-size:11px;
+	color:#828282;
+	text-align:center;
+	border-collapse: collapse;
+	}
+.main_board_line td{
+	height:16px;
+	padding:3px 0 2px 0;
+	border-bottom:1px dotted #ddd;
+	}
+.main_board_line .title{
+	width:165px;
+	color:#262626;
+	border-bottom:1px dotted #ddd;
+	padding:3px 200px 2px 20px;
+	text-align:left;
+	background:url('../images/bg/bg_main_line.jpg')  center left no-repeat;
+	}
+.main_board_line a{
+	color:#262626;
+	}
+.main_board_line a:hover{
+	color:#04b6b4;
+	}
+
+
+
+
+/* 롯데백화점 */
+.wrap_top_info{
+	position:absolute;
+	top:0;
+	right:0px;
+	height:34px;
+	}
+.wrap_top_info ul{
+	float:left;
+	height:100px;
+	display:inline;
+	overflow:hidden;
+	}
+.wrap_top_info li{
+	margin:0;
+	padding:0;
+	display:inline;
+	}
+.wrap_top_info a{
+	float:left;
+	height:100px;
+	padding:49px 0 0 0;
+	overflow:hidden;
+	text-indent:-9000px;
+	height:0px !important;
+	height /**/:49px; /* IE5 */
+	}
+.wrap_top_info a:hover{
+	background-position:0 -49px;
+	}
+.info_logout a{
+	width:83px;
+	background: url('../images/topmenu/info01.jpg') top left no-repeat ;
+	}
+.info_mypage a{
+	width:83px;
+	background: url('../images/topmenu/info02.jpg') top left no-repeat ;
+	}
+.info_notice a{
+	width:83px;
+	background: url('../images/topmenu/info03.jpg') top left no-repeat ;
+	}
+.info_board a{
+	width:73px;
+	background: url('../images/topmenu/info04.jpg') top left no-repeat ;
+	}
+.info_webhard a{
+	width:73px;
+	background: url('../images/topmenu/info05.jpg') top left no-repeat ;
+	}
+.info_manual a{
+	width:83px;
+	background: url('../images/topmenu/info06.jpg') top left no-repeat ;
+	}
+/* 롯데백화점 */
+
+
+/* normal(eland) */
+/*
+.wrap_top_info{
+	position:absolute;
+	top:0;
+	right:10px;
+	height:34px;
+	}
+.wrap_top_info ul{
+	float:left;
+	height:34px;
+	display:inline;
+	overflow:hidden;
+	}
+.wrap_top_info li{
+	margin:0;
+	padding:0;
+	display:inline;
+	}
+
+.wrap_top_info a{
+	float:left;
+	height:34px;
+	padding:34px 0 0 0;
+	overflow:hidden;
+	text-indent:-9000px;
+	height:0px !important;
+	}
+.wrap_top_info a:hover{
+	background-position:0 -34px;
+	}
+.info_logout a{
+	width:51px;
+	background: url('../images/topmenu/info01.jpg') top left no-repeat ;
+	}
+.info_mypage a{
+	width:57px;
+	background: url('../images/topmenu/info02.jpg') top left no-repeat ;
+	}
+.info_notice a{
+	width:48px;
+	background: url('../images/topmenu/info03.jpg') top left no-repeat ;
+	}
+.info_board a{
+	width:41px;
+	background: url('../images/topmenu/info04.jpg') top left no-repeat ;
+	}
+.info_webhard a{
+	width:40px;
+	background: url('../images/topmenu/info05.jpg') top left no-repeat ;
+	}
+	*/
+/* normal(eland) */
+
+.btn_tab{
+	height:28px;
+	}
+.btn_tab ul{
+	float:left;
+	height:24px;
+	display:inline;
+	overflow:hidden;
+	}
+.btn_tab li{
+	margin:0;
+	padding:0;
+	display:inline;
+	}
+.btn_tab a{
+	float:left;
+	height:24px;
+	padding:24px 0 0 0;
+	overflow:hidden;
+	text-indent:-9000px;
+	height:0px !important;
+	height /**/:24px; /* IE5 */
+	}
+.btn_tab a:hover{
+	background-position:0 -24px;
+	}
+.img_tab a{
+	width:66px;
+	background: url('../images/btn/btn_tab01.png') top left no-repeat ;
+	}
+.img_tab_on a{
+	width:66px;
+	background: url('../images/btn/btn_tab01.png') bottom left no-repeat ;
+	}
+.list_tab a{
+	width:58px;
+	background: url('../images/btn/btn_tab02.png') top left no-repeat ;
+	}	
+.list_tab_on a{
+	width:58px;
+	background: url('../images/btn/btn_tab02.png') bottom left no-repeat ;
+	}
+.cate_tab a{
+	width:80px;
+	background: url('../images/btn/btn_img_tab02.png') top left no-repeat ;
+	}
+.cate_tab_on a{
+	width:80px;
+	background: url('../images/btn/btn_img_tab02.png') bottom left no-repeat ;
+	}
+.sel_tab a{
+	width:90px;
+	background: url('../images/btn/btn_img_tab01.png') top left no-repeat ;
+	}	
+.sel_tab_on a{
+	width:90px;
+	background: url('../images/btn/btn_img_tab01.png') bottom left no-repeat ;
+	}
+.view_tab a{
+	width:80px;
+	background: url('../images/btn/btn_tab03.png') top left no-repeat ;
+	}	
+.view_tab_on a{
+	width:80px;
+	background: url('../images/btn/btn_tab03.png') bottom left no-repeat ;
+	}
+.info_tab a{
+	width:64px;
+	background: url('../images/btn/btn_tab04.png') top left no-repeat ;
+	}	
+.info_tab_on a{
+	width:64px;
+	background: url('../images/btn/btn_tab04.png') bottom left no-repeat ;
+	}
+
+.img_view{
+	width:100%;
+	float:left;
+	padding:5px 0 0 0;
+	}
+.img_view .img_list{
+	position:relative;
+	float:left;
+	padding:11px;	
+	text-align:center;
+	font-size:11px;
+	width:130px;
+	}
+.img_view .icon{
+	width:130px;
+	height:100px;
+	border:1px solid #ddd;	
+	vertical-align: center;
+	}
+.img_view .txt{
+	padding:3px 0;
+	background-color: #ddd;
+	}
+.img_list .click{
+	position:absolute;
+	top:0;
+	left:0;
+	width:150px;
+	height:150px;
+	background: url('../images/bg/bg_click.png');
+	border:2px solid #f2c13d;
+	z-index: 1000;
+	}
+
+
+
+
+
+/* top menu*/
+/*
+#header { width:100%; height:54px;background:url('../images/bg/bg_menu.jpg') repeat-x top center; }
+#inner-header {position:relative; width:1000px; height:58px; }
+#header h1 {position:absolute; left:0; top:50px;}
+
+
+#header .gnb {position:absolute; left:0px; top:0;}
+#header .gnb ul li {float:left; position:relative;}
+#header .gnb ul li ul {position:absolute; height:14px; left:0; top:34px; padding:5px 0 0 0; background-color: #fff; font-weight:bold; font-size:11px;}
+#header .gnb ul li ul li{padding:0 15px 0 0;letter-spacing:-0.5px;} 
+#header .gnb ul li ul a{color:#78787a;}
+#header .gnb ul li ul a:hover{color:#0066cc;}
+
+#header .gnb ul li ul.sub1 {width:500px; left:37px;}
+#header .gnb ul li ul.sub2 {width:500px; left:37px;}
+#header .gnb ul li ul.sub3 {width:500px; left:23px;} 
+#header .gnb ul li ul.sub4 {width:500px; left:35px;}
+#header .gnb ul li ul.sub5 {width:500px; left:37px;}
+#header .gnb ul li ul.sub6 {width:500px; left:0px;}
+#header .gnb ul li ul li {float:left; display:inline; margin:0 ;}
+*/
+/* top menu*/
+
+/* 롯데백화점 */
+
+#header { width:100%; height:60px;background:url('../images/bg/bg_menu_lotteDep.jpg') repeat-x top center; }
+#inner-header {position:relative; width:1000px; height:60px; }
+#header h1 {position:absolute; left:0; top:50px;}
+
+
+#header .gnb {position:absolute; left:0px; top:0;}
+#header .gnb ul li {float:left; position:relative;}
+#header .gnb ul li ul {position:absolute; height:14px; left:0; top:50px; padding:5px 0 0 0; font-weight:bold; font-size:12px;}
+#header .gnb ul li ul li{padding:0 15px 0 0;letter-spacing:-0.5px;}
+#header .gnb ul li ul a{color:#463A38;}
+#header .gnb ul li ul a:hover{color:#F4E829;}
+
+#header .gnb ul li ul.sub1 {width:500px; left:37px;}
+#header .gnb ul li ul.sub2 {width:500px; left:37px;}
+#header .gnb ul li ul.sub3 {width:500px; left:23px;} 
+#header .gnb ul li ul.sub4 {width:500px; left:35px;}
+#header .gnb ul li ul.sub5 {width:500px; left:37px;}
+#header .gnb ul li ul.sub6 {width:500px; left:0px;}
+#header .gnb ul li ul li {float:left; display:inline; margin:0 ;}
+/* 롯데백화점 */
+
+
+.middle{
+	margin:20px 0 0 20px;
+	width:1220px;
+	min-width: 1150px; 
+	_width: 1150px;
+	}
+
+.middle_popup{
+	width:100%;
+	height:100%;
+	}
+
+#bottom{
+	position:absolute;
+	left:0;
+	bottom:0;
+	width:100%;
+	height:200px;
+	padding:1px 0 0 0;
+	border-top:1px solid #1C8BCB;
+	}
+	/*
+
+.wrap_bottom_info .bottom_txt{
+	display:block;
+	color:#ef8514;
+	font-size:12px;
+	font-weight:normal;
+	padding:5px 0 0 10px;
+	}
+.wrap_bottom_info{
+	height:22px;
+	position:relative;
+	min-width: 1150px; 
+	_width: 1150px;
+	}
+.wrap_bottom_info .txt01{
+	position:absolute;	
+	top:4px;
+	left:55px;
+	color:#fff;
+	width:50px;
+	text-align:right;
+	font-weight:bold;
+	}
+.wrap_bottom_info .txt02{
+	position:absolute;
+	top:4px;
+	left:177px;
+	width:50px;
+	text-align:right;
+	color:#fff;
+	font-weight:bold;
+	}
+.wrap_bottom_info .txt03{
+	position:absolute;
+	top:4px;
+	left:275px;
+	width:50px;
+	text-align:right;
+	color:#fff;
+	font-weight:bold;
+	}
+.wrap_bottom_info .txt04{
+	position:absolute;
+	top:4px;
+	left:397px;
+	width:50px;
+	text-align:right;
+	color:#fff;
+	font-weight:bold;
+	}
+.wrap_bottom_info ul{
+	float:left;
+	height:20px;
+	overflow:hidden;
+	}
+.wrap_bottom_info li{
+	float:left;
+	margin:0;
+	}
+.wrap_bottom_info a{
+	float:left;
+	height:20px;
+	padding:20px 0 0 0;
+	color:#fff;
+	overflow:hidden;
+	height:0px !important;
+	}
+.wrap_bottom_info a:hover{
+	background-position:0 -20px;
+	}
+.bottom01 a{
+	width:122px;
+	background: url('../images/bottom/btm01.jpg') top left no-repeat ;
+	}
+.bottom02 a{
+	width:122px;
+	background: url('../images/bottom/btm02.jpg') top left no-repeat ;
+	}
+.bottom03 a{
+	width:98px;
+	background: url('../images/bottom/btm03.jpg') top left no-repeat ;
+	}
+.bottom04 a{
+	width:122px;
+	background: url('../images/bottom/btm04.jpg') top left no-repeat ;
+	}
+.bottom05 a{
+	width:105px;
+	background: url('../images/bottom/btm05.jpg') top left no-repeat ;
+	}
+
+*/
+
+/*롯데백화점 적용 */
+
+.wrap_bottom_info .bottom_txt{
+	display:block;
+	color:#ef8514;
+	font-size:12px;
+	font-weight:normal;
+	padding:19px 0 0 10px;
+	}
+.wrap_bottom_info{
+	height:47px;
+	position:relative;
+	min-width: 1150px; 
+	_width: 1150px;
+	}
+.wrap_bottom_info .txt01{
+	position:absolute;	
+	top:19px;
+	left:100px;
+	color:#fff;
+	width:50px;
+	text-align:right;
+	font-weight:bold;
+	}
+.wrap_bottom_info .txt02{
+	position:absolute;
+	top:19px;
+	left:280px;
+	width:50px;
+	text-align:right;
+	color:#fff;
+	font-weight:bold;
+	}
+.wrap_bottom_info .txt03{
+	position:absolute;
+	top:19px;
+	left:432px;
+	width:50px;
+	text-align:right;
+	color:#fff;
+	font-weight:bold;
+	}
+.wrap_bottom_info .txt04{
+	position:absolute;
+	top:19px;
+	left:613px;
+	width:50px;
+	text-align:right;
+	color:#fff;
+	font-weight:bold;
+	}
+.wrap_bottom_info ul{
+	float:left;
+	height:47px;
+	overflow:hidden;
+	}
+.wrap_bottom_info li{
+	float:left;
+	margin:0;
+	}
+.wrap_bottom_info a{
+	float:left;
+	height:47px;
+	padding:47px 0 0 0;
+	color:#fff;
+	overflow:hidden;
+	height:0px !important;
+	height :47px; 
+	}
+.wrap_bottom_info a:hover{
+	background-position:0 -47px;
+	}
+.bottom01 a{
+	width:180px;
+	background: url('../images/bottom/btm01_lotteDep.jpg') top left no-repeat ;
+	}
+.bottom02 a{
+	width:180px;
+	background: url('../images/bottom/btm02_lotteDep.jpg') top left no-repeat ;
+	}
+.bottom03 a{
+	width:153px;
+	background: url('../images/bottom/btm03_lotteDep.jpg') top left no-repeat ;
+	}
+.bottom04 a{
+	width:180px;
+	background: url('../images/bottom/btm04_lotteDep.jpg') top left no-repeat ;
+	}
+.bottom05 a{
+	width:143px;
+	background: url('../images/bottom/btm05_lotteDep.jpg') top left no-repeat ;
+	}
+	
+/*롯데백화점 적용 */
+
+
+/* ��씠���遺�*/
+.title {
+	width:100%;
+	height:25px;
+	margin:0;
+	background: url('../images/bg/bg_g_title.jpg') left bottom repeat-x ;
+	}
+.title .tl_left{
+	float:left;
+	padding:0 0 0 10px;
+	}
+.title .tl_right{
+	float:right;
+	font-size:11px;
+	text-align:right;
+	color:#a2a2a2;
+	}
+.title .tl_right li{
+	float:left;
+	}
+.title .tl_right .nav{
+	padding:3px 5px 0 0;
+	}
+
+.board{
+	border-top:1px solid #dedfdf;
+	border-bottom:1px solid #dedfdf;
+	margin:0 0 5px 0;
+	}
+.board th{
+	border-top:1px solid #dedfdf;
+	font-size:11px;
+	color:#656769;
+	height:26px;
+	background-color: #f2f4f5;
+	}
+.board td{
+	border-bottom:1px dotted #dedfdf;
+	color:#656769;
+	padding:7px 0 7px 0;
+	}
+
+.board_view{
+	margin:10px 0 15px 0;
+	}
+
+.board_title{
+	background: url('../images/bg/bg_title_right.jpg') right top no-repeat ;
+	}
+.board_title p{
+	width:100%;
+	text-align:center;
+	font-weight:bold;
+	padding:8px 0 0 0;
+	height:19px;
+	background: url('../images/bg/bg_title_left.jpg') left top no-repeat ;
+	}
+.board_view td{
+	border-bottom:1px dotted #dedfdf;
+	text-align:left;
+	padding:7px 0 7px 10px;
+	}
+.board_view .bd_title{
+	background-color: #f2f4f5;
+	width:80px;
+	font-weight:bold;
+	font-size:11px;
+	color:#656769;
+	text-align:center;
+	padding:0 0 0 0;
+	}
+.board_view .bd_list{
+	font-size:11px;
+	color:#656769;
+	}
+.board_view .bd_list a{
+	font-size:11px;
+	color:#656769;
+	}
+.board_view .bd_list a:hover{
+	font-size:11px;
+	color:#e0990f;
+	}
+.board_view .comment{
+	padding:15px;
+	line-height:16px;
+	}
+.board_search{
+	margin:0 auto;
+	padding:15px 0 0 200px;
+	width:700px;
+	height:50px;
+	background: url('../images/bg/bg_search.jpg') top left no-repeat ;
+	}
+.grid_cs{
+	width:100%;
+	text-align:center;	
+	border-left:1px solid #b4cece;
+	border-right:1px solid #b4cece;
+	}
+.grid_cs th{
+	height:26px;
+	font-weight:normal;
+	font-size:11px;
+	color:#2e475d;
+	background: url('../images/bg/bg_grid_th.jpg') repeat-x ;	
+	border-right:1px solid #b4cece;
+	}
+.grid_cs td{
+	height:22px;
+	border-bottom:1px solid #b4cece;
+	}
+
+.notice_text{
+	font-size:11px;
+	background:url('../images/etc/bullet_notice.gif') no-repeat center left;
+	color:#db7614;
+	}
+.notice_text2{
+	text-align:left;
+	height:18px;
+	font-size:12px;
+	background:url('../images/etc/bullet_notice.gif') no-repeat top left;
+	color:#db7614;
+	padding:2px 0 0 20px;
+	font-weight:bold;
+	}
+
+.popup_ico{
+	width:92px;
+	height:80px;
+	background:url('../images/etc/ico_notice.jpg') no-repeat center left;
+	}
+
+
+.mypage{
+	position:relative;
+	width:1220px;
+	height:530px;
+	margin:10px 0 0 0;
+	background:url('../images/bg/bg_mypage.jpg')  left top no-repeat;
+	}
+.mypage_right{
+	position:absolute;
+	top:100px;
+	left:465px;
+	width:639px;
+	}
+
+.tb_notice{
+	border-top:1px solid #cfcec9;
+	border-left:1px solid #cfcec9;
+	border-bottom:1px solid #cfcec9;
+	border-collapse:collapse;
+	font-size:11px;
+	margin:5px 0 0 0;
+	}
+.tb_notice th{
+	padding:5px 0 3px 0;
+	border-right:1px solid #cfcec9;
+	border-bottom:1px dotted #cfcec9;
+	background-color: #f9f3dc;
+	color:#9b8321;
+	height:20px;
+	}
+.tb_notice td{
+	padding:5px 0 5px 10px;
+	text-align:left;
+	line-height:16px;
+	color:#d43b05;
+	border-right:1px solid #cfcec9;
+	}
+
+.tb_notice2{
+	width:400px;
+	border-top:1px solid #cfcec9;
+	border-left:1px solid #cfcec9;
+	border-bottom:1px solid #cfcec9;
+	border-collapse:collapse;
+	font-size:11px;
+	}
+.tb_notice2 th{
+	padding:2px 0 2px 0;
+	border-right:1px solid #cfcec9;
+	border-bottom:1px dotted #cfcec9;
+	background-color: #efefef;
+	color:#5e82a5;
+	}
+.tb_notice2 td{
+	padding:2px 0 1px 0;
+	text-align:center;
+	line-height:14px;
+	color:#535353;
+	border-right:1px solid #cfcec9;
+	border-bottom:1px dotted #cfcec9;
+	}
+
+.tb_notice3{
+	border-top:1px solid #cfcec9;
+	border-left:1px solid #cfcec9;
+	border-bottom:1px solid #cfcec9;
+	border-collapse:collapse;
+	font-size:12px;
+	margin:5px 0 0 0;
+	}
+.tb_notice3 th{
+	padding:5px 0 3px 0;
+	border-right:1px solid #cfcec9;
+	border-bottom:1px dotted #cfcec9;
+	background-color: #f9f3dc;
+	color:#9b8321;
+	height:20px;
+	}
+.tb_notice3 td{
+	padding:5px 10px 5px 0;
+	text-align:right;
+	line-height:16px;
+	color:#d43b05;
+	font-weight:bold;
+	border-right:1px solid #cfcec9;
+	}
+
+
+
+.pop01{
+	width:500px;
+	padding:116px 0 0 0;
+	background:url('../images/popup/bg_pop01.jpg')  left top no-repeat;
+	}
+.pop01_info{
+	margin:0 0 5px 25px;
+	}
+.pop01_info .txt{
+	padding:0 0 7px 5px;
+	color:#2c630a;
+	}
+.pop01_info .blt01{
+	padding:2px 30px 4px 100px;
+	background:url('../images/popup/pop01_blt01.png')  left top no-repeat;
+	}
+.pop01_info .blt02{
+	padding:2px 0 4px 100px;
+	background:url('../images/popup/pop01_blt02.png')  left top no-repeat;
+	}
+.pop01_info .blt03{
+	padding:2px 0 4px 100px;
+	background:url('../images/popup/pop01_blt03.png')  left top no-repeat;
+	}
+.pop01_info .blt04{
+	padding:2px 0 4px 100px;
+	background:url('../images/popup/pop01_blt04.png')  left top no-repeat;
+	}
+.pop01_in{
+	width:500px;
+	padding:0 0 33px 0;
+	margin:0 0 0 0;
+	background:url('../images/popup/bg_pop01_in_bottom.jpg')  left bottom no-repeat;
+	}
+.pop01_in p{
+	height:9px;
+	background:url('../images/popup/bg_pop01_in_top.jpg')  left top no-repeat;
+	}
+.pop01_in .view{
+	margin:0 0 0 40px;
+	}
