@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springbootproject.pms.login.service.dao.LoginMapper">
+
+    <!-- 사용자 조회 -->
+    <select id="findtest" parameterType="string" resultType="com.example.springbootproject.pms.login.dto.Syep1000VO">
+        SELECT jijumcd, jijumname
+        FROM syep1000t
+        WHERE jijumcd = #{userid}
+    </select>
+
+    <!-- 사용자 조회 -->
+    <select id="getUserInfo" parameterType="com.example.springbootproject.pms.login.dto.Syep4000VO" resultType="com.example.springbootproject.pms.login.dto.Syep4000VO">
+        select userid, sctno as password, username from syep4000t
+        where userid = #{userid}
+    </select>
+
+</mapper>
+
+
