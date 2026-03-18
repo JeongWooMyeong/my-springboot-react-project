@@ -10,6 +10,7 @@ pipeline {
                 git branch: 'main',
                     url: 'https://github.com/JeongWooMyeong/my-springboot-react-project.git',
                     credentialsId: 'githun-token'
+                sh 'git clean -fdx'
             }
         }
         stage('Grant Permission') {
