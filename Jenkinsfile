@@ -17,6 +17,13 @@ pipeline {
                 sh 'chmod +x gradlew'
             }
         }
+        stage('Install Frontend Dependencies') {
+            steps {
+                dir('frontend') {
+                    sh 'npm install'
+                }
+            }
+        }
         stage('Build') {
             steps {
                 // Gradle 빌드 실행 (백엔드 + 프론트엔드 포함)
