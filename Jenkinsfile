@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools {
+            nodejs "NodeJS_18"   // Jenkins 관리 → Global Tool Configuration에서 등록한 이름
+        }
+
     stages {
         stage('Checkout') {
             steps {
