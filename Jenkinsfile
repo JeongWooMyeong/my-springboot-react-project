@@ -8,6 +8,12 @@ pipeline {
                     credentialsId: 'githun-token'
             }
         }
+        stage('Grant Permission') {
+            steps {
+                sh 'chmod +x gradlew'
+            }
+        }
+
         stage('Backend Build') {
             steps {
                 // Gradle 빌드 실행 22
