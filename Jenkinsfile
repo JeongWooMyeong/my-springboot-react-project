@@ -10,7 +10,8 @@ pipeline {
         }
         stage('Backend Build') {
             steps {
-                sh './mvnw clean package'
+                // Gradle 빌드 실행
+                sh './gradlew clean build'
             }
         }
         stage('Frontend Build') {
