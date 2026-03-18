@@ -1,6 +1,6 @@
 import {useNavigate, useLocation} from "react-router-dom";
-import {useEffect, useState} from "react";
-
+//import {useEffect, useState} from "react";
+/**/
 function MainPage(){
     const location = useLocation();
     const user = location.state?.user;
