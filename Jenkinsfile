@@ -21,7 +21,10 @@ pipeline {
             steps {
                 dir('frontend') {
                     // CI 환경에서는 npm ci 권장
-                    sh 'npm ci'
+                    // 임시: npm install
+                    // 장기적으로는 package-lock.json 정리 후 npm ci
+                    sh 'npm install'
+
                 }
             }
         }
