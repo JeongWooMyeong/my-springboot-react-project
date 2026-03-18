@@ -13,22 +13,10 @@ pipeline {
                 sh 'chmod +x gradlew'
             }
         }
-
-        stage('Backend Build') {
+        stage('Build') {
             steps {
-                // Gradle 빌드 실행 22
+                // Gradle 빌드 실행 (백엔드 + 프론트엔드 포함)
                 sh './gradlew clean build'
-            }
-        }
-        stage('Frontend Build') {
-            steps {
-                dir('frontend') {
-                    nodejs(nodeJSInstallationName: 'NodeJS_18') {
-                        sh 'npm install'
-                        sh 'npm run build'
-
-                    }
-                }
             }
         }
     }
