@@ -43,6 +43,10 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    // 혹시 빠져 있다면 명시적으로 추가
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
+
+    //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     //testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
     //testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
     //testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
