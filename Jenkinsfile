@@ -10,7 +10,7 @@ pipeline {
         }
         stage('Backend Build') {
             steps {
-                // Gradle 빌드 실행
+                // Gradle 빌드 실행 22
                 sh './gradlew clean build'
             }
         }
