@@ -5,7 +5,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/JeongWooMyeong/my-springboot-react-project.git',
-                    credentialsId: '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'
+                    credentialsId: 'github-token'
             }
         }
         stage('Backend Build') {
