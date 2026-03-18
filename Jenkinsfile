@@ -23,8 +23,11 @@ pipeline {
         stage('Frontend Build') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
-                    sh 'npm run build'
+                    nodejs(nodeJSInstallationName: 'NodeJS_18') {
+                        sh 'npm install'
+                        sh 'npm run build'
+
+                    }
                 }
             }
         }
