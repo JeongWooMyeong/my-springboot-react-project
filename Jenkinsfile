@@ -20,7 +20,8 @@ pipeline {
         stage('Install Frontend Dependencies') {
             steps {
                 dir('frontend') {
-                    sh 'npm install'
+                    // CI 환경에서는 npm ci 권장
+                    sh 'npm ci'
                 }
             }
         }
