@@ -35,5 +35,22 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
+        stage('Docker Build') {
+            steps {
+                // Docker 이미지 빌드
+                sh 'docker build -t myapp:${BUILD_NUMBER} .'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                // 기존 컨테이너 종료 후 새 컨테이너 실행
+                sh '''
+                  docker stop myapp-container || true
+                  docker rm myapp-container || true
+                  docker run -d --name myapp-container -p 8081:8081 myapp:${BUILD_NUMBER}
+                '''
+            }
+        }
+
     }
 }
