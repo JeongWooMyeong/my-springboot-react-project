@@ -16,7 +16,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     url: 'https://github.com/JeongWooMyeong/my-springboot-react-project.git',
-                    credentialsId: 'github-token'
+                    credentialsId: 'githuㅜ-token'
                 sh 'git clean -fdx'
             }
         }
