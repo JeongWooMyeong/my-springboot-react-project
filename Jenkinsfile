@@ -57,12 +57,14 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                // Kubernetes 매니페스트 적용
-                sh 'kubectl apply -f k8s/deployment.yaml'
-                sh 'kubectl apply -f k8s/service.yaml'
+                sh """
+                  envsubst < k8s/deployment.yaml | kubectl apply -f -
+                  envsubst < k8s/service.yaml | kubectl apply -f -
+                """
                 sh 'kubectl rollout status deployment/myapp-deployment'
             }
         }
+
 
 
 
