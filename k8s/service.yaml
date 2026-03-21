@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: myapp-service
+spec:
+  type: NodePort  #Minikube에서 외부 접속 가능
+  selector:
+    app: myapp
+  ports:
+    - port: 8081
+      targetPort: 8081
+      nodePort: 30080 #브라우저 접속 포트 (http://localhost:30080)

@@ -47,21 +47,23 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
-        stage('Docker Build') {
+        stage('Docker Build in Minikube') {
             steps {
+                // Minikube Docker 데몬을 바라보도록 설정
+                sh 'eval $(minikube docker-env)'
                 sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
             steps {
-                sh """
-                  docker stop ${CONTAINER_NAME} || true
-                  docker rm ${CONTAINER_NAME} || true
-                  docker run -d --name ${CONTAINER_NAME} -p 8081:8081 ${DOCKER_IMAGE}:${DOCKER_TAG}
-                """
+                // Kubernetes 매니페스트 적용
+                sh 'kubectl apply -f k8s/deployment.yaml'
+                sh 'kubectl apply -f k8s/service.yaml'
+                sh 'kubectl rollout status deployment/myapp-deployment'
             }
         }
+
 
 
     }
