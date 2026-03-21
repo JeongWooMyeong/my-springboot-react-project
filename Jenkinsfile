@@ -58,6 +58,8 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh """
+                  export DOCKER_IMAGE=${DOCKER_IMAGE}
+                  export DOCKER_TAG=${DOCKER_TAG}
                   envsubst < k8s/deployment.yaml | kubectl apply -f -
                   envsubst < k8s/service.yaml | kubectl apply -f -
                 """
