@@ -49,26 +49,23 @@ pipeline {
         }
         stage('Docker Build in Minikube') {
             steps {
-                // Minikube Docker 데몬을 바라보도록 설정
-                sh 'eval $(minikube docker-env)'
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh '''
+                  eval $(minikube docker-env)
+                  docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                '''
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                sh """
+                sh '''
                   export DOCKER_IMAGE=${DOCKER_IMAGE}
                   export DOCKER_TAG=${DOCKER_TAG}
                   envsubst < k8s/deployment.yaml | kubectl apply -f -
                   envsubst < k8s/service.yaml | kubectl apply -f -
-                """
+                '''
                 sh 'kubectl rollout status deployment/myapp-deployment'
             }
         }
-
-
-
-
     }
 }
