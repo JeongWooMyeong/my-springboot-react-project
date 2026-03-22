@@ -50,19 +50,34 @@ pipeline {
         stage('Docker Build in Minikube') {
             steps {
                 sh '''
+                  echo "🔍 Minikube 상태 확인"
+                  minikube status
+
+                  echo "🐳 Minikube Docker 환경 설정"
+                  eval $(minikube -p minikube docker-env)
+
+                  echo "🏗 Docker 이미지 빌드"
                   docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+
+                  echo "📦 빌드된 이미지 확인"
+                  docker images | grep ${DOCKER_IMAGE}
                 '''
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
                   export DOCKER_IMAGE=${DOCKER_IMAGE}
                   export DOCKER_TAG=${DOCKER_TAG}
+
+                  echo "🚀 Deployment 적용"
                   envsubst < k8s/deployment.yaml | kubectl apply -f -
                   envsubst < k8s/service.yaml | kubectl apply -f -
+
+                  echo "📈 Rollout 상태 확인"
+                  kubectl rollout status deployment/myapp-deployment
                 '''
-                sh 'kubectl rollout status deployment/myapp-deployment'
             }
         }
     }
