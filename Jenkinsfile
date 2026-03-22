@@ -50,7 +50,6 @@ pipeline {
         stage('Docker Build in Minikube') {
             steps {
                 sh '''
-                  eval $(minikube -p minikube docker-env)
                   docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
                 '''
             }
