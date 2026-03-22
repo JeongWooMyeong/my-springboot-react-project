@@ -7,6 +7,7 @@ pipeline {
             DOCKER_IMAGE = "myapp"
             DOCKER_TAG   = "${BUILD_NUMBER}"
             CONTAINER_NAME = "myapp-container"
+            KUBECONFIG = "/root/.kube/config"
         }
 
 
