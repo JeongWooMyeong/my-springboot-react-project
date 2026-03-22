@@ -15,7 +15,7 @@ spec:
       containers:
       - name: myapp
         image: ${DOCKER_IMAGE}:${DOCKER_TAG}
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Never
         ports:
           - containerPort: 8081
         resources:
