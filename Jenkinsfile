@@ -51,7 +51,7 @@ pipeline {
             steps {
                 sh '''
                   eval $(minikube docker-env)
-                  docker images | grep ${DOCKER_IMAGE}
+                  docker build -t myapp:latest .
                 '''
             }
         }
