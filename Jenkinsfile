@@ -50,16 +50,7 @@ pipeline {
         stage('Docker Build in Minikube') {
             steps {
                 sh '''
-                  echo "🔍 Minikube 상태 확인"
-                  minikube status
-
-                  echo "🐳 Minikube Docker 환경 설정"
-                  eval $(minikube -p minikube docker-env)
-
-                  echo "🏗 Docker 이미지 빌드"
-                  docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-
-                  echo "📦 빌드된 이미지 확인"
+                  eval $(minikube docker-env)
                   docker images | grep ${DOCKER_IMAGE}
                 '''
             }
