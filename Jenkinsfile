@@ -50,13 +50,8 @@ pipeline {
         stage('Docker Build in Minikube') {
             steps {
                 sh '''
-                if minikube status | grep -q Running; then
                   eval $(minikube -p minikube docker-env)
                   docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-                else
-                  echo "❌ Minikube가 실행 중이 아닙니다"
-                  exit 1
-                fi
                 '''
             }
         }
