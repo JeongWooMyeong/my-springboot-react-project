@@ -49,32 +49,21 @@ pipeline {
         }
         stage('Docker Build in Minikube') {
             steps {
-                powershell '''
-                Write-Host "🐳 Minikube Docker 환경 설정"
-                & minikube -p minikube docker-env --shell powershell | Invoke-Expression
-
-                Write-Host "🏗 Docker 이미지 빌드"
-                docker build -t myapp:latest .
-
-                Write-Host "📦 빌드된 이미지 확인"
-                docker images | Where-Object {$_.Repository -eq "${env.DOCKER_IMAGE}"}
+                sh '''
+                  eval $(minikube -p minikube docker-env)
+                  docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
                 '''
             }
         }
-
         stage('Deploy to Kubernetes') {
             steps {
-                powershell '''
-                $env:DOCKER_IMAGE="${env.DOCKER_IMAGE}"
-                $env:DOCKER_TAG="${env.DOCKER_TAG}"
-
-                Write-Host "🚀 Deployment 적용"
-                envsubst < k8s/deployment.yaml | kubectl apply -f -
-                envsubst < k8s/service.yaml | kubectl apply -f -
-
-                Write-Host "📈 Rollout 상태 확인"
-                kubectl rollout status deployment/myapp-deployment
+                sh '''
+                  export DOCKER_IMAGE=${DOCKER_IMAGE}
+                  export DOCKER_TAG=${DOCKER_TAG}
+                  envsubst < k8s/deployment.yaml | kubectl apply -f -
+                  envsubst < k8s/service.yaml | kubectl apply -f -
                 '''
+                sh 'kubectl rollout status deployment/myapp-deployment'
             }
         }
     }
