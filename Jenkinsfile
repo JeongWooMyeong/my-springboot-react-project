@@ -48,14 +48,14 @@ pipeline {
                 sh './gradlew clean build'
             }
         }
-        stage('Docker Build in Minikube') {
+        stage('Docker Build') {
             steps {
                 sh '''
-                  eval $(minikube -p minikube docker-env)
                   docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
                 '''
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 sh '''
@@ -67,5 +67,6 @@ pipeline {
                 sh 'kubectl rollout status deployment/myapp-deployment'
             }
         }
+
     }
 }
