@@ -47,13 +47,13 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                bat """
-                  set DOCKER_IMAGE=%DOCKER_IMAGE%
-                  set DOCKER_TAG=%DOCKER_TAG%
-                  kubectl apply -f k8s\\deployment.yaml
-                  kubectl apply -f k8s\\service.yaml
-                """
-                bat 'kubectl rollout status deployment/myapp-deployment'
+                withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
+                    bat """
+                      kubectl apply -f k8s\\deployment.yaml
+                      kubectl apply -f k8s\\service.yaml
+                    """
+                    bat 'kubectl rollout status deployment/myapp-deployment'
+                }
             }
         }
     }
