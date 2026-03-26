@@ -1,13 +1,13 @@
 pipeline {
     agent any
     tools {
-            nodejs "NodeJS_18"   // Jenkins 관리 → Global Tool Configuration에서 등록한 이름
+            nodejs "NodeJS_22"   // Jenkins 관리 → Global Tool Configuration에서 등록한 이름
         }
     environment {
             DOCKER_IMAGE = "myapp"
             DOCKER_TAG   = "${BUILD_NUMBER}"
             CONTAINER_NAME = "myapp-container"
-            KUBECONFIG = "/root/.kube/config"
+            KUBECONFIG = "C:\\Users\\jenkins\\.kube\\config"
         }
 
 
