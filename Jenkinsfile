@@ -41,7 +41,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat "docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% ."
+                bat "docker build -t myapp:latest ."
             }
         }
 
@@ -49,7 +49,6 @@ pipeline {
             steps {
                 withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
                    bat """
-                     kubectl set image deployment/myapp-deployment myapp=%DOCKER_IMAGE%:%DOCKER_TAG%
                      kubectl apply -f k8s\\service.yaml
                      kubectl rollout status deployment/myapp-deployment
                    """
