@@ -49,6 +49,7 @@ pipeline {
             steps {
                 withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
                     bat """
+                      kubectl config use-context docker-desktop
                       kubectl apply -f k8s\\deployment.yaml
                       kubectl apply -f k8s\\service.yaml
                     """
