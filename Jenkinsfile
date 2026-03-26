@@ -24,6 +24,14 @@ pipeline {
             }
         }
 
+        stage('Install Frontend Dependencies') {
+            steps {
+                dir('frontend') {
+                    bat 'npm ci'
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 // React 프론트엔드 빌드가 gradle task 안에 포함되어 있다면 gradlew.bat만 실행하면 됨
