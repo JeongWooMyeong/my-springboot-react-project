@@ -5,7 +5,7 @@ pipeline {
     }
     environment {
         DOCKER_IMAGE = "myapp"
-        DOCKER_TAG   = "${BUILD_NUMBER}"
+        DOCKER_TAG   = "${env.BUILD_NUMBER}"
         CONTAINER_NAME = "myapp-container"
         KUBECONFIG = "C:\\Users\\jwm90\\.kube\\config"
     }
