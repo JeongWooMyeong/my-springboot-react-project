@@ -50,7 +50,7 @@ pipeline {
                 withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
                     bat """
                       kubectl config use-context docker-desktop
-                      powershell -Command "(Get-Content k8s\\deployment.yaml) -replace 'image: myapp:latest', 'image: myapp:%DOCKER_TAG%' | Set-Content k8s\\deployment.yaml"
+                      powershell -Command "(Get-Content k8s\\deployment.yaml) -replace 'image: myapp:latest', 'image: myapp:$env:DOCKER_TAG' | Set-Content k8s\\deployment.yaml"
                       kubectl apply -f k8s\\deployment.yaml
                       kubectl apply -f k8s\\service.yaml
                     """
