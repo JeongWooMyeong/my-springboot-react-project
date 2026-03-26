@@ -48,13 +48,11 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
-                    bat """
-                      kubectl config use-context docker-desktop
-                      powershell -Command "(Get-Content k8s\\deployment.yaml) -replace 'image: myapp:latest', 'image: myapp:$env:DOCKER_TAG' | Set-Content k8s\\deployment.yaml"
-                      kubectl apply -f k8s\\deployment.yaml
-                      kubectl apply -f k8s\\service.yaml
-                    """
-                    bat 'kubectl rollout status deployment/myapp-deployment'
+                   bat """
+                     kubectl set image deployment/myapp-deployment myapp=%DOCKER_IMAGE%:%DOCKER_TAG%
+                     kubectl apply -f k8s\\service.yaml
+                     kubectl rollout status deployment/myapp-deployment
+                   """
                 }
             }
         }
