@@ -27,7 +27,7 @@ pipeline {
         stage('Install Frontend Dependencies') {
             steps {
                 dir('frontend') {
-                    bat 'npm ci'
+                    bat 'npm install'
                 }
             }
         }
