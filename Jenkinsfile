@@ -41,8 +41,8 @@ pipeline {
 
         stage('Docker Build & Push') {
             steps {
-                bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
-                bat "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                bat "docker build -t ${DOCKER_IMAGE}:latest ."
+                bat "docker push ${DOCKER_IMAGE}:latest"
             }
         }
 
@@ -51,7 +51,7 @@ pipeline {
            steps {
                withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
                   bat """
-                    kubectl set image deployment/myapp-deployment myapp=${DOCKER_IMAGE}:${DOCKER_TAG} --record
+                    kubectl set image deployment/myapp-deployment myapp=${DOCKER_IMAGE}:latest --record
                     kubectl rollout status deployment/myapp-deployment
                   """
                }
