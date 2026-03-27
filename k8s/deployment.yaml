@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: myapp-deployment
 spec:
-  replicas: 2   # Pod 개수 (확장성)
+  replicas: 1   # Pod 개수 (확장성)
   selector:
     matchLabels:
       app: myapp
