@@ -4,7 +4,7 @@ pipeline {
         nodejs "NodeJS_22"   // Jenkins 관리 → Global Tool Configuration에서 등록한 이름
     }
     environment {
-        DOCKER_IMAGE     = "localhost:5000/myapp"
+        DOCKER_IMAGE     = "192.168.35.60:5000/myapp"
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
         CONTAINER_NAME = "myapp-container"
         KUBECONFIG = "C:\\Users\\jwm90\\.kube\\config"
