@@ -55,6 +55,7 @@ pipeline {
            steps {
                withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
                    bat """
+                       kubectl apply -f deployment.yaml
                        kubectl set image deployment/myapp-deployment myapp=${DOCKER_IMAGE}:${DOCKER_TAG} --record
                        kubectl rollout status deployment/myapp-deployment
                    """
