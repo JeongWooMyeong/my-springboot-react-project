@@ -4,9 +4,8 @@ pipeline {
         nodejs "NodeJS_22"   // Jenkins 관리 → Global Tool Configuration에서 등록한 이름
     }
     environment {
-        DOCKER_IMAGE     = "192.168.35.60:5000/myapp"
+        DOCKER_IMAGE     = "jeongwoomyeong/myapp"
         DOCKER_TAG  = "${env.BUILD_NUMBER}"
-        CONTAINER_NAME = "myapp-container"
         KUBECONFIG = "C:\\Users\\jwm90\\.kube\\config"
     }
 
@@ -41,19 +40,26 @@ pipeline {
 
         stage('Docker Build & Push') {
             steps {
-                bat "docker build -t ${DOCKER_IMAGE}:latest ."
-                bat "docker push ${DOCKER_IMAGE}:latest"
-            }
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials',
+                                                      usernameVariable: 'DOCKER_USER',
+                                                      passwordVariable: 'DOCKER_PASS')]) {
+                        bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+                        bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                        bat "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                        bat "docker push ${DOCKER_IMAGE}:latest"
+                    }
+                }
         }
 
 
        stage('Deploy to Kubernetes') {
            steps {
                withEnv(["KUBECONFIG=${env.KUBECONFIG}"]) {
-                  bat """
-                    kubectl set image deployment/myapp-deployment myapp=${DOCKER_IMAGE}:latest --record
-                    kubectl rollout status deployment/myapp-deployment
-                  """
+                   bat """
+                       kubectl set image deployment/myapp-deployment myapp=${DOCKER_IMAGE}:${DOCKER_TAG} --record
+                       kubectl rollout status deployment/myapp-deployment
+                   """
                }
            }
        }
