@@ -46,8 +46,6 @@ pipeline {
                         bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
                         bat "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                         bat "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        bat "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
-                        bat "docker push ${DOCKER_IMAGE}:latest"
                     }
                 }
         }
