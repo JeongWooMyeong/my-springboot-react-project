@@ -1,0 +1,28 @@
+package com.example.springbootproject.pms.sy.sm.service.impl;
+
+import com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto;
+import com.example.springbootproject.pms.sy.sm.service.Sysm1000Service;
+import com.example.springbootproject.pms.sy.sm.service.dao.Sysm1000Mapper;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class Sysm1000ServiceImpl implements Sysm1000Service {
+
+    private final Sysm1000Mapper sysm1000Mapper;
+
+    public Sysm1000ServiceImpl(Sysm1000Mapper sysm1000Mapper) {
+        this.sysm1000Mapper = sysm1000Mapper;
+    }
+
+    @Override
+    public List<Sysm1000Dto> getAllMenus() {
+        return sysm1000Mapper.getAllMenus();
+    }
+
+    @Override
+    public Sysm1000Dto getMenuByCd(String menuCd) {
+        return sysm1000Mapper.getMenuByCd(menuCd);
+    }
+}

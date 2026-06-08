@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.sy.sm.service.dao.Sysm1000Mapper">
+
+    <select id="getAllMenus" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        SELECT
+            Xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
+            MenuPrntCd, MenuName, MenuCd, FileName, FileLct, DelPssYn, DedName
+        FROM SYSM1000T
+        ORDER BY MenuCd
+    </select>
+
+    <select id="getMenuByCd" parameterType="string" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        SELECT
+            Xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
+            MenuPrntCd, MenuName, MenuCd, FileName, FileLct, DelPssYn, DedName
+        FROM SYSM1000T
+        WHERE MenuCd = #{menuCd}
+    </select>
+
+
+</mapper>

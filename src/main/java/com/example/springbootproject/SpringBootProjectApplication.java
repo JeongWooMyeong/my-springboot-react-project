@@ -5,7 +5,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = "com.example")
-@MapperScan("com.example.springbootproject.pms.login.service.dao")
+@MapperScan({
+        "com.example.springbootproject.pms.login.service.dao",
+        "com.example.springbootproject.pms.sy.sm.service.dao"
+})
 public class SpringBootProjectApplication {
 
     public static void main(String[] args) {
