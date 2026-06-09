@@ -305,7 +305,7 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	border-bottom:1px dotted #ddd;
 	padding:3px 0 2px 15px;
 	text-align:left;
-	background:url('../images/bg/bg_main_line.png')  center left no-repeat;
+	background:url('../images/bg/bg_main_line.png')  center no-repeat;
 	}
 .main_board_line_lotteDep a{
 	color:#4d4d4d;
@@ -319,7 +319,7 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	top:600px;
 	width:600px;
 	height:50px;	
-	background:url('../images/bg/copy_lotteDep.png')  center right no-repeat;
+	background:url('../images/bg/copy_lotteDep.png')  center no-repeat;
 	}
 
 /*롯데백화점*/
@@ -359,7 +359,7 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	border-bottom:1px dotted #ddd;
 	padding:3px 200px 2px 20px;
 	text-align:left;
-	background:url('../images/bg/bg_main_line.jpg')  center left no-repeat;
+	background:url('../images/bg/bg_main_line.jpg')  center no-repeat;
 	}
 .main_board_line a{
 	color:#262626;
@@ -969,7 +969,7 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 
 .notice_text{
 	font-size:11px;
-	background:url('../images/etc/bullet_notice.gif') no-repeat center left;
+	background:url('../images/etc/bullet_notice.gif') no-repeat center;
 	color:#db7614;
 	}
 .notice_text2{
@@ -985,7 +985,7 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 .popup_ico{
 	width:92px;
 	height:80px;
-	background:url('../images/etc/ico_notice.jpg') no-repeat center left;
+	background:url('../images/etc/ico_notice.jpg') no-repeat center;
 	}
 
 
