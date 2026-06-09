@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import Menu from "./Menu";
+import "../css/layout.css";
 
 function MainPage() {
     const location = useLocation();
@@ -26,10 +27,6 @@ function MainPage() {
 
     return (
         <div id="main_wrap">
-            <h2>
-                안녕하세요, {user?.username}님! (토큰: {user?.token})
-            </h2>
-            <Menu />
             <div className="main_logout01">
                 <button onClick={fnLogout}>로그아웃</button>
                 <button onClick={fnHelpManual}>도움말</button>
@@ -37,7 +34,6 @@ function MainPage() {
 
             {/* 공지사항 */}
             <div className="main_board01">
-                <h3>공지사항</h3>
                 <table>
                     {mainnoti.length === 0 ? (
                         <tr>
@@ -58,30 +54,6 @@ function MainPage() {
                 </table>
             </div>
 
-            {/* 파일 다운로드 */}
-            <div className="main_board02">
-                <h3>파일 다운로드</h3>
-                <table>
-                    {mainwebhard.length === 0 ? (
-                        <tr>
-                            <td>등록된 파일이 없습니다.</td>
-                        </tr>
-                    ) : (
-                        mainwebhard.map((file, idx) => (
-                            <tr key={idx}>
-                                <td>
-                                    <a
-                                        href={`/pp/po/getfiledown.do?savefilefsnm=${file.savefilefsnm}&filefsnm=${file.filefsnm}`}
-                                    >
-                                        {file.filefsnm}
-                                    </a>
-                                </td>
-                                <td>{file.rgdate}</td>
-                            </tr>
-                        ))
-                    )}
-                </table>
-            </div>
         </div>
     );
 }

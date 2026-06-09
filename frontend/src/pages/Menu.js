@@ -25,8 +25,19 @@ function Menu() {
 
     return (
         <nav className="main-menu">
-            <ul>
-                {renderMenu("0")} {/* 최상위 메뉴부터 시작 */}
+            <ul className="menu-root">
+                {menus
+                    .filter(menu => menu.menuPrntCd === "0")
+                    .map(menu => (
+                        <li key={menu.menuCd} className="menu-item">
+                            <button type="button" className="menu-button">
+                                {menu.menuName}
+                            </button>
+                            <ul className="submenu">
+                                {renderMenu(menu.menuCd)}
+                            </ul>
+                        </li>
+                    ))}
             </ul>
         </nav>
     );
