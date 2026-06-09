@@ -1,8 +1,6 @@
-import { useLocation } from "react-router-dom";
 import "../css/layout.css";
 
 function MainPage() {
-    const location = useLocation();
 
     // 샘플 데이터 (실제로는 API 호출로 가져와야 함)
     const mainnoti = [
