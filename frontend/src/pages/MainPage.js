@@ -1,20 +1,13 @@
 import { useLocation } from "react-router-dom";
-import Menu from "./Menu";
 import "../css/layout.css";
 
 function MainPage() {
     const location = useLocation();
-    const user = location.state?.user;
 
     // 샘플 데이터 (실제로는 API 호출로 가져와야 함)
     const mainnoti = [
         { bltnno: 1, titl: "공지사항 제목1", upddate: "2026-06-08" },
         { bltnno: 2, titl: "공지사항 제목2", upddate: "2026-06-07" },
-    ];
-
-    const mainwebhard = [
-        { filefsnm: "파일1.pdf", rgdate: "2026-06-08", savefilefsnm: "file1" },
-        { filefsnm: "파일2.docx", rgdate: "2026-06-07", savefilefsnm: "file2" },
     ];
 
     const fnLogout = () => {

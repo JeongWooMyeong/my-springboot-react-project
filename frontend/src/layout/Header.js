@@ -3,7 +3,7 @@ import Menu from "../pages/Menu";
 
 
 function Header(){
-    const location = useLocation();
+    //const location = useLocation();
 
     return(
         <header className="layout-header">
