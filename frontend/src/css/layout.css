@@ -258,9 +258,20 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	}
 
 #main_wrap {
+	display: flex;
+	justify-content: center;   /* 가운데 정렬 */
+	align-items: flex-start;   /* 위쪽 기준 */
 	min-height: 100vh;
 	background: url('../images/bg/main.jpg') no-repeat center top;
 	background-size: cover;
+}
+
+.main_board01 {
+	width: 300px;
+	background-color: #fff;
+	padding: 20px;
+	border-radius: 8px;
+	margin-top: 300px; /* 원하는 Y 위치 */
 }
 
 		/*롯데백화점*/
@@ -323,17 +334,6 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	}
 
 /*롯데백화점*/
-
-
-.main_board01 {
-	position: absolute;
-	top: 300px;   /* 원하는 Y 위치 */
-	right: 520px;  /* 오른쪽 여백 */
-	width: 300px;
-	background-color: #fff;
-	padding: 20px;
-	border-radius: 8px;
-}
 
 .main_board02 {
 	width: 70%;

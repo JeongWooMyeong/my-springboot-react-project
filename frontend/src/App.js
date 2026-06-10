@@ -3,6 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./layout/Layout";
+import Sysm1000Page from "./pages/sy/sm/Sysm1000Page";
 
 function App(){
   return(
@@ -14,6 +15,13 @@ function App(){
               <ProtectedRoute>
                   <Layout>
                     <MainPage />
+                  </Layout>
+              </ProtectedRoute>
+          } />
+          <Route path="/sysm1000" element={
+              <ProtectedRoute>
+                  <Layout>
+                      <Sysm1000Page />   {/* 해당 페이지 컴포넌트 */}
                   </Layout>
               </ProtectedRoute>
           } />

@@ -1,9 +1,16 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 function Menu() {
     const [menus, setMenus] = useState([]);
+
+    const navigate = useNavigate();
+
+    const goPage = (path) => {
+        navigate(path);
+    };
 
     useEffect(() => {
         axios.get("/api/sysm1000/menus") // Sysm1000Controller에서 내려주는 API
@@ -17,7 +24,7 @@ function Menu() {
             .filter(menu => menu.menuPrntCd === parentCd)
             .map(menu => (
                 <li key={menu.menuCd}>
-                    <Link to={menu.fileLct}>{menu.menuName}</Link>
+                    <Link to={menu.dedName}>{menu.menuName}</Link>
                     <ul>{renderMenu(menu.menuCd)}</ul>
                 </li>
             ));
@@ -30,7 +37,7 @@ function Menu() {
                     .filter(menu => menu.menuPrntCd === "0")
                     .map(menu => (
                         <li key={menu.menuCd} className="menu-item">
-                            <button type="button" className="menu-button">
+                            <button type="button" className="menu-button" onClick={()=> goPage(menu.dedName)}>
                                 {menu.menuName}
                             </button>
                             <ul className="submenu">

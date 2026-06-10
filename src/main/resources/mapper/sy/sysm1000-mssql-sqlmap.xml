@@ -11,6 +11,7 @@
             Xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
             MenuPrntCd, MenuName, MenuCd, FileName, FileLct, DelPssYn, DedName
         FROM SYSM1000T
+        WHERE USEYn = 'Y'
         ORDER BY MenuCd
     </select>
 

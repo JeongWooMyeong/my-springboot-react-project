@@ -32,13 +32,12 @@ function LoginPage() {
             if(response.ok){
                 const data = await response.json();
                 console.log("로그인 성공", data);
-                //로그인 성공 후 페이지 이동 등 처리
-                //로그인 정보 저장
-                //localStorage.setItem("userInfo", JSON.stringify(data));
-                //또는 쿠키 사용
-                //Cookies.set("userInfo", JSOn.stringify(data), {expires: 7});
-                //navigate("/main");
-                navigate("/main", {state : {user : data}})
+
+                // 로그인 정보 저장 (localStorage)
+                localStorage.setItem("user", JSON.stringify(data));
+
+                // 메인 페이지로 이동 (state 넘길 필요 없음)
+                navigate("/main");
             }else{
                 alert("로그인 실패");
             }

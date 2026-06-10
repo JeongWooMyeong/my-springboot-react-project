@@ -3,24 +3,21 @@ import { Navigate, useLocation } from "react-router-dom";
 
 
 function ProtectedRoute({ children }) {
-    const location = useLocation();
-    const user = location.state?.user;
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const token = storedUser?.token;
     const [valid, setValid] = useState(null);
 
     useEffect(() => {
-        if (!user?.token) {
+        if (!token) {
             setValid(false);
             return;
         }
-
-        //alert(user?.token);
-
         fetch("/api/verify", {
-            headers: { Authorization: `Bearer ${user.token}` },
+            headers: { Authorization: `Bearer ${token}` },
         })
             .then((res) => setValid(res.ok))
             .catch(() => setValid(false));
-    }, [user]);
+    }, [token]);
 
     if (valid === null) return <div>검증 중...</div>;
     if (!valid) return <Navigate to="/" replace />;
