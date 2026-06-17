@@ -25,4 +25,20 @@ public class Sysm1000ServiceImpl implements Sysm1000Service {
     public Sysm1000Dto getMenuByCd(String menuCd) {
         return sysm1000Mapper.getMenuByCd(menuCd);
     }
+
+    @Override
+    public void createMenu(Sysm1000Dto dto) {
+        sysm1000Mapper.createMenu(dto);   // ✅ 필드명 수정
+    }
+
+    @Override
+    public void updateMenu(String menuCd, Sysm1000Dto dto) {
+        dto.setMenuCd(menuCd);
+        sysm1000Mapper.updateMenu(dto);   // ✅ 필드명 수정
+    }
+
+    @Override
+    public void deleteMenu(String menuCd) {
+        sysm1000Mapper.deleteMenu(menuCd); // ✅ 필드명 수정
+    }
 }

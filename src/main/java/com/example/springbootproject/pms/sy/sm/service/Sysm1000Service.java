@@ -9,4 +9,9 @@ public interface Sysm1000Service {
     List<Sysm1000Dto> getAllMenus();
     Sysm1000Dto getMenuByCd(String menuCd);
 
+    void createMenu(Sysm1000Dto dto);   // 등록
+    void updateMenu(String menuCd, Sysm1000Dto dto); // 수정
+    void deleteMenu(String menuCd);     // 삭제
+
+
 }

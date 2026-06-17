@@ -9,7 +9,7 @@ function Menu() {
     const navigate = useNavigate();
 
     const goPage = (path) => {
-        navigate(path);
+        navigate(`${path}?t=${Date.now()}`);
     };
 
     useEffect(() => {

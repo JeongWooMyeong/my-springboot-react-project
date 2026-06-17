@@ -9,4 +9,12 @@ import java.util.List;
 public interface Sysm1000Mapper {
     List<Sysm1000Dto> getAllMenus();
     Sysm1000Dto getMenuByCd(String menuCd);
+    // 등록
+    int createMenu(Sysm1000Dto dto);
+
+    // 수정
+    int updateMenu(Sysm1000Dto dto);
+
+    // 삭제
+    int deleteMenu(String menuCd);
 }

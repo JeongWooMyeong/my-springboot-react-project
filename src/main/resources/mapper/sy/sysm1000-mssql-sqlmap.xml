@@ -23,5 +23,23 @@
         WHERE MenuCd = #{menuCd}
     </select>
 
+    <insert id="createMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        INSERT INTO sysm1000t (menucd, menuname, menuprntcd, filelct, filename, useyn)
+        VALUES (#{menuCd}, #{menuName}, #{menuPrntCd}, #{fileLct}, #{fileName}, #{useYn})
+    </insert>
+
+    <update id="updateMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        update sysm1000t
+        set menuname = #{menuName},
+            menuprntcd = #{menuPrntCd},
+            filelct = #{fileLct},
+            filename = #{fileName},
+            useyn = #{useYn}
+        where menucd = #{menuCd}
+    </update>
+
+    <delete id="deleteMenu" parameterType="string">
+        update sysm1000t set useyn = 'N' where menucd = #{menuCd}
+    </delete>
 
 </mapper>
