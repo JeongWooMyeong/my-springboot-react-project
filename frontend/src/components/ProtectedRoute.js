@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
-
+//
 function ProtectedRoute({ children }) {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const token = storedUser?.token;
