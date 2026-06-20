@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface Sysm1000Service {
 
-    List<Sysm1000Dto> getAllMenus();
+    List<Sysm1000Dto> getAllMenus(String useYn);
     Sysm1000Dto getMenuByCd(String menuCd);
 
     void createMenu(Sysm1000Dto dto);   // 등록

@@ -16,8 +16,9 @@ public class Sysm1000Controller {
     }
 
     @GetMapping("/menus")
-    public List<Sysm1000Dto> getAllMenus() {
-        return sysm1000Service.getAllMenus();
+    public List<Sysm1000Dto> getAllMenus(@RequestParam(required = false) String useYn) {
+
+        return sysm1000Service.getAllMenus(useYn);
     }
 
     @GetMapping("/menus/{menuCd}")

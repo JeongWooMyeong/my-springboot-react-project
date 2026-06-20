@@ -17,8 +17,8 @@ public class Sysm1000ServiceImpl implements Sysm1000Service {
     }
 
     @Override
-    public List<Sysm1000Dto> getAllMenus() {
-        return sysm1000Mapper.getAllMenus();
+    public List<Sysm1000Dto> getAllMenus(String useYn) {
+        return sysm1000Mapper.getAllMenus(useYn);
     }
 
     @Override

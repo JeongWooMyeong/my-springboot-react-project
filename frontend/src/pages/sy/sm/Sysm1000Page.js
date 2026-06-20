@@ -39,7 +39,9 @@ function Sysm1000Page() {
 
     // 메뉴 데이터 가져오기
     useEffect(() => {
-        fetch("/api/sysm1000/menus")
+        fetch("/api/sysm1000/menus", {
+                params: {useYn: ""}
+            })
             .then(res => res.json())
             .then(data => {
                 const treeData = buildTree(data);
@@ -126,8 +128,10 @@ function Sysm1000Page() {
             <Sidebar selectedMenuCd={selectedMenuCd} />
 
             <div className="content">
-                <h2>Sysm1000 Page</h2>
-                <Tree treeData={menuData} onSelect={onSelect} defaultExpandAll />
+                <h2>메뉴관리</h2>
+                <div className="tree-container">
+                    <Tree treeData={menuData} onSelect={onSelect} defaultExpandAll />
+                </div>
 
                 {menuDetail && (
                     <>
@@ -136,6 +140,7 @@ function Sysm1000Page() {
                             columns={columns}
                             pagination={false}
                             rowKey="menuCd"
+                            style={{ width: 600, overflow: "auto" }}
                         />
                         <Button
                             onClick={() => {

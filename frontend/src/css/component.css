@@ -52,3 +52,15 @@
     background: #fff;
     overflow-y: auto;
 }
+
+.tree-container {
+    width: 400px;        /* 가로 폭 넉넉하게 */
+    max-height: 600px;   /* 세로 높이 제한 */
+    overflow: auto;      /* 스크롤 허용 */
+    border: 1px solid #ddd;
+    flex-shrink: 0;      /* flex 레이아웃에서 줄어들지 않도록 */
+}
+
+.ant-table {
+    min-width: 600px;    /* 테이블 최소 폭 */
+}

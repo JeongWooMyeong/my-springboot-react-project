@@ -13,7 +13,9 @@ function Menu() {
     };
 
     useEffect(() => {
-        axios.get("/api/sysm1000/menus") // Sysm1000Controller에서 내려주는 API
+        axios.get("/api/sysm1000/menus", {
+                params: {useYn : "Y"}
+            }) // Sysm1000Controller에서 내려주는 API
             .then(res => setMenus(res.data))
             .catch(err => console.error(err));
     }, []);
