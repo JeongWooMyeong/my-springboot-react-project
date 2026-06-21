@@ -1,0 +1,25 @@
+.syep4000-container {
+    padding: 20px;
+}
+
+.grid-table {
+    display: grid;
+    grid-template-columns: 100px 1fr 150px 100px;
+    border: 1px solid #ccc;
+}
+
+.grid-header, .grid-row {
+    display: contents; /* 각 셀을 같은 그리드에 배치 */
+}
+
+.grid-header div {
+    font-weight: bold;
+    background: #f0f0f0;
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+.grid-row div {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+}

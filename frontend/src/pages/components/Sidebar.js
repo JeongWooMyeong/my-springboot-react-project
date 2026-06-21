@@ -43,7 +43,7 @@ function Sidebar() {
 
     const renderTree = (menu) => (
         <li key={menu.menuCd}>
-            <Link to={menu.fileName || "#"}>{menu.menuName}</Link>
+            <Link to={menu.dedName || "#"}>{menu.menuName}</Link>
             {menu.children && menu.children.length > 0 && (
                 <ul>
                     {menu.children.map(child => renderTree(child))}
