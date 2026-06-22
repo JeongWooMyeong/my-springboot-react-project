@@ -7,7 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = "com.example")
 @MapperScan({
         "com.example.springbootproject.pms.login.service.dao",
-        "com.example.springbootproject.pms.sy.sm.service.dao"
+        "com.example.springbootproject.pms.sy.sm.service.dao",
+        "com.example.springbootproject.pms.sy.ep.service.dao",
 })
 public class SpringBootProjectApplication {
 

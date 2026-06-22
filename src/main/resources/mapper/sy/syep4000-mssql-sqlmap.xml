@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.sy.ep.service.dao.Syep4000Mapper">
+    <select id="selectAll" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto">
+        SELECT
+        userid,
+        username,
+        sctno,
+        jijumcd,
+        tel,
+        selphone,
+        ofcrtel,
+        useean,
+        rgdate,
+        rgr,
+        upddate,
+        updpn,
+        brandcd,
+        useremail,
+        smsyn,
+        ntnid,
+        coid,
+        usergubun,
+        webmobileuse
+        FROM syep4000t
+    </select>
+
+</mapper>

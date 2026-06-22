@@ -1,36 +1,49 @@
-import React from "react";
-import "../../../css/page.css";
+import React, { useEffect, useState } from 'react';
+import { Table } from 'antd';
+import axios from 'axios';
 
-function Syep4000Page() {
-    // 예시 데이터
-    const data = [
-        { id: 1, name: "상품 A", price: 1000, stock: 20 },
-        { id: 2, name: "상품 B", price: 2000, stock: 15 },
-        { id: 3, name: "상품 C", price: 3000, stock: 5 },
-        { id: 4, name: "상품 D", price: 4000, stock: 0 },
-    ];
+const columns = [
+    { title: 'User ID', dataIndex: 'userid', key: 'userid' },
+    { title: 'User Name', dataIndex: 'username', key: 'username' },
+    { title: 'Sct No', dataIndex: 'sctno', key: 'sctno' },
+    { title: 'Jijum Cd', dataIndex: 'jijumcd', key: 'jijumcd' },
+    { title: 'Tel', dataIndex: 'tel', key: 'tel' },
+    { title: 'Selphone', dataIndex: 'selphone', key: 'selphone' },
+    { title: 'Ofcr Tel', dataIndex: 'ofcrtel', key: 'ofcrtel' },
+    { title: 'Use Ean', dataIndex: 'useean', key: 'useean' },
+    { title: 'Reg Date', dataIndex: 'rgdate', key: 'rgdate' },
+    { title: 'Rgr', dataIndex: 'rgr', key: 'rgr' },
+    { title: 'Upd Date', dataIndex: 'upddate', key: 'upddate' },
+    { title: 'Updpn', dataIndex: 'updpn', key: 'updpn' },
+    { title: 'Brand Cd', dataIndex: 'brandcd', key: 'brandcd' },
+    { title: 'User Email', dataIndex: 'useremail', key: 'useremail' },
+    { title: 'SMS Yn', dataIndex: 'smsyn', key: 'smsyn' },
+    { title: 'Ntn Id', dataIndex: 'ntnid', key: 'ntnid' },
+    { title: 'Co Id', dataIndex: 'coid', key: 'coid' },
+    { title: 'User Gubun', dataIndex: 'usergubun', key: 'usergubun' },
+    { title: 'Web/Mobile Use', dataIndex: 'webmobileuse', key: 'webmobileuse' },
+];
+
+export default function Syep4000Grid() {
+    const [rows, setRows] = useState([]);
+
+    useEffect(() => {
+        axios.get('/api/users')
+            .then(res => {
+                const dataWithKey = res.data.map((row, index) => ({ key: index, ...row }));
+                setRows(dataWithKey);
+            })
+            .catch(err => console.error(err));
+    }, []);
 
     return (
-        <div className="syep4000-container">
-            <h2>사용자관리</h2>
-            <div className="grid-table">
-                <div className="grid-header">
-                    <div>ID</div>
-                    <div>상품명</div>
-                    <div>가격</div>
-                    <div>재고</div>
-                </div>
-                {data.map(item => (
-                    <div className="grid-row" key={item.id}>
-                        <div>{item.id}</div>
-                        <div>{item.name}</div>
-                        <div>{item.price.toLocaleString()}원</div>
-                        <div>{item.stock}</div>
-                    </div>
-                ))}
-            </div>
-        </div>
+        <Table
+            dataSource={rows}
+            columns={columns}
+            pagination={{ pageSize: 10 }}
+            rowSelection={{ type: 'checkbox' }}
+            scroll={{ x: 'max-content', y: 600 }}
+        />
+
     );
 }
-
-export default Syep4000Page;
