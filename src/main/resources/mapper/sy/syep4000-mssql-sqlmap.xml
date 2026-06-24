@@ -29,4 +29,18 @@
         FROM syep4000t
     </select>
 
+    <select id="getAllRoles" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        select
+            roleno,
+            rolename
+        from sysm2000t
+        where useyn = 'Y'
+    </select>
+
+    <select id="selectUserRoles" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2020Dto">
+        SELECT roleno
+        FROM SYSM2020T
+        WHERE userid = #{userId}
+    </select>
+
 </mapper>

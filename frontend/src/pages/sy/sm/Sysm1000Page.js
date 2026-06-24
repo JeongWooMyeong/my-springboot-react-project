@@ -124,9 +124,9 @@ function Sysm1000Page() {
     ];
 
     return (
+        <>
+        <Sidebar selectedMenuCd={selectedMenuCd} />
         <div className="layout">
-            <Sidebar selectedMenuCd={selectedMenuCd} />
-
             <div className="content">
                 <h2>메뉴관리</h2>
                 <div className="tree-container">
@@ -213,6 +213,7 @@ function Sysm1000Page() {
                 </Modal>
             </div>
         </div>
+        </>
     );
 }
 

@@ -1,6 +1,6 @@
 .layout {
     display: flex;
-    /*flex-direction: column;*/
+    flex-direction: column;
     min-height: 100vh;
 }
 
@@ -19,9 +19,10 @@
 }
 
 .layout-body {
-    flex: 1; /* 남은 공간 채우기 */
-    padding: 20px;
-    background: transparent; /* 배경 덮지 않도록 */
+    flex: 1;
+    display: flex;          /* 사이드바와 본문을 가로 배치 */
+    padding-top: 60px;      /* Header 높이만큼 여백 */
+    overflow: hidden;
 }
 
 .layout-footer {
@@ -37,30 +38,31 @@
 
 /* 왼쪽 사이드바 영역 */
 .sidebar {
-    flex: 0 0 250px;        /* 고정 너비 240px */
+    flex: 0 0 250px;        /* 고정 너비 */
     background-color: #f4f4f4;
     padding: 20px;
-    height: 100vh;          /* 화면 전체 높이 */
+    height: calc(100vh - 100px); /* Header(60) + Footer(40) 제외 */
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    overflow-y: auto;       /* 내용이 많으면 스크롤 */
+    overflow-y: auto;
 }
 
 /* 오른쪽 본문 영역 */
 .content {
-    flex: 1; /* 남은 공간 전부 차지 */
+    flex: 1;
     padding: 20px;
     background: #fff;
+    height: calc(100vh - 100px); /* Header+Footer 제외 */
     overflow-y: auto;
 }
 
 .tree-container {
-    width: 400px;        /* 가로 폭 넉넉하게 */
-    max-height: 600px;   /* 세로 높이 제한 */
-    overflow: auto;      /* 스크롤 허용 */
+    width: 400px;
+    max-height: 600px;
+    overflow: auto;
     border: 1px solid #ddd;
-    flex-shrink: 0;      /* flex 레이아웃에서 줄어들지 않도록 */
+    flex-shrink: 0;
 }
 
 .ant-table {
-    min-width: 600px;    /* 테이블 최소 폭 */
+    min-width: 600px;
 }
