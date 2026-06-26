@@ -9,7 +9,10 @@ import java.util.List;
 
 @Mapper
 public interface Syep4000Mapper {
-    List<Syep4000Dto> selectAll();
+    List<Syep4000Dto> selectAll(String userid, String username);
     List<Sysm2020Dto> selectUserRoles(String userId);
     List<Sysm2000Dto> getAllRoles();
+    // ⭐ 사용자 등록
+    void insertUser(Syep4000Dto user);
+    int countUserId(String userid);
 }

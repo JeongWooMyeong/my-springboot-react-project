@@ -5,10 +5,7 @@ import com.example.springbootproject.pms.sy.ep.service.Syep4000Service;
 import com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto;
 import com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto;
 import com.example.springbootproject.pms.sy.sm.dto.Sysm2020Dto;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,8 +20,12 @@ public class Syep4000Controller {
     }
 
     @GetMapping
-    public List<Syep4000Dto> getUser(){
-        return syep4000Service.getAllUsers();
+    public List<Syep4000Dto> getUser(
+            @RequestParam(required = false) String userid,
+            @RequestParam(required = false) String username
+    ){
+
+        return syep4000Service.getAllUsers(userid, username);
     }
 
     // ⭐ 전체 ROLE LIST (추가)
@@ -39,5 +40,17 @@ public class Syep4000Controller {
     ) {
         return syep4000Service.getUserRoles(userId);
     }
+
+    @PostMapping
+    public void registerUser(@RequestBody Syep4000Dto user) {
+        syep4000Service.registerUser(user);
+    }
+
+    @GetMapping("/check/{userid}")
+    public boolean checkUserId(@PathVariable String userid) {
+        return syep4000Service.checkUserId(userid);
+    }
+
+
 
 }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.sy.ep.service.dao.Syep1000Mapper">
+    <select id="selectAll" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep1000Dto">
+        SELECT
+            jijumcd,
+            jijumname,
+            jijumclcd,
+            qee,
+            useyn,
+            delpssyn,
+            upddate,
+            updpn,
+            ntnid,
+            coid,
+            floor,
+            section,
+            old_jijumcd,
+            old_teamcd,
+            old_jijumgubun,
+            old_brandcd,
+            xpn
+        FROM syep1000t
+        where useyn = 'Y'
+    </select>
+</mapper>
