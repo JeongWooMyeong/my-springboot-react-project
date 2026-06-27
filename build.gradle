@@ -60,6 +60,7 @@ tasks.named('test') {
 }
 
 tasks.register('buildFrontend', Exec) {
+    onlyIf { project.hasProperty('frontend') }  // ✅ frontend flag 있을 때만 실행
     workingDir "$projectDir/frontend"
     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
         commandLine "C:/Program Files/nodejs/npm.cmd", "run", "build"
@@ -70,6 +71,7 @@ tasks.register('buildFrontend', Exec) {
 }
 
 tasks.register('copyFrontend', Copy) {
+    onlyIf { project.hasProperty('frontend') }  // ✅ frontend flag 있을 때만 실행
     from("$projectDir/frontend/build")
     into("$projectDir/src/main/resources/static")
 }

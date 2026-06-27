@@ -20,12 +20,9 @@ public class Syep4000Controller {
     }
 
     @GetMapping
-    public List<Syep4000Dto> getUser(
-            @RequestParam(required = false) String userid,
-            @RequestParam(required = false) String username
-    ){
+    public List<Syep4000Dto> getUser(@ModelAttribute Syep4000Dto searchDto){
 
-        return syep4000Service.getAllUsers(userid, username);
+        return syep4000Service.getAllUsers(searchDto);
     }
 
     // ⭐ 전체 ROLE LIST (추가)
@@ -51,6 +48,15 @@ public class Syep4000Controller {
         return syep4000Service.checkUserId(userid);
     }
 
+    @PutMapping("/{userid}")
+    public void updateUser(@PathVariable String userid, @RequestBody Syep4000Dto user) {
+        syep4000Service.updateUser(userid, user);
+    }
+
+    @DeleteMapping
+    public void deleteUsers(@RequestBody List<String> userIds) {
+        syep4000Service.deleteUsers(userIds);
+    }
 
 
 }

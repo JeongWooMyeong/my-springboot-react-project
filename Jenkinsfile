@@ -32,10 +32,10 @@ pipeline {
         }
 
         stage('Build') {
-            steps {
-                // React 프론트엔드 빌드가 gradle task 안에 포함되어 있다면 gradlew.bat만 실행하면 됨
-                bat 'gradlew.bat clean build'
-            }
+            bat '''
+                    set CI=false
+                    gradlew.bat clean build -Pfrontend
+                '''
         }
 
         stage('Docker Build & Push') {

@@ -19,8 +19,8 @@ public class Syep4000ServiceImpl implements Syep4000Service {
     }
 
     @Override
-    public List<Syep4000Dto> getAllUsers(String userid, String username) {
-        return syep4000Mapper.selectAll(userid, username);
+    public List<Syep4000Dto> getAllUsers(Syep4000Dto searchDto) {
+        return syep4000Mapper.selectAll(searchDto);
     }
 
     @Override
@@ -42,5 +42,15 @@ public class Syep4000ServiceImpl implements Syep4000Service {
     @Override
     public boolean checkUserId(String userid) {
         return syep4000Mapper.countUserId(userid) > 0;
+    }
+
+    @Override
+    public void updateUser(String userid, Syep4000Dto user) {
+        syep4000Mapper.updateUser(userid, user);
+    }
+
+    @Override
+    public void deleteUsers(List<String> userIds) {
+        syep4000Mapper.deleteUsers(userIds);
     }
 }

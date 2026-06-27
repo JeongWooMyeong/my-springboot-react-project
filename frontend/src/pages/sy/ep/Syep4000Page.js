@@ -9,6 +9,13 @@ const columns = [
     { title: 'User Name', dataIndex: 'username', key: 'username', width: 150 },
     { title: 'Sct No', dataIndex: 'sctno', key: 'sctno', width: 120 },
     { title: 'Jijum Cd', dataIndex: 'jijumcd', key: 'jijumcd', width: 120 },
+    {
+        title: '사용 여부',
+        dataIndex: 'useean',
+        key: 'useean',
+        width: 100,
+        render: (value) => value === "Y" ? "사용" : "미사용"
+    }
     /*{ title: 'Tel', dataIndex: 'tel', key: 'tel', width: 150 },
     { title: 'Selphone', dataIndex: 'selphone', key: 'selphone', width: 150 },
     { title: 'Ofcr Tel', dataIndex: 'ofcrtel', key: 'ofcrtel', width: 150 },
@@ -58,6 +65,9 @@ export default function Syep4000Grid() {
 
     const [isEdit, setIsEdit] = useState(false);   // ✅ 등록/수정 모드 구분
 
+    const [editingUser, setEditingUser] = useState(null);
+
+    const [searchParams, setSearchParams] = useState(null);
 
     useEffect(() => {
         axios.get('/api/users')
@@ -67,6 +77,17 @@ export default function Syep4000Grid() {
             })
             .catch(err => console.error(err));
     }, []);
+
+    const buildFilters = (values) => {
+        const filters = {};
+        if (values.searchField && values.searchValue) {
+            filters[values.searchField] = values.searchValue; // userid=abc 형태로 변환
+        }
+        if (values.useean) {
+            filters.useean = values.useean;
+        }
+        return filters;
+    };
 
     const handleUserClick = (record) => {
         setSelectedUser(record);
@@ -97,12 +118,10 @@ export default function Syep4000Grid() {
     }, []);
 
     const handleSearch = () => {
-        const { searchField, searchValue } = searchForm.getFieldsValue();
-        if (searchField && searchValue) {
-            fetchUsers({ [searchField]: searchValue });
-        } else {
-            fetchUsers();
-        }
+        const values = searchForm.getFieldsValue();
+        const filters = buildFilters(values);
+        setSearchParams(filters);
+        fetchUsers(filters);
     };
 
     const handleRegister = () => {
@@ -115,7 +134,8 @@ export default function Syep4000Grid() {
                     setIsEdit(false);
                     setCheckMessage("");   // ✅ 메시지 초기화
                     setCheckStatus("");    // ✅ 상태 초기화
-                    fetchUsers();          // 리스트 새로 조회
+                    // ✅ 저장된 검색 조건으로 다시 조회
+                    fetchUsers(searchParams);
                 })
                 .catch(err => {
                     console.error("등록 실패:", err);
@@ -132,7 +152,8 @@ export default function Syep4000Grid() {
                     setIsModalOpen(false);
                     registerForm.resetFields();
                     setIsEdit(false);
-                    fetchUsers(); // 리스트 다시 조회
+                    // ✅ 저장된 검색 조건으로 다시 조회
+                    fetchUsers(searchParams);
                 })
                 .catch(err => {
                     console.error("수정 실패:", err);
@@ -159,6 +180,16 @@ export default function Syep4000Grid() {
                                    onPressEnter={handleSearch}   // 엔터 입력 시 조회 실행
                             />
                         </Form.Item>
+
+                        {/* 사용 여부 필터 추가 */}
+                        <Form.Item name="useean" initialValue="">
+                            <Select style={{ width: 150 }}>
+                                <Select.Option value="">전체</Select.Option>
+                                <Select.Option value="Y">사용</Select.Option>
+                                <Select.Option value="N">미사용</Select.Option>
+                            </Select>
+                        </Form.Item>
+
                         <Form.Item>
                             <Button type="primary" onClick={handleSearch}>
                                 조회
@@ -184,6 +215,7 @@ export default function Syep4000Grid() {
                                     const user = rows.find(u => u.userid === userId);
                                     if (user) {
                                         registerForm.setFieldsValue(user); // 선택된 사용자 값 채워넣기
+                                        setEditingUser(user);   // 수정할 사용자 저장
                                         setIsEdit(true); // 수정 모드
                                         setIsModalOpen(true);
                                     }
@@ -201,7 +233,9 @@ export default function Syep4000Grid() {
                                     axios.delete('/api/users', { data: selectedUserIds })
                                         .then(() => {
                                             alert("삭제 완료");
-                                            fetchUsers();
+                                            // ✅ 현재 검색 조건 가져오기
+                                            // ✅ 저장된 검색 조건으로 다시 조회
+                                            fetchUsers(searchParams);
                                             setSelectedUserIds([]);
                                         })
                                         .catch(err => {
@@ -316,7 +350,7 @@ export default function Syep4000Grid() {
                             </Form.Item>
 
                             {/* 지점 선택 */}
-                            <JijumSelect form={registerForm} />
+                            <JijumSelect form={registerForm} initialJijumCd={editingUser?.jijumcd}/>
 
                             {/* 전화번호 */}
                             <Form.Item

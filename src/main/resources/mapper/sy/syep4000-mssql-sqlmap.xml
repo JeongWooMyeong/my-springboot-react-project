@@ -5,7 +5,7 @@
 
 
 <mapper namespace="com.example.springbootproject.pms.sy.ep.service.dao.Syep4000Mapper">
-    <select id="selectAll" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto">
+    <select id="selectAll" parameterType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto">
         SELECT
         userid,
         username,
@@ -33,6 +33,9 @@
             </if>
             <if test="username != null and username != ''">
                 and username like concat('%', #{username}, '%')
+            </if>
+            <if test="useean != null and useean != ''">
+                and useean = #{useean}
             </if>
         </where>
     </select>
@@ -77,5 +80,24 @@
     <select id="countUserId" parameterType="string" resultType="int">
         SELECT COUNT(*) FROM syep4000t WHERE userid = #{userid}
     </select>
+
+    <update id="updateUser">
+        UPDATE syep4000t
+        SET username = #{user.username},
+            sctno = #{user.sctno},
+            jijumcd = #{user.jijumcd},
+            useean = #{user.useean},
+            useremail = #{user.useremail},
+            tel = #{user.tel}
+        WHERE userid = #{userid}
+    </update>
+
+    <delete id="deleteUsers">
+        DELETE FROM syep4000t
+        WHERE userid IN
+        <foreach item="id" collection="userIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
 </mapper>
