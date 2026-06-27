@@ -32,10 +32,12 @@ pipeline {
         }
 
         stage('Build') {
-            bat '''
+            steps {
+                bat '''
                     set CI=false
                     gradlew.bat clean build -Pfrontend
                 '''
+            }
         }
 
         stage('Docker Build & Push') {
