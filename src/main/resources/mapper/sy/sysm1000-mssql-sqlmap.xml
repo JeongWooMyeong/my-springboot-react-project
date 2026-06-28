@@ -26,8 +26,8 @@
     </select>
 
     <insert id="createMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
-        INSERT INTO sysm1000t (menucd, menuname, menuprntcd, filelct, filename, useyn)
-        VALUES (#{menuCd}, #{menuName}, #{menuPrntCd}, #{fileLct}, #{fileName}, #{useYn})
+        INSERT INTO sysm1000t (menucd, menuname, menuprntcd, filelct, filename, useyn, dedname)
+        VALUES (#{menuCd}, #{menuName}, #{menuPrntCd}, #{fileLct}, #{fileName}, #{useYn}, #{dedName})
     </insert>
 
     <update id="updateMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">

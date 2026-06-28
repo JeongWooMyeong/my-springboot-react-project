@@ -120,7 +120,9 @@ function Sysm1000Page() {
         { title: "부모 코드", dataIndex: "menuPrntCd", key: "menuPrntCd" },
         { title: "파일 위치", dataIndex: "fileLct", key: "fileLct" },
         { title: "파일명", dataIndex: "fileName", key: "fileName" },
+        { title: "실행 URL", dataIndex: "dedName", key: "dedName" },
         { title: "사용 여부", dataIndex: "useYn", key: "useYn" }
+
     ];
 
     return (
@@ -201,6 +203,9 @@ function Sysm1000Page() {
                             <Input />
                         </Form.Item>
                         <Form.Item name="fileName" label="파일명">
+                            <Input />
+                        </Form.Item>
+                        <Form.Item name="dedName" label="실행 URL">
                             <Input />
                         </Form.Item>
                         <Form.Item name="useYn" label="사용 여부">
