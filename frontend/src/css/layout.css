@@ -1180,3 +1180,7 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 .submenu li a:hover {
 	color: #0078d7;
 }
+
+.clicked-row {
+	background-color: #e6f7ff !important; /* Ant Design 기본 파란색 */
+}

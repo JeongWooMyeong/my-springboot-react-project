@@ -18,4 +18,6 @@ public interface Syep4000Service {
     void updateUser(String userid, Syep4000Dto user);
 
     void deleteUsers(List<String> userIds);
+
+    void saveUserRoles(String userid, List<String> rolenos);
 }

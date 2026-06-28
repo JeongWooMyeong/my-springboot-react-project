@@ -19,4 +19,10 @@ public interface Syep4000Mapper {
     // ⭐ 추가
     void updateUser(@Param("userid") String userid, @Param("user") Syep4000Dto user);
     void deleteUsers(@Param("userIds") List<String> userIds);
+
+    // 특정 유저 Role 삭제
+    void deleteUserRoles(String userid);
+
+    // 특정 유저 Role 저장 (배열 insert)
+    void insertUserRoles(@Param("userid") String userid, @Param("rolenos") List<String> rolenos);
 }

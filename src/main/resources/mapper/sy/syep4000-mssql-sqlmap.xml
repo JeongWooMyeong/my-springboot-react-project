@@ -100,4 +100,19 @@
         </foreach>
     </delete>
 
+    <!-- 특정 유저 Role 삭제 -->
+    <delete id="deleteUserRoles" parameterType="string">
+        DELETE FROM sysm2020t
+        WHERE userid = #{userid}
+    </delete>
+
+    <!-- 특정 유저 Role 저장 -->
+    <insert id="insertUserRoles" parameterType="map">
+        INSERT INTO sysm2020t (userid, roleno, useyn, upddate, updpn)
+        VALUES
+        <foreach item="roleno" collection="rolenos" separator=",">
+            (#{userid}, #{roleno}, 'Y', getdate(), 'systemadmin')
+        </foreach>
+    </insert>
+
 </mapper>

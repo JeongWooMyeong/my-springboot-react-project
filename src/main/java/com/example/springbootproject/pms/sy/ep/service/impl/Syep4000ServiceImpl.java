@@ -53,4 +53,10 @@ public class Syep4000ServiceImpl implements Syep4000Service {
     public void deleteUsers(List<String> userIds) {
         syep4000Mapper.deleteUsers(userIds);
     }
+
+    @Override
+    public void saveUserRoles(String userid, List<String> rolenos) {
+        syep4000Mapper.deleteUserRoles(userid);
+        syep4000Mapper.insertUserRoles(userid, rolenos);
+    }
 }

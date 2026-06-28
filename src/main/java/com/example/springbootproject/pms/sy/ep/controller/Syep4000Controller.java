@@ -58,5 +58,10 @@ public class Syep4000Controller {
         syep4000Service.deleteUsers(userIds);
     }
 
+    @PostMapping("/roles")
+    public void saveUserRoles(@RequestBody Sysm2020Dto dto) {
+        syep4000Service.saveUserRoles(dto.getUserid(), dto.getRolenos());
+    }
+
 
 }

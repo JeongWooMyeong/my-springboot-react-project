@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Card, Input, Button, Form, Select, Modal } from 'antd';
+import {Table, Card, Input, Button, Form, Select, Modal, message} from 'antd';
 import axios from 'axios';
 import Sidebar from "../../components/Sidebar";
 import JijumSelect from "../../components/JijumSelect";
+import "../../../css/layout.css";
 
 const columns = [
     { title: 'User ID', dataIndex: 'userid', key: 'userid', width: 100 },
@@ -68,6 +69,8 @@ export default function Syep4000Grid() {
     const [editingUser, setEditingUser] = useState(null);
 
     const [searchParams, setSearchParams] = useState(null);
+
+    const [clickedUserId, setClickedUserId] = useState(null);
 
     useEffect(() => {
         axios.get('/api/users')
@@ -160,6 +163,19 @@ export default function Syep4000Grid() {
                     alert("사용자 수정 중 오류가 발생했습니다.");
                 });
         });
+    };
+
+    const handleSave = async () => {
+        try {
+            await axios.post("/api/users/roles", {
+                userid: clickedUserId,   // ✅ 단일 사용자 ID
+                rolenos: userRoles       // ✅ 선택된 role 번호 배열
+            });
+            message.success("저장되었습니다!");
+        } catch (error) {
+            console.error(error);
+            message.error("저장 실패");
+        }
     };
 
     return (
@@ -263,8 +279,14 @@ export default function Syep4000Grid() {
                             }
                         }}
                         onRow={(record) => ({
-                            onClick: () => handleUserClick(record)
+                            onClick: () => {
+                                handleUserClick(record);
+                                setClickedUserId(record.userid);       // ✅ 클릭된 행의 userid 저장
+                            }
                         })}
+                        rowClassName={(record) =>
+                            record.userid === clickedUserId ? "clicked-row" : ""
+                        }
                     />
 
                     <Modal
@@ -390,7 +412,19 @@ export default function Syep4000Grid() {
                 </Card>
 
 
-                <Card title="Role List (Selected User Roles)">
+                <Card title={
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <span>Role List (Selected User Roles)</span>
+                            <Button
+                                type="primary"
+                                onClick={handleSave}
+                                style={{ marginLeft: 50 }} // ✅ 타이틀 바로 옆에 붙도록 간격 조정
+                            >
+                                저장
+                            </Button>
+                        </div>
+                    }
+                >
                     <Table
                         rowKey="roleno"
                         dataSource={roles}

@@ -1,5 +1,7 @@
 package com.example.springbootproject.pms.sy.sm.dto;
 
+import java.util.List;
+
 public class Sysm2020Dto {
 
     private String useyn;
@@ -8,6 +10,15 @@ public class Sysm2020Dto {
     private String updpn;
     private String upddate;
     private String rolename;
+    private List<String> rolenos;
+
+    public List<String> getRolenos() {
+        return rolenos;
+    }
+
+    public void setRolenos(List<String> rolenos) {
+        this.rolenos = rolenos;
+    }
 
     public String getUseyn() {
         return useyn;
