@@ -8,7 +8,7 @@
 
     <select id="getAllMenus" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
         SELECT
-            Xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
+            xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
             MenuPrntCd, MenuName, MenuCd, FileName, FileLct, DelPssYn, DedName
         FROM SYSM1000T
         <if test="useYn != null and useYn != ''">
@@ -26,8 +26,8 @@
     </select>
 
     <insert id="createMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
-        INSERT INTO sysm1000t (menucd, menuname, menuprntcd, filelct, filename, useyn, dedname)
-        VALUES (#{menuCd}, #{menuName}, #{menuPrntCd}, #{fileLct}, #{fileName}, #{useYn}, #{dedName})
+        INSERT INTO sysm1000t (menucd, menuname, menuprntcd, filelct, filename, useyn, dedname, xpn)
+        VALUES (#{menuCd}, #{menuName}, #{menuPrntCd}, #{fileLct}, #{fileName}, #{useYn}, #{dedName}, #{xpn})
     </insert>
 
     <update id="updateMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
@@ -37,6 +37,7 @@
             filelct = #{fileLct},
             filename = #{fileName},
             dedName = #{dedName},
+            xpn = #{xpn},
             useyn = #{useYn}
         where menucd = #{menuCd}
     </update>

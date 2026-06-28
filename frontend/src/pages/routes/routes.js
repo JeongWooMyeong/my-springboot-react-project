@@ -1,12 +1,15 @@
-import { lazy } from "react";
+const modules = require.context("../../pages", true, /\.js$/);
 
-// Lazy Loading으로 필요할 때만 import
-const MainPage = lazy(() => import("../../pages/MainPage"));
-const Sysm1000Page = lazy(() => import("../../pages/sy/sm/Sysm1000Page"));
-const Syep4000Page = lazy(() => import("../../pages/sy/ep/Syep4000Page"));
+export const componentMap = {};
 
-export const componentMap = {
-    MainPage,
-    Sysm1000Page,
-    Syep4000Page,
-};
+modules.keys().forEach((fileName) => {
+    const module = modules(fileName).default;
+
+    const name = fileName
+        .replace("./", "")
+        .replace(".js", "")
+        .split("/")
+        .pop();
+
+    componentMap[name] = module;
+});

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/Sidebar";
 import "../../../css/layout.css";
 import { Tree, Table, Button, Modal, Form, Input } from "antd";
+import { useMenu } from "../../../context/MenuContext";
 
 // 트리 구조 변환 함수
 function buildTree(data) {
@@ -30,6 +31,7 @@ function buildTree(data) {
 }
 
 function Sysm1000Page() {
+    const { fetchMenus } = useMenu();
     const [selectedMenuCd, setSelectedMenuCd] = useState(null);
     const [menuData, setMenuData] = useState([]);
     const [menuDetail, setMenuDetail] = useState(null);
@@ -91,6 +93,7 @@ function Sysm1000Page() {
                 setMenuDetail(data);
                 alert("수정 완료!");
                 setIsModalVisible(false);
+                fetchMenus();
                 //수정 후 트리 갱신
                 return fetch("/api/sysm1000/menus")
                     .then(res => res.json())
@@ -108,6 +111,7 @@ function Sysm1000Page() {
             .then(() => {
                 alert("등록 완료!");
                 setIsModalVisible(false);
+                fetchMenus();
                 return fetch("/api/sysm1000/menus")
                     .then(res => res.json())
                     .then(data => setMenuData(buildTree(data)));
@@ -121,6 +125,7 @@ function Sysm1000Page() {
         { title: "파일 위치", dataIndex: "fileLct", key: "fileLct" },
         { title: "파일명", dataIndex: "fileName", key: "fileName" },
         { title: "실행 URL", dataIndex: "dedName", key: "dedName" },
+        { title: "페이지명", dataIndex: "xpn", key: "xpn" },
         { title: "사용 여부", dataIndex: "useYn", key: "useYn" }
 
     ];
@@ -206,6 +211,9 @@ function Sysm1000Page() {
                             <Input />
                         </Form.Item>
                         <Form.Item name="dedName" label="실행 URL">
+                            <Input />
+                        </Form.Item>
+                        <Form.Item name="xpn" label="페이지명">
                             <Input />
                         </Form.Item>
                         <Form.Item name="useYn" label="사용 여부">
