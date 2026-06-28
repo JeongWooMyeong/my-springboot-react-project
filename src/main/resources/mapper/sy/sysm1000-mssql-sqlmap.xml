@@ -36,6 +36,7 @@
             menuprntcd = #{menuPrntCd},
             filelct = #{fileLct},
             filename = #{fileName},
+            dedName = #{dedName},
             useyn = #{useYn}
         where menucd = #{menuCd}
     </update>
