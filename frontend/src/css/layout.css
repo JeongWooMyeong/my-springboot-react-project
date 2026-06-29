@@ -1162,6 +1162,11 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	border: 1px solid #ddd;
 	list-style: none;
 	padding: 5px 0;
+	min-width: 220px;   /* ✅ 최소 너비 확보 */
+	max-width: 300px;   /* ✅ 필요시 최대 너비 제한 */
+	max-height: 300px;   /* ✅ 반드시 높이 제한 */
+	overflow-y: auto;       /* ✅ 내부 스크롤 활성화 */
+	z-index: 1000;          /* ✅ 다른 요소 위에 표시 */
 }
 
 .menu-item:hover .submenu {
@@ -1170,6 +1175,8 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 
 .submenu li {
 	padding: 5px 15px;
+	white-space: normal;
+	word-break: break-word;
 }
 
 .submenu li a {

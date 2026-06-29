@@ -6,14 +6,15 @@ const MenuContext = createContext();
 export const MenuProvider = ({ children }) => {
     const [routesFromDB, setRoutesFromDB] = useState([]);
 
-    const fetchMenus = () => {
-        axios.get("/api/sysm1000/menus", { params: { useYn: "Y" } })
+    // ✅ useYn을 인자로 받아서 동적으로 처리
+    const fetchMenus = (useYn = "Y") => {
+        axios.get("/api/sysm1000/menus", { params: { useYn } })
             .then(res => setRoutesFromDB(res.data))
             .catch(err => console.error(err));
     };
 
     useEffect(() => {
-        fetchMenus(); // 최초 실행
+        fetchMenus(); // 최초 실행 시 기본값 "Y"
     }, []);
 
     return (
