@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Card, Tree, Checkbox } from "antd";
+import { Table, Card, Tree, Checkbox, Button } from "antd";
 import axios from "axios";
 import { useMenu } from "../../../context/MenuContext";
 
@@ -34,6 +34,7 @@ const Sysm2000Page = () => {
     const [selectedRole, setSelectedRole] = useState(null);
     const [selectedMenu, setSelectedMenu] = useState(null);
     const [permissions, setPermissions] = useState([]);
+    const [originalPermissions, setOriginalPermissions] = useState([]);
     const { routesFromDB } = useMenu();
 
     // 역할 목록 불러오기
@@ -41,12 +42,12 @@ const Sysm2000Page = () => {
         axios.get("/api/sysm2000/roles").then(res => setRoles(res.data));
     }, []);
 
-    // 권한 조회 (Role + MenuCd)
+    // 권한 조회
     useEffect(() => {
         if (selectedRole && selectedMenu) {
             axios.get(`/api/sysm2000/roles/${selectedRole}/permissions/${selectedMenu}`)
                 .then(res => {
-                    const found = res.data?.[0]; // 단일 권한 데이터
+                    const found = res.data?.[0];
                     const merged = {
                         menucd: selectedMenu,
                         qryrole: found?.qryrole || "F",
@@ -56,30 +57,185 @@ const Sysm2000Page = () => {
                         excelrole: found?.excelrole || "F",
                         etcrole: found?.etcrole || "F",
                     };
-                    setPermissions([merged]); // 항상 menucd 표시
+                    setPermissions([merged]);
+                    setOriginalPermissions([merged]); // ✅ 원본 저장
                 });
         }
     }, [selectedRole, selectedMenu]);
 
     const treeData = buildTree(routesFromDB);
 
-    // 권한 컬럼 정의 (체크박스)
     const permissionColumns = [
         { title: "MenuCd", dataIndex: "menucd", key: "menucd" },
-        { title: "QryRole", dataIndex: "qryrole", key: "qryrole", render: val => <Checkbox checked={val === "T"} disabled /> },
-        { title: "SaveRole", dataIndex: "saverole", key: "saverole", render: val => <Checkbox checked={val === "T"} disabled /> },
-        { title: "UpdRole", dataIndex: "updrole", key: "updrole", render: val => <Checkbox checked={val === "T"} disabled /> },
-        { title: "DelRole", dataIndex: "delrole", key: "delrole", render: val => <Checkbox checked={val === "T"} disabled /> },
-        { title: "ExcelRole", dataIndex: "excelrole", key: "excelrole", render: val => <Checkbox checked={val === "T"} disabled /> },
-        { title: "EtcRole", dataIndex: "etcrole", key: "etcrole", render: val => <Checkbox checked={val === "T"} disabled /> },
+        {
+            title: "QryRole",
+            dataIndex: "qryrole",
+            key: "qryrole",
+            render: (val, record, idx) => {
+                const changed = originalPermissions[idx]?.qryrole !== permissions[idx]?.qryrole;
+                return (
+                    <Checkbox
+                        checked={val === "T"}
+                        onChange={(e) => {
+                            const newPermissions = [...permissions];
+                            newPermissions[idx].qryrole = e.target.checked ? "T" : "F";
+                            setPermissions(newPermissions);
+                        }}
+                        style={changed ? { accentColor: "orange" } : {}}
+                    />
+                );
+            },
+        },
+        {
+            title: "SaveRole",
+            dataIndex: "saverole",
+            key: "saverole",
+            render: (val, record, idx) => {
+                const changed = originalPermissions[idx]?.saverole !== permissions[idx]?.saverole;
+                return (
+                    <Checkbox
+                        checked={val === "T"}
+                        onChange={(e) => {
+                            const newPermissions = [...permissions];
+                            newPermissions[idx].saverole = e.target.checked ? "T" : "F";
+                            setPermissions(newPermissions);
+                        }}
+                        style={changed ? { accentColor: "orange" } : {}}
+                    />
+                );
+            },
+        },
+        {
+            title: "UpdRole",
+            dataIndex: "updrole",
+            key: "updrole",
+            render: (val, record, idx) => {
+                const changed = originalPermissions[idx]?.updrole !== permissions[idx]?.updrole;
+                return (
+                    <Checkbox
+                        checked={val === "T"}
+                        onChange={(e) => {
+                            const newPermissions = [...permissions];
+                            newPermissions[idx].updrole = e.target.checked ? "T" : "F";
+                            setPermissions(newPermissions);
+                        }}
+                        style={changed ? { accentColor: "orange" } : {}}
+                    />
+                );
+            },
+        },
+        {
+            title: "DelRole",
+            dataIndex: "delrole",
+            key: "delrole",
+            render: (val, record, idx) => {
+                const changed = originalPermissions[idx]?.delrole !== permissions[idx]?.delrole;
+                return (
+                    <Checkbox
+                        checked={val === "T"}
+                        onChange={(e) => {
+                            const newPermissions = [...permissions];
+                            newPermissions[idx].delrole = e.target.checked ? "T" : "F";
+                            setPermissions(newPermissions);
+                        }}
+                        style={changed ? { accentColor: "orange" } : {}}
+                    />
+                );
+            },
+        },
+        {
+            title: "ExcelRole",
+            dataIndex: "excelrole",
+            key: "excelrole",
+            render: (val, record, idx) => {
+                const changed = originalPermissions[idx]?.excelrole !== permissions[idx]?.excelrole;
+                return (
+                    <Checkbox
+                        checked={val === "T"}
+                        onChange={(e) => {
+                            const newPermissions = [...permissions];
+                            newPermissions[idx].excelrole = e.target.checked ? "T" : "F";
+                            setPermissions(newPermissions);
+                        }}
+                        style={changed ? { accentColor: "orange" } : {}}
+                    />
+                );
+            },
+        },
+        {
+            title: "EtcRole",
+            dataIndex: "etcrole",
+            key: "etcrole",
+            render: (val, record, idx) => {
+                const changed = originalPermissions[idx]?.etcrole !== permissions[idx]?.etcrole;
+                return (
+                    <Checkbox
+                        checked={val === "T"}
+                        onChange={(e) => {
+                            const newPermissions = [...permissions];
+                            newPermissions[idx].etcrole = e.target.checked ? "T" : "F";
+                            setPermissions(newPermissions);
+                        }}
+                        style={changed ? { accentColor: "orange" } : {}}
+                    />
+                );
+            },
+        },
     ];
+
+    const handleSave = () => {
+        if (!selectedRole || permissions.length === 0) return;
+
+        const payload = {
+            roleno: selectedRole,
+            menucd: permissions[0].menucd,
+            qryrole: permissions[0].qryrole,
+            saverole: permissions[0].saverole,
+            updrole: permissions[0].updrole,
+            delrole: permissions[0].delrole,
+            excelrole: permissions[0].excelrole,
+            etcrole: permissions[0].etcrole,
+        };
+
+        axios.post("/api/sysm2000/roles/savePermission", payload)
+            .then(() => {
+                alert("권한이 저장되었습니다.");
+            })
+            .catch(() => {
+                alert("저장 중 오류가 발생했습니다.");
+            });
+    };
+
 
     return (
         <>
-            <Card title="Sysm2000 Role List">
+            <Card
+                title={<span style={{ lineHeight: "32px" }}>Sysm2000 Role List</span>}
+                extra={
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <Button type="primary">등록</Button>
+                        <Button>수정</Button>
+                        <Button danger>삭제</Button>
+                    </div>
+                }
+                style={{ marginBottom: 16 }}
+            >
                 <Table
                     dataSource={roles.map((r, idx) => ({ key: idx, ...r }))}
                     columns={[
+                        {
+                            title: "선택",
+                            dataIndex: "roleno",
+                            key: "checkbox",
+                            render: (roleno) => (
+                                <Checkbox
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log("체크된 RoleNo:", roleno);
+                                    }}
+                                />
+                            ),
+                        },
                         { title: "Role ID", dataIndex: "roleno" },
                         { title: "Role Name", dataIndex: "rolename" },
                     ]}
@@ -91,7 +247,10 @@ const Sysm2000Page = () => {
             </Card>
 
             {selectedRole && (
-                <Card title={`메뉴 트리 (Role: ${selectedRole})`} style={{ marginTop: 20 }}>
+                <Card
+                    title={<span style={{ lineHeight: "32px" }}>메뉴 트리 (Role: {selectedRole})</span>}
+                    style={{ marginBottom: 16 }}
+                >
                     <div style={{ height: 300, overflowY: "auto", border: "1px solid #ddd", padding: 8 }}>
                         <Tree
                             treeData={treeData}
@@ -103,7 +262,23 @@ const Sysm2000Page = () => {
             )}
 
             {selectedRole && selectedMenu && (
-                <Card title={`권한 (Role: ${selectedRole}, Menu: ${selectedMenu})`} style={{ marginTop: 20 }}>
+                <Card
+                    title={
+                        <span style={{ lineHeight: "32px" }}>
+      권한 (Role: {selectedRole}, Menu: {selectedMenu})
+    </span>
+                    }
+                    extra={
+                        <Button
+                            type="primary"
+                            onClick={handleSave}
+                            style={{ marginRight: "16px" }} // ✅ 버튼을 왼쪽으로 이동
+                        >
+                            저장
+                        </Button>
+                    }
+                    style={{ marginBottom: 16 }}
+                >
                     <Table
                         dataSource={permissions}
                         columns={permissionColumns}
@@ -112,6 +287,7 @@ const Sysm2000Page = () => {
                     />
                 </Card>
             )}
+
         </>
     );
 };
