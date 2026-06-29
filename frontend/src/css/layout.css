@@ -1191,3 +1191,64 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 .clicked-row {
 	background-color: #e6f7ff !important; /* Ant Design 기본 파란색 */
 }
+
+.tree-table-container {
+	display: flex;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+.tree-section {
+	flex: 1;
+	max-width: 300px;
+}
+
+.table-section {
+	flex: 2;
+}
+
+.section-title {
+	margin-bottom: 10px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.action-buttons {
+	margin-top: 10px;
+	display: flex;
+	gap: 4px;            /* ✅ 버튼 사이 간격 */
+	justify-content: flex-start; /* 왼쪽 정렬 */
+}
+
+.section-header-fixed {
+	position: sticky;   /* ✅ 스크롤해도 고정 */
+	top: 0;             /* 화면 최상단에 붙음 */
+	background-color: #fff;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 16px;
+	z-index: 100;       /* 트리/테이블 위에 표시 */
+	border-bottom: 1px solid #ddd;
+}
+
+.tree-header {
+	display: flex;
+	justify-content: space-between; /* 타이틀 왼쪽, 버튼 오른쪽 */
+	align-items: center;
+	width: 300px;                   /* ✅ 트리 영역 너비에 맞게 제한 */
+	margin-bottom: 10px;
+}
+
+.section-title {
+	margin: 0;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.detail-header {
+	display: flex;
+	justify-content: space-between; /* 타이틀 왼쪽, 버튼 오른쪽 */
+	align-items: center;
+	margin-bottom: 10px;
+}

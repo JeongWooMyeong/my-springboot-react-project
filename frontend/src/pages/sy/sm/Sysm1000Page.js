@@ -135,45 +135,55 @@ function Sysm1000Page() {
         <Sidebar selectedMenuCd={selectedMenuCd} />
         <div className="layout">
             <div className="content">
-                <h2>메뉴관리</h2>
-                <div className="tree-container">
-                    <Tree treeData={menuData} onSelect={onSelect} defaultExpandAll />
+                <div className="tree-header">
+                    <h2 className="section-title">메뉴관리</h2>
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            form.resetFields();
+                            setMenuDetail(null);
+                            setIsEditMode(false);
+                            setIsModalVisible(true);
+                        }}
+                    >
+                        등록
+                    </Button>
                 </div>
+                <div className="tree-table-container" style={{ display: "flex", gap: "20px", alignItems: "flex-start" }}>
+                    {/* 트리 영역 */}
+                    <div className="tree-container" style={{ flex: 1, maxWidth: 300 }}>
+                        <Tree treeData={menuData} onSelect={onSelect} defaultExpandAll />
+                    </div>
 
-                {menuDetail && (
-                    <>
-                        <Table
-                            dataSource={[menuDetail]}
-                            columns={columns}
-                            pagination={false}
-                            rowKey="menuCd"
-                            style={{ width: 600, overflow: "auto" }}
-                        />
-                        <Button
-                            onClick={() => {
-                                setIsEditMode(true);
-                                setIsModalVisible(true);
-                            }}
-                        >
-                            수정
-                        </Button>
-                        <Button danger onClick={handleDelete}>
-                            삭제
-                        </Button>
-                    </>
-                )}
-
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        form.resetFields();
-                        setMenuDetail(null);
-                        setIsEditMode(false);
-                        setIsModalVisible(true);
-                    }}
-                >
-                    등록
-                </Button>
+                    {/* 테이블 영역 */}
+                    {menuDetail && (
+                        <div className="table-container" style={{ flex: 2 }}>
+                            <div className="detail-header">
+                                <h2 className="section-title">메뉴상세</h2>
+                                <div className="action-buttons">
+                                    <Button
+                                        onClick={() => {
+                                            setIsEditMode(true);
+                                            setIsModalVisible(true);
+                                        }}
+                                    >
+                                        수정
+                                    </Button>
+                                    <Button danger onClick={handleDelete}>
+                                        삭제
+                                    </Button>
+                                </div>
+                            </div>
+                            <Table
+                                dataSource={[menuDetail]}
+                                columns={columns}
+                                pagination={false}
+                                rowKey="menuCd"
+                                style={{ width: "100%", overflow: "auto" }}
+                            />
+                        </div>
+                    )}
+                </div>
 
                 <Modal
                     title={isEditMode ? "메뉴 수정" : "메뉴 등록"}
