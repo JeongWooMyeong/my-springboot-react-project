@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Table, Card, Tree, Checkbox, Button } from "antd";
 import axios from "axios";
 import { useMenu } from "../../../context/MenuContext";
+import RoleModal from "../../components/RoleModal";
+import Sidebar from "../../components/Sidebar";
 
 // 트리 구조 변환 함수
 function buildTree(data) {
@@ -30,6 +32,9 @@ function buildTree(data) {
 }
 
 const Sysm2000Page = () => {
+
+    const [selectedMenuCd] = useState(null);
+
     const [roles, setRoles] = useState([]);
     const [selectedRole, setSelectedRole] = useState(null);
     const [selectedMenu, setSelectedMenu] = useState(null);
@@ -37,15 +42,30 @@ const Sysm2000Page = () => {
     const [originalPermissions, setOriginalPermissions] = useState([]);
     const { routesFromDB } = useMenu();
 
-    // 역할 목록 불러오기
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [mode, setMode] = useState("create");
+    const [selectedRoles, setSelectedRoles] = useState([]);       // 삭제용
+
+    // 역할 목록 불러오기 함수
+    const fetchRoles = async () => {
+        try {
+            const res = await axios.get("/api/sysm2000/roles");
+            setRoles(res.data);
+        } catch (error) {
+            console.error(error);
+            alert("역할 목록을 불러오는 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 페이지 로드 시 목록 불러오기
     useEffect(() => {
-        axios.get("/api/sysm2000/roles").then(res => setRoles(res.data));
+        fetchRoles();
     }, []);
 
     // 권한 조회
     useEffect(() => {
         if (selectedRole && selectedMenu) {
-            axios.get(`/api/sysm2000/roles/${selectedRole}/permissions/${selectedMenu}`)
+            axios.get(`/api/sysm2000/roles/${selectedRole.roleno}/permissions/${selectedMenu}`)
                 .then(res => {
                     const found = res.data?.[0];
                     const merged = {
@@ -66,9 +86,10 @@ const Sysm2000Page = () => {
     const treeData = buildTree(routesFromDB);
 
     const permissionColumns = [
-        { title: "MenuCd", dataIndex: "menucd", key: "menucd" },
+        { title: "MenuCd", width: 10, dataIndex: "menucd", key: "menucd" },
         {
             title: "QryRole",
+            width: 80,
             dataIndex: "qryrole",
             key: "qryrole",
             render: (val, record, idx) => {
@@ -88,6 +109,7 @@ const Sysm2000Page = () => {
         },
         {
             title: "SaveRole",
+            width: 80,
             dataIndex: "saverole",
             key: "saverole",
             render: (val, record, idx) => {
@@ -107,6 +129,7 @@ const Sysm2000Page = () => {
         },
         {
             title: "UpdRole",
+            width: 80,
             dataIndex: "updrole",
             key: "updrole",
             render: (val, record, idx) => {
@@ -126,6 +149,7 @@ const Sysm2000Page = () => {
         },
         {
             title: "DelRole",
+            width: 80,
             dataIndex: "delrole",
             key: "delrole",
             render: (val, record, idx) => {
@@ -145,6 +169,7 @@ const Sysm2000Page = () => {
         },
         {
             title: "ExcelRole",
+            width: 80,
             dataIndex: "excelrole",
             key: "excelrole",
             render: (val, record, idx) => {
@@ -164,6 +189,7 @@ const Sysm2000Page = () => {
         },
         {
             title: "EtcRole",
+            width: 150,
             dataIndex: "etcrole",
             key: "etcrole",
             render: (val, record, idx) => {
@@ -186,8 +212,9 @@ const Sysm2000Page = () => {
     const handleSave = () => {
         if (!selectedRole || permissions.length === 0) return;
 
+        console.log(selectedRole.roleno.value);
         const payload = {
-            roleno: selectedRole,
+            roleno: selectedRole.roleno,
             menucd: permissions[0].menucd,
             qryrole: permissions[0].qryrole,
             saverole: permissions[0].saverole,
@@ -206,16 +233,79 @@ const Sysm2000Page = () => {
             });
     };
 
+    // 등록/수정 공통 저장 함수
+    const saveRole = async (values) => {
+        try {
+            if (mode === "create") {
+                // 등록 API 호출
+                await axios.post("/api/sysm2000/roles", values);
+                alert("Role이 등록되었습니다.");
+            } else {
+                // 수정 API 호출 (PUT 엔드포인트 필요)
+                await axios.put(`/api/sysm2000/roles/${values.roleno}`, values);
+                alert("Role이 수정되었습니다.");
+            }
+
+            fetchRoles();          // 목록 새로고침
+            setIsModalOpen(false); // 모달 닫기
+        } catch (error) {
+            console.error(error);
+            alert("Role 저장 중 오류가 발생했습니다.");
+        }
+    };
+
 
     return (
         <>
+            <Sidebar selectedMenuCd={selectedMenuCd} />
             <Card
                 title={<span style={{ lineHeight: "32px" }}>Sysm2000 Role List</span>}
                 extra={
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <Button type="primary">등록</Button>
-                        <Button>수정</Button>
-                        <Button danger>삭제</Button>
+                        <Button type="primary" onClick={() => {
+                            setSelectedRole(null);
+                            setMode("create");
+                            setIsModalOpen(true);
+                        }}>등록</Button>
+
+                        <Button
+                            onClick={() => {
+                                if (!selectedRole) {
+                                    alert("수정할 Role을 선택하세요!");
+                                    return;
+                                }
+                                setMode("edit");
+                                setIsModalOpen(true);
+                            }}
+                        >
+                            수정
+                        </Button>
+
+                        <Button
+                            danger
+                            onClick={async () => {
+                                if (selectedRoles.length === 0) {
+                                    alert("삭제할 Role을 선택하세요!");
+                                    return;
+                                }
+
+                                try {
+                                    // 선택된 roleno 배열을 순회하며 삭제 API 호출
+                                    for (const roleno of selectedRoles) {
+                                        await axios.delete(`/api/sysm2000/roles/${roleno}`);
+                                    }
+
+                                    alert("선택한 Role이 삭제되었습니다.");
+                                    setSelectedRoles([]); // 선택 초기화
+                                    fetchRoles();         // 목록 새로고침
+                                } catch (error) {
+                                    console.error(error);
+                                    alert("Role 삭제 중 오류가 발생했습니다.");
+                                }
+                            }}
+                        >
+                            삭제
+                        </Button>
                     </div>
                 }
                 style={{ marginBottom: 16 }}
@@ -229,9 +319,14 @@ const Sysm2000Page = () => {
                             key: "checkbox",
                             render: (roleno) => (
                                 <Checkbox
+                                    checked={selectedRoles.includes(roleno)}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("체크된 RoleNo:", roleno);
+                                        setSelectedRoles((prev) =>
+                                            prev.includes(roleno)
+                                                ? prev.filter((r) => r !== roleno) // 이미 있으면 제거
+                                                : [...prev, roleno]                // 없으면 추가
+                                        );
                                     }}
                                 />
                             ),
@@ -241,14 +336,18 @@ const Sysm2000Page = () => {
                     ]}
                     pagination={{ pageSize: 10 }}
                     onRow={(record) => ({
-                        onClick: () => setSelectedRole(record.roleno),
+                        onClick: () => {
+                            // 행 클릭 시 수정용 Role 전체 데이터 저장
+                            setSelectedRole(record);
+                        },
                     })}
                 />
+
             </Card>
 
             {selectedRole && (
                 <Card
-                    title={<span style={{ lineHeight: "32px" }}>메뉴 트리 (Role: {selectedRole})</span>}
+                    title={<span style={{ lineHeight: "32px" }}>메뉴 트리 (Role: {selectedRole.roleno})</span>}
                     style={{ marginBottom: 16 }}
                 >
                     <div style={{ height: 300, overflowY: "auto", border: "1px solid #ddd", padding: 8 }}>
@@ -265,8 +364,8 @@ const Sysm2000Page = () => {
                 <Card
                     title={
                         <span style={{ lineHeight: "32px" }}>
-      권한 (Role: {selectedRole}, Menu: {selectedMenu})
-    </span>
+                            권한 (Role: {selectedRole.roleno}, Menu: {selectedMenu})
+                        </span>
                     }
                     extra={
                         <Button
@@ -283,10 +382,19 @@ const Sysm2000Page = () => {
                         dataSource={permissions}
                         columns={permissionColumns}
                         pagination={false}
-                        scroll={{ y: 200 }}
+                        scroll={{ x: 100 }}
                     />
                 </Card>
             )}
+
+            {/* ✅ 맨 밑에 RoleModal 배치 */}
+            <RoleModal
+                visible={isModalOpen}
+                mode={mode}
+                initialValues={selectedRole}
+                onOk={(values) => saveRole(values)}   // ✅ 여기서 saveRole 호출
+                onCancel={() => setIsModalOpen(false)}
+            />
 
         </>
     );

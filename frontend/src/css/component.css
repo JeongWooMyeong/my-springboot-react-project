@@ -22,7 +22,7 @@
     flex: 1;
     display: flex;          /* 사이드바와 본문을 가로 배치 */
     padding-top: 60px;      /* Header 높이만큼 여백 */
-    overflow: hidden;
+    overflow: auto;       /* ✅ 가로/세로 스크롤 모두 허용 */
 }
 
 .layout-footer {

@@ -52,4 +52,10 @@ public class Sysm2000Controller {
             @PathVariable String menuCd) {
         return service.getPermissions(roleno, menuCd);
     }
+
+    @PostMapping("/roles/savePermission")
+    public void savePermission(@RequestBody Sysm2010Dto dto) {
+        service.deletePermission(dto);
+        service.savePermission(dto);
+    }
 }

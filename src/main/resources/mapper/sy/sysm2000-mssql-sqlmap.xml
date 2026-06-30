@@ -74,4 +74,20 @@
           AND MenuCd = #{menucd}
     </select>
 
+    <!-- 기존 권한 삭제 -->
+    <delete id="deletePermission" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        DELETE FROM sysm2010t
+        WHERE ROLENO = #{roleno}
+          AND MENUCD = #{menucd}
+    </delete>
+
+    <!-- 새 권한 등록 -->
+    <insert id="savePermission" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        INSERT INTO sysm2010t (
+            ROLENO, MENUCD, QRYROLE, SAVEROLE, UPDROLE, DELROLE, EXCELROLE, ETCROLE
+        ) VALUES (
+                     #{roleno}, #{menucd}, #{qryrole}, #{saverole}, #{updrole}, #{delrole}, #{excelrole}, #{etcrole}
+                 )
+    </insert>
+
 </mapper>

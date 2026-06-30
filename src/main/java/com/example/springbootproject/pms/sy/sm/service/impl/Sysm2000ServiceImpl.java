@@ -45,4 +45,14 @@ public class Sysm2000ServiceImpl implements Sysm2000Service {
     public List<Sysm2010Dto> getPermissions(String roleno, String menucd) {
         return mapper.selectPermissions(roleno, menucd);
     }
+
+    @Override
+    public void savePermission(Sysm2010Dto dto) {
+        mapper.savePermission(dto);
+    }
+
+    @Override
+    public void deletePermission(Sysm2010Dto dto) {
+        mapper.deletePermission(dto);
+    }
 }
