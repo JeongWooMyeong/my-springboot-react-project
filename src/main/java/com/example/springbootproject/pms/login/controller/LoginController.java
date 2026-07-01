@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -37,12 +39,19 @@ public class LoginController {
         Syep4000VO userinfo = loginService.getUserInfo(vo);
         System.out.println("user:" + userinfo.getUserid());
 
+        // 2. JWT 토큰 생성 (최소한의 정보만 claim에 넣기)
+        List<String> rolenoList = userinfo.getRoles()
+                .stream()
+                .map(r -> r.getRoleno())
+                .collect(Collectors.toList());
+
         //2. jwt 토큰 생성
         String token = Jwts.builder()
-                .subject(userinfo.getUserid()) // subject
-                .claim("username", userinfo.getUsername())
+                .subject(userinfo.getUserid()) // 사용자 ID
+                .claim("username", userinfo.getUsername()) // 이름
+                .claim("roles", rolenoList) // ✅ roleno만 넣기
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효
                 .signWith(JwtConfig.getSecretKey())
                 .compact();
         //토큰을 VO담아서 반환

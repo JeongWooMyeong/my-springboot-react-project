@@ -19,4 +19,10 @@ public interface Sysm2000Mapper {
                                         @Param("menuCds") List<String> menuCds);
     void savePermission(Sysm2010Dto dto);
     void deletePermission(Sysm2010Dto dto);
+
+    // 사용자 ID로 역할 목록 조회
+    List<Sysm2000Dto> getUserRoles(@Param("userid") String userid);
+
+    // 역할 번호로 권한 목록 조회
+    List<Sysm2010Dto> getPermissionsByRole(@Param("roleno") String roleno);
 }

@@ -1,11 +1,21 @@
 package com.example.springbootproject.pms.login.dto;
 
 
+import com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto;
+import com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto;
+
+import java.util.List;
+
 public class Syep4000VO {
     private String userid;
     private String password;
     private String username;
     private String token;
+
+    // ✅ 추가
+    private String roleno;                  // 역할 번호
+    private String roleName;                // 역할 이름
+    private List<Sysm2000Dto> roles;  // 메뉴별 권한 리스트
 
 
     public String getToken() {
@@ -38,5 +48,29 @@ public class Syep4000VO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getRoleno() {
+        return roleno;
+    }
+
+    public void setRoleno(String roleno) {
+        this.roleno = roleno;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public List<Sysm2000Dto> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Sysm2000Dto> roles) {
+        this.roles = roles;
     }
 }

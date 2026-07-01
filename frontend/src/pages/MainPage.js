@@ -8,21 +8,8 @@ function MainPage() {
         { bltnno: 2, titl: "공지사항 제목2", upddate: "2026-06-07" },
     ];
 
-    const fnLogout = () => {
-        console.log("로그아웃 처리");
-    };
-
-    const fnHelpManual = () => {
-        console.log("도움말 실행");
-    };
-
     return (
         <div id="main_wrap">
-            <div className="main_logout01">
-                <button onClick={fnLogout}>로그아웃</button>
-                <button onClick={fnHelpManual}>도움말</button>
-            </div>
-
             {/* 공지사항 */}
             <div className="main_board01">
                 <table>

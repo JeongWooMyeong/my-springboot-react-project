@@ -93,4 +93,18 @@
                  )
     </insert>
 
+    <select id="getUserRoles" parameterType="string"
+            resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        SELECT a.roleno, (select rolename from sysm2000t where roleno = a.roleno) as rolename
+        FROM sysm2020t a
+        WHERE userid = #{userid}
+    </select>
+
+    <select id="getPermissionsByRole" parameterType="string"
+            resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        SELECT menucd, qryrole, saverole, updrole, delrole, excelrole, etcrole
+        FROM sysm2010t
+        WHERE roleno = #{roleno}
+    </select>
+
 </mapper>

@@ -1,5 +1,7 @@
 package com.example.springbootproject.pms.sy.sm.dto;
 
+import java.util.List;
+
 public class Sysm2000Dto {
     private String delpssyn;
     private String ntnid;
@@ -15,6 +17,16 @@ public class Sysm2000Dto {
     private String updpn;
     private String useyn;
     private String xpn;
+
+    private List<Sysm2010Dto> permissions;
+
+    public List<Sysm2010Dto> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<Sysm2010Dto> permissions) {
+        this.permissions = permissions;
+    }
 
     public String getDelpssyn() {
         return delpssyn;
