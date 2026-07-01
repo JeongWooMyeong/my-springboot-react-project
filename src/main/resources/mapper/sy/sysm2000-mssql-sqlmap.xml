@@ -71,7 +71,10 @@
         SELECT *
         FROM sysm2010t
         WHERE RoleNo = #{roleno}
-          AND MenuCd = #{menucd}
+        AND menucd IN
+        <foreach item="menuCd" collection="menuCds" open="(" separator="," close=")">
+            #{menuCd}
+        </foreach>
     </select>
 
     <!-- 기존 권한 삭제 -->

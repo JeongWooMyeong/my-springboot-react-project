@@ -12,7 +12,7 @@ public interface Sysm2000Service {
     void updateRole(Sysm2000Dto dto);
     void deleteRole(String roleno);
     // ✅ 권한 조회 추가
-    List<Sysm2010Dto> getPermissions(String roleno, String menucd);
+    List<Sysm2010Dto> getPermissions(String roleno, List<String> menuCds);
     void savePermission(Sysm2010Dto dto);
     void deletePermission(Sysm2010Dto dto);
 }

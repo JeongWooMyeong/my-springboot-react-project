@@ -46,16 +46,18 @@ public class Sysm2000Controller {
     }
 
     // ✅ 권한 조회 (RoleNo + MenuCd)
-    @GetMapping("/roles/{roleno}/permissions/{menuCd}")
+    @GetMapping("/roles/{roleno}/permissions")
     public List<Sysm2010Dto> getRolePermissions(
             @PathVariable String roleno,
-            @PathVariable String menuCd) {
-        return service.getPermissions(roleno, menuCd);
+            @RequestParam List<String> menuCds) {
+        return service.getPermissions(roleno, menuCds);
     }
 
-    @PostMapping("/roles/savePermission")
-    public void savePermission(@RequestBody Sysm2010Dto dto) {
-        service.deletePermission(dto);
-        service.savePermission(dto);
+    @PostMapping("/roles/savePermissions")
+    public void savePermission(@RequestBody List<Sysm2010Dto> dtos) {
+        for (Sysm2010Dto dto : dtos) {
+            service.deletePermission(dto);
+            service.savePermission(dto);
+        }
     }
 }

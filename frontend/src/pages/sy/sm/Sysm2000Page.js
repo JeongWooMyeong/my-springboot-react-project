@@ -37,7 +37,9 @@ const Sysm2000Page = () => {
 
     const [roles, setRoles] = useState([]);
     const [selectedRole, setSelectedRole] = useState(null);
-    const [selectedMenu, setSelectedMenu] = useState(null);
+    //const [selectedMenu, setSelectedMenu] = useState(null);
+    const [selectedMenu, setSelectedMenu] = useState([]);
+
     const [permissions, setPermissions] = useState([]);
     const [originalPermissions, setOriginalPermissions] = useState([]);
     const { routesFromDB } = useMenu();
@@ -62,14 +64,19 @@ const Sysm2000Page = () => {
         fetchRoles();
     }, []);
 
-    // 권한 조회
+    //권한조회
     useEffect(() => {
-        if (selectedRole && selectedMenu) {
-            axios.get(`/api/sysm2000/roles/${selectedRole.roleno}/permissions/${selectedMenu}`)
-                .then(res => {
-                    const found = res.data?.[0];
-                    const merged = {
-                        menucd: selectedMenu,
+        if (selectedRole && selectedMenu.length > 0) {
+            axios.get(`/api/sysm2000/roles/${selectedRole.roleno}/permissions`, {
+                params: { menuCds: selectedMenu }
+            }).then(res => {
+                const data = res.data || [];
+
+                // ✅ 선택된 메뉴 전체를 돌면서 서버 응답에 없으면 기본값으로 채움
+                const merged = selectedMenu.map(menuCd => {
+                    const found = data.find(d => d.menucd === menuCd);
+                    return {
+                        menucd: menuCd,
                         qryrole: found?.qryrole || "F",
                         saverole: found?.saverole || "F",
                         updrole: found?.updrole || "F",
@@ -77,9 +84,11 @@ const Sysm2000Page = () => {
                         excelrole: found?.excelrole || "F",
                         etcrole: found?.etcrole || "F",
                     };
-                    setPermissions([merged]);
-                    setOriginalPermissions([merged]); // ✅ 원본 저장
                 });
+
+                setPermissions(merged);
+                setOriginalPermissions(merged);
+            });
         }
     }, [selectedRole, selectedMenu]);
 
@@ -212,19 +221,18 @@ const Sysm2000Page = () => {
     const handleSave = () => {
         if (!selectedRole || permissions.length === 0) return;
 
-        console.log(selectedRole.roleno.value);
-        const payload = {
+        const payload = permissions.map(p => ({
             roleno: selectedRole.roleno,
-            menucd: permissions[0].menucd,
-            qryrole: permissions[0].qryrole,
-            saverole: permissions[0].saverole,
-            updrole: permissions[0].updrole,
-            delrole: permissions[0].delrole,
-            excelrole: permissions[0].excelrole,
-            etcrole: permissions[0].etcrole,
-        };
+            menucd: p.menucd,
+            qryrole: p.qryrole,
+            saverole: p.saverole,
+            updrole: p.updrole,
+            delrole: p.delrole,
+            excelrole: p.excelrole,
+            etcrole: p.etcrole,
+        }));
 
-        axios.post("/api/sysm2000/roles/savePermission", payload)
+        axios.post("/api/sysm2000/roles/savePermissions", payload)
             .then(() => {
                 alert("권한이 저장되었습니다.");
             })
@@ -252,6 +260,16 @@ const Sysm2000Page = () => {
             console.error(error);
             alert("Role 저장 중 오류가 발생했습니다.");
         }
+    };
+
+    const collectKeys = (node) => {
+        let result = [node.key];
+        if (node.children) {
+            node.children.forEach(child => {
+                result = result.concat(collectKeys(child));
+            });
+        }
+        return result;
     };
 
 
@@ -353,7 +371,10 @@ const Sysm2000Page = () => {
                     <div style={{ height: 300, overflowY: "auto", border: "1px solid #ddd", padding: 8 }}>
                         <Tree
                             treeData={treeData}
-                            onSelect={(keys) => setSelectedMenu(keys[0])}
+                            onSelect={(keys, info) => {
+                                const allKeys = collectKeys(info.node); // 재귀로 children까지 모음
+                                setSelectedMenu(allKeys);
+                            }}
                             defaultExpandAll
                         />
                     </div>
@@ -364,14 +385,14 @@ const Sysm2000Page = () => {
                 <Card
                     title={
                         <span style={{ lineHeight: "32px" }}>
-                            권한 (Role: {selectedRole.roleno}, Menu: {selectedMenu})
-                        </span>
+      권한 (Role: {selectedRole.roleno}
+    </span>
                     }
                     extra={
                         <Button
                             type="primary"
                             onClick={handleSave}
-                            style={{ marginRight: "16px" }} // ✅ 버튼을 왼쪽으로 이동
+                            style={{ marginRight: "16px" }}
                         >
                             저장
                         </Button>
@@ -379,8 +400,19 @@ const Sysm2000Page = () => {
                     style={{ marginBottom: 16 }}
                 >
                     <Table
+                        rowSelection={{
+                            selectedRowKeys: permissions.map(p => p.menucd), // 선택된 키
+                            onChange: (selectedRowKeys) => {
+                                // 선택된 행들만 필터링하거나 상태 업데이트
+                                const newPermissions = permissions.filter(p =>
+                                    selectedRowKeys.includes(p.menucd)
+                                );
+                                setPermissions(newPermissions);
+                            },
+                        }}
                         dataSource={permissions}
                         columns={permissionColumns}
+                        rowKey="menucd"   // ✅ 각 행을 구분할 고유 키
                         pagination={false}
                         scroll={{ x: 100 }}
                     />

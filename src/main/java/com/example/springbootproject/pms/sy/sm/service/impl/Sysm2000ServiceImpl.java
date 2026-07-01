@@ -42,8 +42,8 @@ public class Sysm2000ServiceImpl implements Sysm2000Service {
 
     // ✅ 권한 조회 추가
     @Override
-    public List<Sysm2010Dto> getPermissions(String roleno, String menucd) {
-        return mapper.selectPermissions(roleno, menucd);
+    public List<Sysm2010Dto> getPermissions(String roleno, List<String> menuCds) {
+        return mapper.selectPermissions(roleno, menuCds);
     }
 
     @Override
