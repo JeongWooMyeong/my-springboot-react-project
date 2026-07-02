@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         "com.example.springbootproject.pms.login.service.dao",
         "com.example.springbootproject.pms.sy.sm.service.dao",
         "com.example.springbootproject.pms.sy.ep.service.dao",
+        "com.example.springbootproject.pms.sy.tm.service.dao",
 })
 public class SpringBootProjectApplication {
 

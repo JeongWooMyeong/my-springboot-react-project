@@ -31,7 +31,7 @@ function Menu({ userinfo }) {   // ✅ 로그인 응답에서 받은 userinfo pr
         const result = userinfo.roles.some(role =>
             role.permissions?.some(p => p.menucd === menuCd && p.qryrole === "T")
         );
-        console.log("check", menuCd, result);
+        //console.log("check", menuCd, result);
         return result;
     };
 

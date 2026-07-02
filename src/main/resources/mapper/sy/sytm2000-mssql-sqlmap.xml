@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springbootproject.pms.sy.tm.service.dao.Sytm2000Mapper">
+
+    <!-- INSERT -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO template (
+        title,
+        canvas_data,
+        created_at,
+        updated_at
+        )
+        VALUES (
+        #{title},
+        #{canvasData},
+        #{createdAt},
+        #{updatedAt}
+        )
+    </insert>
+
+    <!-- LIST -->
+    <select id="selectList" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+        SELECT
+        id,
+        title,
+        canvas_data AS canvasData,
+        created_at AS createdAt,
+        updated_at AS updatedAt
+        FROM template
+        ORDER BY id DESC
+    </select>
+
+    <!-- ONE -->
+    <select id="selectById" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+        SELECT
+        id,
+        title,
+        canvas_data AS canvasData,
+        created_at AS createdAt,
+        updated_at AS updatedAt
+        FROM template
+        WHERE id = #{id}
+    </select>
+
+    <!-- UPDATE -->
+    <update id="update">
+        UPDATE template
+        SET
+        title = #{title},
+        canvas_data = #{canvasData},
+        updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+
+    <!-- DELETE -->
+    <delete id="delete">
+        DELETE FROM template WHERE id = #{id}
+    </delete>
+
+</mapper>
