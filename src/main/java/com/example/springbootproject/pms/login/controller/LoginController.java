@@ -49,6 +49,8 @@ public class LoginController {
         String token = Jwts.builder()
                 .subject(userinfo.getUserid()) // 사용자 ID
                 .claim("username", userinfo.getUsername()) // 이름
+                .claim("jijumcd", userinfo.getJijumcd())
+                .claim("coid", userinfo.getCoid())
                 .claim("roles", rolenoList) // ✅ roleno만 넣기
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효

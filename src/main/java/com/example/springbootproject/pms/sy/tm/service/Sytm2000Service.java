@@ -10,7 +10,7 @@ public interface Sytm2000Service {
 
     List<Sytm2000Dto> list();
 
-    Map<String, Object> get(Long id);
+    Sytm2000Dto get(Long id);
 
     int update(Long id, Map<String, Object> param);
 

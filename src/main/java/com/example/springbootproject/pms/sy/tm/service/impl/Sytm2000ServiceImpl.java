@@ -33,7 +33,7 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
     }
 
     @Override
-    public Map<String, Object> get(Long id) {
+    public Sytm2000Dto get(Long id) {
         return mapper.selectById(id);
     }
 

@@ -14,7 +14,7 @@
 
     <!-- 사용자 조회 -->
     <select id="getUserInfo" parameterType="com.example.springbootproject.pms.login.dto.Syep4000VO" resultType="com.example.springbootproject.pms.login.dto.Syep4000VO">
-        select userid, sctno as password, username from syep4000t
+        select userid, sctno as password, username, jijumcd, coid from syep4000t
         where userid = #{userid}
     </select>
 

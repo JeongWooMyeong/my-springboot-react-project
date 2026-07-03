@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Stage, Layer, Text, Image as KonvaImage } from "react-konva";
 import axios from "axios";
 import useImage from "use-image";
 
-export default function Sytm2000Page() {
+export default function Sytm2000Page({ templateData }) {
 
     const [elements, setElements] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
@@ -11,7 +11,16 @@ export default function Sytm2000Page() {
     const selectedElement = elements.find(el => el.id === selectedId);
 
     // ----------------------------
-    // TEXT 추가 (fieldName 자동 생성)
+    // 초기 데이터 로딩 (핵심)
+    // ----------------------------
+    useEffect(() => {
+        if (!templateData) return;
+
+        setElements(templateData.canvasData || []);
+    }, [templateData]);
+
+    // ----------------------------
+    // TEXT 추가
     // ----------------------------
     const addText = () => {
         const newEl = {
@@ -29,7 +38,7 @@ export default function Sytm2000Page() {
     };
 
     // ----------------------------
-    // IMAGE 추가 (로컬 업로드)
+    // IMAGE 추가
     // ----------------------------
     const addImage = (file) => {
         const reader = new FileReader();
@@ -102,22 +111,35 @@ export default function Sytm2000Page() {
     };
 
     // ----------------------------
-    // 저장 (JSON)
+    // 저장 (CREATE or UPDATE)
     // ----------------------------
     const saveTemplate = async () => {
         try {
-            await axios.post("/api/sytm2000", {
-                title: "Sytm2000",
+
+            const payload = {
+                title: templateData?.title || "Sytm2000",
                 canvasData: JSON.stringify(elements)
-            });
+            };
+
+            if (templateData?.id) {
+                // UPDATE
+                await axios.put(`/api/sytm2000/${templateData.id}`, payload);
+            } else {
+                // CREATE
+                await axios.post("/api/sytm2000", payload);
+            }
 
             alert("저장 완료");
+
         } catch (e) {
             console.error(e);
             alert("저장 실패");
         }
     };
 
+    // ----------------------------
+    // UI
+    // ----------------------------
     return (
         <div style={{ display: "flex", gap: 20, padding: 20 }}>
 
@@ -151,12 +173,9 @@ export default function Sytm2000Page() {
 
                 <hr />
 
-                {/* ----------------------------
-                    선택된 요소 편집
-                ---------------------------- */}
+                {/* 속성 편집 */}
                 {selectedElement && (
                     <div>
-
                         <h4>속성 편집</h4>
 
                         {selectedElement.type === "text" && (
@@ -165,18 +184,13 @@ export default function Sytm2000Page() {
                                     value={selectedElement.text}
                                     onChange={(e) => updateText(e.target.value)}
                                     placeholder="텍스트"
-                                    style={{ width: "100%", padding: 5 }}
                                 />
 
                                 <input
                                     value={selectedElement.fieldName}
                                     onChange={(e) => updateFieldName(e.target.value)}
                                     placeholder="fieldName"
-                                    style={{
-                                        width: "100%",
-                                        padding: 5,
-                                        marginTop: 5
-                                    }}
+                                    style={{ marginTop: 5 }}
                                 />
                             </>
                         )}
@@ -184,7 +198,6 @@ export default function Sytm2000Page() {
                         {selectedElement.type === "image" && (
                             <p>이미지 요소 선택됨</p>
                         )}
-
                     </div>
                 )}
 
@@ -203,7 +216,6 @@ export default function Sytm2000Page() {
 
                         {elements.map(el => {
 
-                            // ---------------- TEXT ----------------
                             if (el.type === "text") {
                                 return (
                                     <Text
@@ -230,7 +242,6 @@ export default function Sytm2000Page() {
                                 );
                             }
 
-                            // ---------------- IMAGE ----------------
                             if (el.type === "image") {
                                 return (
                                     <CanvasImage

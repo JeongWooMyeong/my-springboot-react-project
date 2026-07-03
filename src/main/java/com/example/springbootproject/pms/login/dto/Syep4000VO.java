@@ -16,7 +16,24 @@ public class Syep4000VO {
     private String roleno;                  // 역할 번호
     private String roleName;                // 역할 이름
     private List<Sysm2000Dto> roles;  // 메뉴별 권한 리스트
+    private String jijumcd;
+    private String coid;
 
+    public String getCoid() {
+        return coid;
+    }
+
+    public void setCoid(String coid) {
+        this.coid = coid;
+    }
+
+    public String getJijumcd() {
+        return jijumcd;
+    }
+
+    public void setJijumcd(String jijumcd) {
+        this.jijumcd = jijumcd;
+    }
 
     public String getToken() {
         return token;

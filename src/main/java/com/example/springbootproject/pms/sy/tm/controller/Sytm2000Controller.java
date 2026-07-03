@@ -26,7 +26,7 @@ public class Sytm2000Controller {
     }
 
     @GetMapping("/{id}")
-    public Map<String, Object> get(@PathVariable Long id) {
+    public Sytm2000Dto get(@PathVariable Long id) {
         return service.get(id);
     }
 

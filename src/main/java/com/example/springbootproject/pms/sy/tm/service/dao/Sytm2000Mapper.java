@@ -13,7 +13,7 @@ public interface Sytm2000Mapper {
 
     List<Sytm2000Dto> selectList();
 
-    Map<String, Object> selectById(Long id);
+    Sytm2000Dto selectById(Long id);
 
     int update(Map<String, Object> param);
 
