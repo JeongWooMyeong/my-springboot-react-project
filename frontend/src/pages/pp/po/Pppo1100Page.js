@@ -1,173 +1,263 @@
+import React from "react";
 import { useEffect, useState } from "react";
-import { Stage, Layer, Text } from "react-konva";
+import {
+    Stage,
+    Layer,
+    Text,
+    Rect,
+    Image as KonvaImage
+} from "react-konva";
 
+import useImage from "use-image";
+
+// -----------------------------
+// IMAGE COMPONENT (핵심)
+// -----------------------------
+function CanvasImage({ el, src, isFocus }) {
+
+    const [img] = useImage(src || "", "anonymous");
+
+    if (!src) {
+        return (
+            <Rect
+                x={el.x}
+                y={el.y}
+                width={el.width}
+                height={el.height}
+                fill="#f5f5f5"
+                stroke={isFocus ? "#1976d2" : "#aaa"}
+                dash={[6, 4]}
+            />
+        );
+    }
+
+    return (
+        <KonvaImage
+            image={img}
+            x={el.x}
+            y={el.y}
+            width={el.width}
+            height={el.height}
+        />
+    );
+}
+
+// -----------------------------
+// PAGE
+// -----------------------------
 export default function Pppo1100Page({ templateid, onBack }) {
 
     const token = JSON.parse(localStorage.getItem("user"))?.token;
+
     const [templateData, setTemplateData] = useState(null);
     const [productData, setProductData] = useState({});
-    //const [ordno] = useState(`ORD_${Date.now()}`);
+    const [focusField, setFocusField] = useState(null);
+
     const ordno =
         "TP" +
         Math.floor(Math.random() * 1_000_000_000000)
             .toString()
             .padStart(12, "0");
 
-    // -------------------------
-    // 1. 템플릿 로드
-    // -------------------------
+    // -----------------------------
+    // LOAD TEMPLATE
+    // -----------------------------
     useEffect(() => {
         if (!templateid) return;
 
-        const load = async () => {
-            try {
-                const res = await fetch(`/api/sytm2000/${templateid}`);
-                const data = await res.json();
+        (async () => {
+            const res = await fetch(`/api/sytm2000/${templateid}`);
+            const data = await res.json();
 
-                setTemplateData({
-                    ...data,
-                    canvasData: JSON.parse(data.canvasData)
-                });
-
-            } catch (e) {
-                console.error(e);
-            }
-        };
-
-        load();
+            setTemplateData({
+                ...data,
+                canvasData: JSON.parse(data.canvasData)
+            });
+        })();
     }, [templateid]);
 
-    if (!templateData) {
-        return (
-            <div>
-                <button onClick={onBack}>← 뒤로</button>
-                <p>로딩중...</p>
-            </div>
-        );
-    }
+    if (!templateData) return <div>로딩중...</div>;
 
-    // -------------------------
-    // SAVE (핵심 수정)
-    // -------------------------
-    const saveData = async () => {
-        try {
-            const payload = {
-                ordno,
-                templateid,
-                data: productData   // 그대로 보내도 OK (백엔드가 Map이면)
-            };
-
-            const res = await fetch("/api/pppo1000", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`   // ⭐ 필수
-                },
-                body: JSON.stringify(payload)
-            });
-
-            if (!res.ok) throw new Error("저장 실패");
-
-            alert("저장 완료");
-
-            // 목록으로 이동
-            onBack();
-
-        } catch (e) {
-            console.error(e);
-            alert("저장 실패");
-        }
+    // -----------------------------
+    // INPUT CHANGE
+    // -----------------------------
+    const handleChange = (key, value) => {
+        setProductData(prev => ({
+            ...prev,
+            [key]: value
+        }));
     };
 
-    // -------------------------
-    // GRID
-    // -------------------------
-    const renderGrid = () => {
-        return (
-            <div style={{ width: 320, padding: 10, borderRight: "1px solid #ddd" }}>
-                <h3>데이터 입력</h3>
+    // -----------------------------
+    // IMAGE UPLOAD → URL 저장
+    // -----------------------------
+    const handleImageUpload = async (fieldName, file) => {
 
-                <div style={{ fontSize: 12, marginBottom: 10 }}>
-                    ORD NO: {ordno}
-                </div>
+        const formData = new FormData();
+        formData.append("file", file);
 
-                {templateData.canvasData.map(field => (
+        const res = await fetch("/api/pppo1000/upload/image", {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            body: formData
+        });
+
+        const url = await res.text();
+
+        setProductData(prev => ({
+            ...prev,
+            [fieldName]: url
+        }));
+    };
+
+    // -----------------------------
+    // SAVE
+    // -----------------------------
+    const saveData = async () => {
+
+        const payload = {
+            ordno,
+            templateid,
+            data: productData
+        };
+
+        const res = await fetch("/api/pppo1000", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+            alert("저장 실패");
+            return;
+        }
+
+        alert("저장 완료");
+        onBack();
+    };
+
+    // -----------------------------
+    // GRID UI
+    // -----------------------------
+    const renderGrid = () => (
+        <div style={{ width: 320, padding: 10, borderRight: "1px solid #ddd" }}>
+            <h3>데이터 입력</h3>
+
+            <div style={{ fontSize: 12 }}>
+                ORD: {ordno}
+            </div>
+
+            {templateData.canvasData.map(field => {
+
+                const isImage = field.type === "image";
+
+                return (
                     <div key={field.id} style={{ marginBottom: 12 }}>
+
                         <label style={{ fontSize: 12 }}>
                             {field.fieldName}
                         </label>
 
-                        <input
-                            style={{
-                                width: "100%",
-                                padding: 6,
-                                marginTop: 4
-                            }}
-                            value={productData[field.fieldName] ?? ""}
-                            onChange={(e) => {
-                                setProductData(prev => ({
-                                    ...prev,
-                                    [field.fieldName]: e.target.value
-                                }));
-                            }}
-                        />
+                        {!isImage && (
+                            <input
+                                value={productData[field.fieldName] ?? ""}
+                                onChange={(e) =>
+                                    handleChange(field.fieldName, e.target.value)
+                                }
+                                onFocus={() => setFocusField(field.fieldName)}
+                                style={{
+                                    width: "100%",
+                                    padding: 6,
+                                    border: focusField === field.fieldName
+                                        ? "2px solid #1976d2"
+                                        : "1px solid #ccc"
+                                }}
+                            />
+                        )}
+
+                        {isImage && (
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onFocus={() => setFocusField(field.fieldName)}
+                                onChange={(e) => {
+                                    const file = e.target.files[0];
+                                    if (file) handleImageUpload(field.fieldName, file);
+                                }}
+                            />
+                        )}
                     </div>
-                ))}
+                );
+            })}
 
-                <button
-                    onClick={saveData}
-                    style={{
-                        marginTop: 20,
-                        width: "100%",
-                        padding: 10,
-                        background: "#1976d2",
-                        color: "#fff",
-                        border: "none",
-                        cursor: "pointer"
-                    }}
-                >
-                    저장
-                </button>
-            </div>
-        );
-    };
+            <button onClick={saveData} style={{ width: "100%" }}>
+                저장
+            </button>
+        </div>
+    );
 
-    // -------------------------
+    // -----------------------------
     // CANVAS
-    // -------------------------
-    const renderCanvas = () => {
-        return (
-            <Stage width={900} height={600} style={{ border: "1px solid #ddd" }}>
-                <Layer>
+    // -----------------------------
+    const renderCanvas = () => (
+        <Stage width={900} height={600} style={{ border: "1px solid #ddd" }}>
+            <Layer>
 
-                    {templateData.canvasData.map(el => {
+                {templateData.canvasData.map(el => {
 
-                        const value = productData?.[el.fieldName] ?? "";
+                    const value = productData?.[el.fieldName];
+                    const isFocus = focusField === el.fieldName;
 
-                        if (el.type === "text") {
-                            return (
+                    // ---------------- TEXT ----------------
+                    if (el.type === "text") {
+                        return (
+                            <React.Fragment key={el.id}>
                                 <Text
-                                    key={el.id}
                                     x={el.x}
                                     y={el.y}
-                                    text={value}
+                                    text={value || ""}
                                     fontSize={el.fontSize || 20}
                                     fill={el.fill || "black"}
                                 />
-                            );
-                        }
 
-                        return null;
-                    })}
+                                {isFocus && (
+                                    <Rect
+                                        x={el.x - 4}
+                                        y={el.y - 4}
+                                        width={200}
+                                        height={30}
+                                        stroke="#1976d2"
+                                        dash={[6, 4]}
+                                    />
+                                )}
+                            </React.Fragment>
+                        );
+                    }
 
-                </Layer>
-            </Stage>
-        );
-    };
+                    // ---------------- IMAGE ----------------
+                    if (el.type === "image") {
+                        return (
+                            <CanvasImage
+                                key={el.id}
+                                el={el}
+                                src={value}
+                                isFocus={isFocus}
+                            />
+                        );
+                    }
 
-    // -------------------------
-    // UI
-    // -------------------------
+                    return null;
+                })}
+
+            </Layer>
+        </Stage>
+    );
+
     return (
         <div style={{ display: "flex", height: "100%" }}>
 

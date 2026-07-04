@@ -8,6 +8,13 @@ import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/pppo1000")
@@ -51,4 +58,17 @@ public class Pppo1000Controller {
 
         return ResponseEntity.ok(service.find(ordNo));
     }
+
+    @PostMapping("/upload/image")
+    public Map<String, String> upload(@RequestParam MultipartFile file) throws Exception {
+
+        String fileName = UUID.randomUUID() + ".png";
+        Path path = Paths.get("src/main/resources/static/userimage/", fileName);
+
+        Files.createDirectories(path.getParent());
+        file.transferTo(path);
+
+        return Map.of("url", "/userimage/" + fileName);
+    }
+
 }

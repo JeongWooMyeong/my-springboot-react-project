@@ -1,28 +1,30 @@
 import { useEffect, useState, useRef } from "react";
-import { Stage, Layer, Text, Image as KonvaImage } from "react-konva";
+import { Stage, Rect, Layer, Text, Image as KonvaImage } from "react-konva";
 import axios from "axios";
 import useImage from "use-image";
 
-export default function Sytm2000Page({ templateData }) {
+export default function Sytm2000Page({ templateData, dataMap = {} }) {
 
     const [elements, setElements] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
+    const [title, setTitle] = useState("");
 
     const stageRef = useRef(null);
 
     const selectedElement = elements.find(el => el.id === selectedId);
 
     // ----------------------------
-    // 초기 데이터 로딩 (핵심)
+    // INIT
     // ----------------------------
     useEffect(() => {
         if (!templateData) return;
 
         setElements(templateData.canvasData || []);
+        setTitle(templateData.title || "");
     }, [templateData]);
 
     // ----------------------------
-    // TEXT 추가
+    // ADD TEXT
     // ----------------------------
     const addText = () => {
         const newEl = {
@@ -40,30 +42,24 @@ export default function Sytm2000Page({ templateData }) {
     };
 
     // ----------------------------
-    // IMAGE 추가
+    // ADD IMAGE (fieldName만 저장)
     // ----------------------------
-    const addImage = (file) => {
-        const reader = new FileReader();
-
-        reader.onload = () => {
-            const newEl = {
-                id: Date.now(),
-                type: "image",
-                src: reader.result,
-                x: 100,
-                y: 100,
-                width: 150,
-                height: 120
-            };
-
-            setElements(prev => [...prev, newEl]);
+    const addImage = () => {
+        const newEl = {
+            id: Date.now(),
+            type: "image",
+            fieldName: `image_${Date.now()}`, // ⭐ 핵심
+            x: 100,
+            y: 100,
+            width: 150,
+            height: 120
         };
 
-        reader.readAsDataURL(file);
+        setElements(prev => [...prev, newEl]);
     };
 
     // ----------------------------
-    // 요소 업데이트
+    // UPDATE ELEMENT
     // ----------------------------
     const updateElement = (id, attrs) => {
         setElements(prev =>
@@ -73,9 +69,16 @@ export default function Sytm2000Page({ templateData }) {
         );
     };
 
-    // ----------------------------
-    // fieldName 수정
-    // ----------------------------
+    const updateText = (value) => {
+        setElements(prev =>
+            prev.map(el =>
+                el.id === selectedId
+                    ? { ...el, text: value }
+                    : el
+            )
+        );
+    };
+
     const updateFieldName = (value) => {
         setElements(prev =>
             prev.map(el =>
@@ -87,20 +90,7 @@ export default function Sytm2000Page({ templateData }) {
     };
 
     // ----------------------------
-    // text 수정
-    // ----------------------------
-    const updateText = (value) => {
-        setElements(prev =>
-            prev.map(el =>
-                el.id === selectedId
-                    ? { ...el, text: value }
-                    : el
-            )
-        );
-    };
-
-    // ----------------------------
-    // 삭제
+    // DELETE
     // ----------------------------
     const deleteElement = () => {
         if (!selectedId) return;
@@ -113,7 +103,7 @@ export default function Sytm2000Page({ templateData }) {
     };
 
     // ----------------------------
-    // 저장 (CREATE or UPDATE)
+    // SAVE TEMPLATE + THUMBNAIL
     // ----------------------------
     const saveTemplate = async () => {
 
@@ -123,11 +113,11 @@ export default function Sytm2000Page({ templateData }) {
                 pixelRatio: 0.3
             });
 
-            const thumbnailBlob = dataURLToBlob(thumbnailDataUrl);
+            const blob = dataURLToBlob(thumbnailDataUrl);
 
             const template = {
                 id: templateData?.id,
-                title: templateData?.title || "Sytm2000",
+                title: title,
                 canvasData: JSON.stringify(elements)
             };
 
@@ -135,56 +125,36 @@ export default function Sytm2000Page({ templateData }) {
 
             formData.append(
                 "template",
-                new Blob(
-                    [JSON.stringify(template)],
-                    {
-                        type: "application/json"
-                    }
-                )
+                new Blob([JSON.stringify(template)], {
+                    type: "application/json"
+                })
             );
 
-            formData.append(
-                "thumbnail",
-                thumbnailBlob,
-                "thumbnail.png"
-            );
+            formData.append("thumbnail", blob, "thumbnail.png");
 
             if (template.id) {
-
-                await axios.put(
-                    `/api/sytm2000/${template.id}`,
-                    formData
-                );
-
+                await axios.put(`/api/sytm2000/${template.id}`, formData);
             } else {
-
-                await axios.post(
-                    "/api/sytm2000",
-                    formData
-                );
-
+                await axios.post("/api/sytm2000", formData);
             }
 
             alert("저장 완료");
 
         } catch (e) {
-
             console.error(e);
-
             alert("저장 실패");
-
         }
-
     };
 
+    // ----------------------------
+    // UTIL
+    // ----------------------------
     const dataURLToBlob = (dataURL) => {
         const arr = dataURL.split(",");
         const mime = arr[0].match(/:(.*?);/)[1];
-
         const bstr = atob(arr[1]);
 
         let n = bstr.length;
-
         const u8arr = new Uint8Array(n);
 
         while (n--) {
@@ -200,23 +170,22 @@ export default function Sytm2000Page({ templateData }) {
     return (
         <div style={{ display: "flex", gap: 20, padding: 20 }}>
 
-            {/* LEFT PANEL */}
+            {/* LEFT */}
             <div style={{ width: 250 }}>
+
+                <h3>템플릿</h3>
+
+                <input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="템플릿 이름"
+                    style={{ width: "100%", padding: 6 }}
+                />
 
                 <h3>툴</h3>
 
                 <button onClick={addText}>+ 텍스트</button>
-
-                <br /><br />
-
-                <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) addImage(file);
-                    }}
-                />
+                <button onClick={addImage}>+ 이미지</button>
 
                 <br /><br />
 
@@ -230,10 +199,10 @@ export default function Sytm2000Page({ templateData }) {
 
                 <hr />
 
-                {/* 속성 편집 */}
+                {/* 속성 */}
                 {selectedElement && (
                     <div>
-                        <h4>속성 편집</h4>
+                        <h4>속성</h4>
 
                         {selectedElement.type === "text" && (
                             <>
@@ -247,20 +216,22 @@ export default function Sytm2000Page({ templateData }) {
                                     value={selectedElement.fieldName}
                                     onChange={(e) => updateFieldName(e.target.value)}
                                     placeholder="fieldName"
-                                    style={{ marginTop: 5 }}
                                 />
                             </>
                         )}
 
                         {selectedElement.type === "image" && (
-                            <p>이미지 요소 선택됨</p>
+                            <input
+                                value={selectedElement.fieldName || ""}
+                                onChange={(e) => updateFieldName(e.target.value)}
+                                placeholder="image fieldName"
+                            />
                         )}
                     </div>
                 )}
 
                 <hr />
 
-                <h4>JSON</h4>
                 <pre style={{ fontSize: 11 }}>
                     {JSON.stringify(elements, null, 2)}
                 </pre>
@@ -288,16 +259,13 @@ export default function Sytm2000Page({ templateData }) {
                                         fontSize={el.fontSize}
                                         fill={el.fill}
                                         draggable
-
                                         onClick={() => setSelectedId(el.id)}
-
-                                        onDragEnd={(e) => {
+                                        onDragEnd={(e) =>
                                             updateElement(el.id, {
                                                 x: e.target.x(),
                                                 y: e.target.y()
-                                            });
-                                        }}
-
+                                            })
+                                        }
                                         stroke={selectedId === el.id ? "blue" : null}
                                         strokeWidth={selectedId === el.id ? 2 : 0}
                                     />
@@ -309,6 +277,7 @@ export default function Sytm2000Page({ templateData }) {
                                     <CanvasImage
                                         key={el.id}
                                         el={el}
+                                        dataMap={dataMap}
                                         updateElement={updateElement}
                                         selectedId={selectedId}
                                         setSelectedId={setSelectedId}
@@ -328,32 +297,77 @@ export default function Sytm2000Page({ templateData }) {
 }
 
 // ----------------------------
-// IMAGE COMPONENT
+// IMAGE COMPONENT (핵심)
 // ----------------------------
-function CanvasImage({ el, updateElement, selectedId, setSelectedId }) {
+function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId }) {
 
-    const [img] = useImage(el.src);
+    const src = dataMap?.[el.fieldName];
+    const [img] = useImage(src || "");
+
+    const isEmpty = !src;
+
+    const isSelected = selectedId === el.id;
 
     return (
-        <KonvaImage
-            image={img}
-            x={el.x}
-            y={el.y}
-            width={el.width}
-            height={el.height}
-            draggable
+        <>
+            {/* =========================
+                IMAGE 존재할 때
+            ========================= */}
+            {!isEmpty && (
+                <KonvaImage
+                    image={img}
+                    x={el.x}
+                    y={el.y}
+                    width={el.width}
+                    height={el.height}
+                    draggable
+                    onClick={() => setSelectedId(el.id)}
+                    onDragEnd={(e) =>
+                        updateElement(el.id, {
+                            x: e.target.x(),
+                            y: e.target.y()
+                        })
+                    }
+                    stroke={isSelected ? "#1976d2" : null}
+                    strokeWidth={2}
+                />
+            )}
 
-            onClick={() => setSelectedId(el.id)}
+            {/* =========================
+                PLACEHOLDER (점선 박스)
+            ========================= */}
+            {isEmpty && (
+                <>
+                    <Rect
+                        x={el.x}
+                        y={el.y}
+                        width={el.width}
+                        height={el.height}
+                        fill="#fafafa"
+                        stroke={isSelected ? "#1976d2" : "#bbb"}
+                        strokeWidth={1}
+                        dash={[6, 4]}   // ⭐ 핵심: 점선
+                        draggable
+                        onClick={() => setSelectedId(el.id)}
+                        onDragEnd={(e) =>
+                            updateElement(el.id, {
+                                x: e.target.x(),
+                                y: e.target.y()
+                            })
+                        }
+                    />
 
-            onDragEnd={(e) => {
-                updateElement(el.id, {
-                    x: e.target.x(),
-                    y: e.target.y()
-                });
-            }}
-
-            stroke={selectedId === el.id ? "blue" : null}
-            strokeWidth={2}
-        />
+                    <Text
+                        x={el.x}
+                        y={el.y + el.height / 2 - 7}
+                        width={el.width}
+                        text={el.fieldName || "IMAGE"}
+                        fontSize={12}
+                        fill="#888"
+                        align="center"
+                    />
+                </>
+            )}
+        </>
     );
 }
