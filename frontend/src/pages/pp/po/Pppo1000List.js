@@ -59,7 +59,7 @@ export default function Pppo1000List({ onSelect }) {
                             src={
                                 item.thumbnailpath
                                     ? `http://localhost:8081${item.thumbnailpath}`
-                                    : "/thumb/noimage.png"
+                                    : "/upload/thumb/noimage.png"
                             }
                             alt="thumb"
                             style={{

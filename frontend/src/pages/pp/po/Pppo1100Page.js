@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Stage,
     Layer,
@@ -10,37 +9,44 @@ import {
 
 import useImage from "use-image";
 
-// -----------------------------
-// IMAGE COMPONENT (핵심)
-// -----------------------------
-function CanvasImage({ el, src, isFocus }) {
 
-    const [img] = useImage(src || "", "anonymous");
+// -----------------------------
+// IMAGE COMPONENT
+// -----------------------------
+function CanvasImage({ el, src, isFocus, onClick }) {
 
-    if (!src) {
-        return (
+    const [img, status] = useImage(src || "", "anonymous");
+
+    const hasImage = !!src && status === "loaded";
+
+    return (
+        <>
+            {/* 항상 영역 */}
             <Rect
                 x={el.x}
                 y={el.y}
                 width={el.width}
                 height={el.height}
-                fill="#f5f5f5"
+                fill={hasImage ? "transparent" : "#f5f5f5"}
                 stroke={isFocus ? "#1976d2" : "#aaa"}
                 dash={[6, 4]}
+                onClick={onClick}
             />
-        );
-    }
 
-    return (
-        <KonvaImage
-            image={img}
-            x={el.x}
-            y={el.y}
-            width={el.width}
-            height={el.height}
-        />
+            {/* 이미지 */}
+            {hasImage && (
+                <KonvaImage
+                    image={img}
+                    x={el.x}
+                    y={el.y}
+                    width={el.width}
+                    height={el.height}
+                />
+            )}
+        </>
     );
 }
+
 
 // -----------------------------
 // PAGE
@@ -59,6 +65,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
             .toString()
             .padStart(12, "0");
 
+
     // -----------------------------
     // LOAD TEMPLATE
     // -----------------------------
@@ -76,7 +83,9 @@ export default function Pppo1100Page({ templateid, onBack }) {
         })();
     }, [templateid]);
 
+
     if (!templateData) return <div>로딩중...</div>;
+
 
     // -----------------------------
     // INPUT CHANGE
@@ -88,8 +97,9 @@ export default function Pppo1100Page({ templateid, onBack }) {
         }));
     };
 
+
     // -----------------------------
-    // IMAGE UPLOAD → URL 저장
+    // IMAGE UPLOAD (URL 저장)
     // -----------------------------
     const handleImageUpload = async (fieldName, file) => {
 
@@ -104,13 +114,14 @@ export default function Pppo1100Page({ templateid, onBack }) {
             body: formData
         });
 
-        const url = await res.text();
+        const url = await res.json(); // {url: "..."} 가정
 
         setProductData(prev => ({
             ...prev,
-            [fieldName]: url
+            [fieldName]: url.url   // ⭐ string만 저장
         }));
     };
+
 
     // -----------------------------
     // SAVE
@@ -141,6 +152,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
         onBack();
     };
 
+
     // -----------------------------
     // GRID UI
     // -----------------------------
@@ -163,6 +175,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                             {field.fieldName}
                         </label>
 
+                        {/* TEXT */}
                         {!isImage && (
                             <input
                                 value={productData[field.fieldName] ?? ""}
@@ -180,6 +193,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                             />
                         )}
 
+                        {/* IMAGE */}
                         {isImage && (
                             <input
                                 type="file"
@@ -201,6 +215,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
         </div>
     );
 
+
     // -----------------------------
     // CANVAS
     // -----------------------------
@@ -213,7 +228,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                     const value = productData?.[el.fieldName];
                     const isFocus = focusField === el.fieldName;
 
-                    // ---------------- TEXT ----------------
+                    // TEXT
                     if (el.type === "text") {
                         return (
                             <React.Fragment key={el.id}>
@@ -239,7 +254,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                         );
                     }
 
-                    // ---------------- IMAGE ----------------
+                    // IMAGE
                     if (el.type === "image") {
                         return (
                             <CanvasImage
@@ -247,6 +262,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                                 el={el}
                                 src={value}
                                 isFocus={isFocus}
+                                onClick={() => setFocusField(el.fieldName)}
                             />
                         );
                     }
@@ -257,6 +273,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
             </Layer>
         </Stage>
     );
+
 
     return (
         <div style={{ display: "flex", height: "100%" }}>

@@ -22,7 +22,7 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
 
     private final Sytm2000Mapper mapper;
     private final String uploadDir =
-            "src/main/resources/static/thumb/";
+            "upload/thumb/";
 
     @Override
     public Long create(Sytm2000Dto dto, MultipartFile thumbnail) throws Exception {
@@ -83,6 +83,6 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
         file.transferTo(path);
 
         // DB에 저장할 값 (URL)
-        return "/thumb/" + fileName;
+        return "/upload/thumb/" + fileName;
     }
 }

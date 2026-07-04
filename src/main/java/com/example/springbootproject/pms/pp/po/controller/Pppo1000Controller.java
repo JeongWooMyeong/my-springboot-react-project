@@ -63,12 +63,17 @@ public class Pppo1000Controller {
     public Map<String, String> upload(@RequestParam MultipartFile file) throws Exception {
 
         String fileName = UUID.randomUUID() + ".png";
-        Path path = Paths.get("src/main/resources/static/userimage/", fileName);
+
+        String dir = System.getProperty("user.dir") + "/upload/userimage/";
+
+        Path path = Paths.get(dir, fileName);
 
         Files.createDirectories(path.getParent());
+
         file.transferTo(path);
 
-        return Map.of("url", "/userimage/" + fileName);
+        return Map.of(
+                "url", "http://localhost:8081/upload/userimage/" + fileName
+        );
     }
-
 }
