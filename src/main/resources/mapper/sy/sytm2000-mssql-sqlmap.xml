@@ -11,13 +11,15 @@
         title,
         canvas_data,
         created_at,
-        updated_at
+        updated_at,
+        thumbnailpath
         )
         VALUES (
         #{title},
         #{canvasData},
         #{createdAt},
-        #{updatedAt}
+        #{updatedAt},
+        #{thumbnailpath}
         )
     </insert>
 
@@ -28,7 +30,8 @@
         title,
         canvas_data AS canvasData,
         created_at AS createdAt,
-        updated_at AS updatedAt
+        updated_at AS updatedAt,
+        thumbnailpath
         FROM template
         ORDER BY id DESC
     </select>
@@ -40,19 +43,29 @@
         title,
         canvas_data AS canvasData,
         created_at AS createdAt,
-        updated_at AS updatedAt
+        updated_at AS updatedAt,
+        thumbnailpath
         FROM template
         WHERE id = #{id}
     </select>
 
     <!-- UPDATE -->
-    <update id="update">
-        UPDATE template
+    <update id="update"
+            parameterType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+
+        UPDATE SYTM2000
+
         SET
         title = #{title},
         canvas_data = #{canvasData},
         updated_at = #{updatedAt}
+
+        <if test="thumbnailpath != null">
+            , thumbnail_path = #{thumbnailpath}
+        </if>
+
         WHERE id = #{id}
+
     </update>
 
     <!-- DELETE -->

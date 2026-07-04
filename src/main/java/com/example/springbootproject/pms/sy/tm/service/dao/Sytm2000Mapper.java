@@ -9,13 +9,13 @@ import java.util.Map;
 @Mapper
 public interface Sytm2000Mapper {
 
-    int insert(Map<String, Object> param);
+    int insert(Sytm2000Dto dto);
 
     List<Sytm2000Dto> selectList();
 
     Sytm2000Dto selectById(Long id);
 
-    int update(Map<String, Object> param);
+    int update(Sytm2000Dto dto);
 
     int delete(Long id);
 }

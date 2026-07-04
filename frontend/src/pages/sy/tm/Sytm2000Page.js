@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Stage, Layer, Text, Image as KonvaImage } from "react-konva";
 import axios from "axios";
 import useImage from "use-image";
@@ -7,6 +7,8 @@ export default function Sytm2000Page({ templateData }) {
 
     const [elements, setElements] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
+
+    const stageRef = useRef(null);
 
     const selectedElement = elements.find(el => el.id === selectedId);
 
@@ -114,27 +116,82 @@ export default function Sytm2000Page({ templateData }) {
     // 저장 (CREATE or UPDATE)
     // ----------------------------
     const saveTemplate = async () => {
+
         try {
 
-            const payload = {
+            const thumbnailDataUrl = stageRef.current.toDataURL({
+                pixelRatio: 0.3
+            });
+
+            const thumbnailBlob = dataURLToBlob(thumbnailDataUrl);
+
+            const template = {
+                id: templateData?.id,
                 title: templateData?.title || "Sytm2000",
                 canvasData: JSON.stringify(elements)
             };
 
-            if (templateData?.id) {
-                // UPDATE
-                await axios.put(`/api/sytm2000/${templateData.id}`, payload);
+            const formData = new FormData();
+
+            formData.append(
+                "template",
+                new Blob(
+                    [JSON.stringify(template)],
+                    {
+                        type: "application/json"
+                    }
+                )
+            );
+
+            formData.append(
+                "thumbnail",
+                thumbnailBlob,
+                "thumbnail.png"
+            );
+
+            if (template.id) {
+
+                await axios.put(
+                    `/api/sytm2000/${template.id}`,
+                    formData
+                );
+
             } else {
-                // CREATE
-                await axios.post("/api/sytm2000", payload);
+
+                await axios.post(
+                    "/api/sytm2000",
+                    formData
+                );
+
             }
 
             alert("저장 완료");
 
         } catch (e) {
+
             console.error(e);
+
             alert("저장 실패");
+
         }
+
+    };
+
+    const dataURLToBlob = (dataURL) => {
+        const arr = dataURL.split(",");
+        const mime = arr[0].match(/:(.*?);/)[1];
+
+        const bstr = atob(arr[1]);
+
+        let n = bstr.length;
+
+        const u8arr = new Uint8Array(n);
+
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+
+        return new Blob([u8arr], { type: mime });
     };
 
     // ----------------------------
@@ -211,7 +268,12 @@ export default function Sytm2000Page({ templateData }) {
 
             {/* CANVAS */}
             <div>
-                <Stage width={800} height={600} style={{ border: "1px solid #ccc" }}>
+                <Stage
+                    ref={stageRef}
+                    width={800}
+                    height={600}
+                    style={{ border: "1px solid #ccc" }}
+                >
                     <Layer>
 
                         {elements.map(el => {

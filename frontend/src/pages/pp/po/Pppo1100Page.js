@@ -70,6 +70,9 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
             alert("저장 완료");
 
+            // 목록으로 이동
+            onBack();
+
         } catch (e) {
             console.error(e);
             alert("저장 실패");

@@ -18,4 +18,6 @@ public class Sytm2000Dto {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private String thumbnailpath;
 }

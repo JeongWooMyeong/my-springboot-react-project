@@ -5,26 +5,41 @@ import com.example.springbootproject.pms.sy.tm.service.Sytm2000Service;
 import com.example.springbootproject.pms.sy.tm.service.dao.Sytm2000Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class Sytm2000ServiceImpl implements Sytm2000Service {
 
     private final Sytm2000Mapper mapper;
+    private final String uploadDir =
+            "src/main/resources/static/thumb/";
 
     @Override
-    public Long create(Map<String, Object> param) {
+    public Long create(Sytm2000Dto dto, MultipartFile thumbnail) throws Exception {
 
-        param.put("createdAt", LocalDateTime.now());
-        param.put("updatedAt", LocalDateTime.now());
+        dto.setCreatedAt(LocalDateTime.now());
+        dto.setUpdatedAt(LocalDateTime.now());
 
-        mapper.insert(param);
+        if (thumbnail != null && !thumbnail.isEmpty()) {
 
-        return Long.valueOf(param.get("id").toString());
+            String thumbnailPath = saveThumbnail(thumbnail);
+
+            dto.setThumbnailpath(thumbnailPath);
+        }
+
+        mapper.insert(dto);
+
+        return dto.getId();
     }
 
     @Override
@@ -38,16 +53,36 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
     }
 
     @Override
-    public int update(Long id, Map<String, Object> param) {
+    public int update(Sytm2000Dto dto, MultipartFile thumbnail) throws Exception {
 
-        param.put("id", id);
-        param.put("updatedAt", LocalDateTime.now());
+        dto.setUpdatedAt(LocalDateTime.now());
 
-        return mapper.update(param);
+        if (thumbnail != null && !thumbnail.isEmpty()) {
+
+            String thumbnailPath = saveThumbnail(thumbnail);
+
+            dto.setThumbnailpath(thumbnailPath);
+        }
+
+        return mapper.update(dto);
     }
 
     @Override
     public int delete(Long id) {
         return mapper.delete(id);
+    }
+
+    private String saveThumbnail(MultipartFile file) throws Exception {
+
+        Files.createDirectories(Paths.get(uploadDir));
+
+        String fileName = UUID.randomUUID() + ".png";
+
+        Path path = Paths.get(uploadDir, fileName);
+
+        file.transferTo(path);
+
+        // DB에 저장할 값 (URL)
+        return "/thumb/" + fileName;
     }
 }
