@@ -1,54 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { useMenu } from "../../context/MenuContext";
 
 function Sidebar() {
-    const [menus, setMenus] = useState([]);
+    const { menus } = useMenu(); // ✅ Context에서 메뉴 가져오기
 
-    // 트리 변환 함수
     function buildTree(data) {
         const map = {};
         const roots = [];
-
-        // SY prefix만 필터링
         const filtered = data.filter(item => item.menuCd.startsWith("SY"));
-
-        // 각 메뉴를 map에 등록
+        filtered.forEach(item => { map[item.menuCd] = { ...item, children: [] }; });
         filtered.forEach(item => {
-            map[item.menuCd] = { ...item, children: [] };
+            if (item.menuPrntCd === "0") roots.push(map[item.menuCd]);
+            else if (map[item.menuPrntCd]) map[item.menuPrntCd].children.push(map[item.menuCd]);
         });
-
-        // 부모-자식 관계 연결
-        filtered.forEach(item => {
-            if (item.menuPrntCd === "0") {
-                roots.push(map[item.menuCd]);
-            } else {
-                if (map[item.menuPrntCd]) {
-                    map[item.menuPrntCd].children.push(map[item.menuCd]);
-                }
-            }
-        });
-
         return roots;
     }
 
-    useEffect(() => {
-        axios.get("/api/sysm1000/menus")
-            .then(res => {
-                const treeData = buildTree(res.data);
-                setMenus(treeData);
-            })
-            .catch(err => console.error(err));
-    }, []);
+    const treeData = buildTree(menus);
 
     const renderTree = (menu) => (
         <li key={menu.menuCd}>
             <Link to={menu.dedName || "#"}>{menu.menuName}</Link>
-            {menu.children && menu.children.length > 0 && (
-                <ul>
-                    {menu.children.map(child => renderTree(child))}
-                </ul>
-            )}
+            {menu.children?.length > 0 && <ul>{menu.children.map(renderTree)}</ul>}
         </li>
     );
 
@@ -56,8 +30,8 @@ function Sidebar() {
         <aside className="sidebar">
             <h3>SY 메뉴</h3>
             <ul>
-                {menus.length > 0
-                    ? menus.map(menu => renderTree(menu))
+                {treeData.length > 0
+                    ? treeData.map(renderTree)
                     : <li>SY prefix 메뉴가 없습니다</li>}
             </ul>
         </aside>

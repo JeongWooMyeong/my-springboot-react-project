@@ -4,6 +4,7 @@ import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./layout/Layout";
+import SidebarLayout from "./layout/SidebarLayout"; // 새로 만든 사이드바 레이아웃
 import { componentMap } from "./pages/routes/routes";
 import { MenuProvider, useMenu } from "./context/MenuContext";
 
@@ -25,19 +26,22 @@ function AppRoutes() {
             } />
 
             {/* DB 기반 라우트 */}
-            {routesFromDB.map(({ dedName, xpn }) => {
+            {routesFromDB.map(({ menuCd, dedName, xpn }) => {
                 const PageComponent = componentMap[xpn];
+                // menuCd가 "SY"로 시작하면 SidebarLayout, 아니면 기본 Layout
+                const LayoutComponent = menuCd.startsWith("SY") ? SidebarLayout : Layout;
+
                 return (
                     <Route
                         key={dedName}
                         path={dedName}
                         element={
                             <ProtectedRoute>
-                                <Layout>
+                                <LayoutComponent>
                                     <Suspense fallback={<div>Loading...</div>}>
                                         <PageComponent />
                                     </Suspense>
-                                </Layout>
+                                </LayoutComponent>
                             </ProtectedRoute>
                         }
                     />

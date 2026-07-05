@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {Table, Card, Input, Button, Form, Select, Modal, message} from 'antd';
 import axios from 'axios';
-import Sidebar from "../../components/Sidebar";
 import JijumSelect from "../../components/JijumSelect";
 import "../../../css/layout.css";
 
@@ -34,26 +33,13 @@ const columns = [
     { title: 'Web/Mobile Use', dataIndex: 'webmobileuse', key: 'webmobileuse', width: 150 },*/
 ];
 
-const roleColumns = [
-    {
-        title: 'Role ID',
-        dataIndex: 'roleno',
-        key: 'roleno'
-    },
-    {
-        title: 'Role Name',
-        dataIndex: 'rolename',
-        key: 'rolename'
-    }
-];
-
 export default function Syep4000Grid() {
-    const [selectedMenuCd, setSelectedMenuCd] = useState(null);
+
     const [rows, setRows] = useState([]);
-    const [users, setUsers] = useState([]);
+
     const [roles, setRoles] = useState([]);
     const [userRoles, setUserRoles] = useState([]); // 체크된 role ids
-    const [selectedUser, setSelectedUser] = useState(null);
+    const [setSelectedUser] = useState(null);
     const [searchForm] = Form.useForm();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -180,7 +166,6 @@ export default function Syep4000Grid() {
 
     return (
         <>
-            <Sidebar selectedMenuCd={selectedMenuCd} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <Card title="User List" style={{ marginBottom: 16 }}>
                     {/* 검색 필터 영역 */}

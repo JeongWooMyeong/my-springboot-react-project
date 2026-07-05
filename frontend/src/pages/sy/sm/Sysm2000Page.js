@@ -3,7 +3,6 @@ import { Table, Card, Tree, Checkbox, Button } from "antd";
 import axios from "axios";
 import { useMenu } from "../../../context/MenuContext";
 import RoleModal from "../../components/RoleModal";
-import Sidebar from "../../components/Sidebar";
 
 // 트리 구조 변환 함수
 function buildTree(data) {
@@ -32,8 +31,6 @@ function buildTree(data) {
 }
 
 const Sysm2000Page = () => {
-
-    const [selectedMenuCd] = useState(null);
 
     const [roles, setRoles] = useState([]);
     const [selectedRole, setSelectedRole] = useState(null);
@@ -275,7 +272,6 @@ const Sysm2000Page = () => {
 
     return (
         <>
-            <Sidebar selectedMenuCd={selectedMenuCd} />
             <Card
                 title={<span style={{ lineHeight: "32px" }}>Sysm2000 Role List</span>}
                 extra={

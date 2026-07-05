@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "../../components/Sidebar";
 import "../../../css/layout.css";
 import { Tree, Table, Button, Modal, Form, Input } from "antd";
 import { useMenu } from "../../../context/MenuContext";
@@ -132,7 +131,6 @@ function Sysm1000Page() {
 
     return (
         <>
-        <Sidebar selectedMenuCd={selectedMenuCd} />
         <div className="layout">
             <div className="content">
                 <div className="tree-header">
