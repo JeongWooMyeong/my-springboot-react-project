@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.sy.ep.service.dao.Syep2000Mapper">
+    <select id="selectAll" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep2000Dto">
+        SELECT coid, coname, tmpfileroot, fluptmproot, rgdate, rgr, upddate, updpn
+        FROM syep2000t
+    </select>
+
+    <select id="selectById" parameterType="String" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep2000Dto">
+        SELECT coid, coname, tmpfileroot, fluptmproot, rgdate, rgr, upddate, updpn
+        FROM syep2000t
+        WHERE coid = #{coid}
+    </select>
+
+    <insert id="insert" parameterType="com.example.springbootproject.pms.sy.ep.dto.Syep2000Dto">
+        INSERT INTO syep2000t (
+            coid, coname, tmpfileroot, fluptmproot, rgdate, rgr, upddate, updpn
+        ) VALUES (
+                     #{coid}, #{coname}, #{tmpfileroot}, #{fluptmproot}, #{rgdate}, #{rgr}, #{upddate}, #{updpn}
+                 )
+    </insert>
+
+    <update id="update" parameterType="com.example.springbootproject.pms.sy.ep.dto.Syep2000Dto">
+        UPDATE syep2000t
+        SET coname=#{coname},
+            tmpfileroot=#{tmpfileroot},
+            fluptmproot=#{fluptmproot},
+            rgdate=#{rgdate},
+            rgr=#{rgr},
+            upddate=#{upddate},
+            updpn=#{updpn}
+        WHERE coid=#{coid}
+    </update>
+
+    <delete id="delete" parameterType="String">
+        DELETE FROM syep2000t WHERE coid=#{coid}
+    </delete>
+</mapper>

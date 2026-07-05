@@ -1,8 +1,10 @@
 package com.example.springbootproject.pms.pp.po.controller;
 
 import com.example.springbootproject.pms.config.JwtConfig;
+import com.example.springbootproject.pms.login.dto.Syep4000VO;
 import com.example.springbootproject.pms.pp.po.dto.Pppo1000Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo1000Service;
+import com.example.springbootproject.pms.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -29,20 +31,12 @@ public class Pppo1000Controller {
     @PostMapping
     public ResponseEntity<?> save(@RequestBody Pppo1000Dto dto, @RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
+        Syep4000VO user = JwtUtil.parseToken(token);
 
-        Claims claims = Jwts.parser()
-                .verifyWith(JwtConfig.getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
 
-        String userid = claims.getSubject();
-        String jijumcd = claims.get("jijumcd", String.class);
-        String coid = claims.get("coid", String.class);
-
-        dto.setRgr(userid);
-        dto.setJijumcd(jijumcd);
-        dto.setCoid(coid);
+        dto.setRgr(user.getUserid());
+        dto.setJijumcd(user.getJijumcd());
+        dto.setCoid(user.getJijumcd());
         dto.setNtnid("NL01");
 
         service.save(dto);

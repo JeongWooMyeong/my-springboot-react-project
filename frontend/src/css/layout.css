@@ -1262,3 +1262,27 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 	cursor: pointer;
 	font-weight: bold;
 }
+
+.tree-headers {
+	border: 1px solid #ddd;
+	padding: 15px;
+	border-radius: 6px;
+	margin-bottom: 20px;
+	background-color: #fafafa;
+}
+
+.header-title {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 12px;
+}
+
+.company-select {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.company-select .label {
+	font-weight: bold;
+}
