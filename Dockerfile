@@ -22,7 +22,7 @@ RUN ./gradlew build -x test --no-daemon || true
 COPY . .
 
 # 프론트 결과 복사
-COPY --from=frontend /app/frontend/build /app/src/main/resources/static
+COPY --from=frontend /app/frontend/dist /app/src/main/resources/static
 
 # clean 제거 → 증분 빌드 가능
 RUN ./gradlew bootJar -x buildFrontend --no-daemon
