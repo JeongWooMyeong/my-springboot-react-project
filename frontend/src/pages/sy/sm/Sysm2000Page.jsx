@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Table, Card, Tree, Checkbox, Button } from "antd";
 import axios from "axios";
-import { useMenu } from "../../../context/MenuContext";
-import RoleModal from "../../components/RoleModal";
+import { useMenu } from "../../../context/MenuContext.jsx";
+import RoleModal from "../../components/RoleModal.jsx";
 
 // 트리 구조 변환 함수
 function buildTree(data) {

@@ -72,7 +72,7 @@ tasks.register('buildFrontend', Exec) {
 
 tasks.register('copyFrontend', Copy) {
     onlyIf { project.hasProperty('frontend') }  // ✅ frontend flag 있을 때만 실행
-    from("$projectDir/frontend/build")
+    from("$projectDir/frontend/dist")
     into("$projectDir/src/main/resources/static")
 }
 

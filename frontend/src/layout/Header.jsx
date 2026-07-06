@@ -1,4 +1,4 @@
-import Menu from "../pages/Menu";
+import Menu from "../pages/Menu.jsx";
 
 
 function Header(){

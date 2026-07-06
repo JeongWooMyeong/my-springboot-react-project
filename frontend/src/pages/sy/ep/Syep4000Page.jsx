@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {Table, Card, Input, Button, Form, Select, Modal, message} from 'antd';
 import axios from 'axios';
-import JijumSelect from "../../components/JijumSelect";
+import JijumSelect from "../../components/JijumSelect.jsx";
 import "../../../css/layout.css";
 
 const columns = [

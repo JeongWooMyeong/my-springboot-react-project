@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useMenu } from "../../context/MenuContext";
+import { useMenu } from "../../context/MenuContext.jsx";
 
 function Sidebar() {
     const { menus } = useMenu(); // ✅ Context에서 메뉴 가져오기

@@ -1,12 +1,12 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
 import React, { Suspense } from "react";
-import LoginPage from "./pages/LoginPage";
-import MainPage from "./pages/MainPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Layout from "./layout/Layout";
-import SidebarLayout from "./layout/SidebarLayout"; // 새로 만든 사이드바 레이아웃
-import { componentMap } from "./pages/routes/routes";
-import { MenuProvider, useMenu } from "./context/MenuContext";
+import LoginPage from "./pages/LoginPage.jsx";
+import MainPage from "./pages/MainPage.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import Layout from "./layout/Layout.jsx";
+import SidebarLayout from "./layout/SidebarLayout.jsx"; // 새로 만든 사이드바 레이아웃
+import { componentMap } from "./pages/routes/routes.jsx";
+import { MenuProvider, useMenu } from "./context/MenuContext.jsx";
 
 function AppRoutes() {
     const { routesFromDB } = useMenu();

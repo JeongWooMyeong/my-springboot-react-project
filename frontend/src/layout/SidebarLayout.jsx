@@ -1,6 +1,6 @@
-import Sidebar from "../pages/components/Sidebar";
-import Header from "./Header";
-import Footer from "./Footer";
+import Sidebar from "../pages/components/Sidebar.jsx";
+import Header from "./Header.jsx";
+import Footer from "./Footer.jsx";
 
 function SidebarLayout({ children }) {
     return (

@@ -1,6 +1,6 @@
 import React from "react";
-import Header from "./Header";
-import Footer from "./Footer";
+import Header from "./Header.jsx";
+import Footer from "./Footer.jsx";
 import "../css/component.css";
 import "../css/layout.css";
 

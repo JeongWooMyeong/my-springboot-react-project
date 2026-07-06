@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import "../css/layout.css";
-import { useMenu } from "../context/MenuContext";
+import { useMenu } from "../context/MenuContext.jsx";
 
 function Menu({ userinfo }) {
     const { menus } = useMenu();  // ✅ menus가 undefined일 경우 빈 배열로 처리

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../../css/layout.css";
 import { Tree, Table, Button, Modal, Form, Input } from "antd";
-import { useMenu } from "../../../context/MenuContext";
+import { useMenu } from "../../../context/MenuContext.jsx";
 
 // 트리 구조 변환 함수
 function buildTree(data) {
