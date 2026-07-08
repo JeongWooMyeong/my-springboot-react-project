@@ -6,9 +6,11 @@ import com.example.springbootproject.pms.sy.tm.dto.Sytm1010Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm1000Service;
 import com.example.springbootproject.pms.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sytm1000")
@@ -62,5 +64,23 @@ public class Sytm1000Controller {
     @PostMapping("/activate/children")
     public void activateChidren(@RequestBody List<Sytm1010Dto> dtos, HttpServletRequest request) {
         sytm1000Service.activateChildren(dtos);
+    }
+
+    @PostMapping("/add")
+    public ResponseEntity<Void> addClassification(@RequestBody Sytm1000Dto dto) {
+        sytm1000Service.addClassification(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateClassification(@RequestBody Sytm1000Dto dto) {
+        sytm1000Service.updateClassification(dto);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteClassification(@RequestBody Map<String, List<String>> body) {
+        sytm1000Service.deleteClassification(body.get("clcds"));
+        return ResponseEntity.ok().build();
     }
 }

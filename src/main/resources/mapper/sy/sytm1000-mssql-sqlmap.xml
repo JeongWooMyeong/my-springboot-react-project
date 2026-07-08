@@ -108,4 +108,35 @@
         ) AS c
     </insert>
 
+    <insert id="insertClassification">
+        INSERT INTO pppo7010t (
+            clcd,
+            prdnclcd,
+            clname,
+            useean,
+            qeesqo
+        )
+        VALUES (
+                   #{clcd},
+                   #{prdnclcd},
+                   #{clname},
+                   #{useean},
+                   #{qeesqo}
+               )
+    </insert>
+
+    <update id="updateClassification">
+        UPDATE pppo7010t
+        SET clname = #{clname}
+        WHERE clcd = #{clcd}
+    </update>
+
+    <delete id="deleteClassification">
+        DELETE FROM pppo7010t
+        WHERE clcd IN
+        <foreach collection="clcds" item="clcd" open="(" separator="," close=")">
+            #{clcd}
+        </foreach>
+    </delete>
+
 </mapper>

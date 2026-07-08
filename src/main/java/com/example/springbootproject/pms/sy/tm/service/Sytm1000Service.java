@@ -15,4 +15,8 @@ public interface Sytm1000Service {
     void activate(List<Sytm1010Dto> dtos);
     void deactivate(String clcd, String jijumcd);
     void activateChildren(List<Sytm1010Dto> dtos);
+
+    void addClassification(Sytm1000Dto dto);
+    void updateClassification(Sytm1000Dto dto);
+    void deleteClassification(List<String> clcds);
 }

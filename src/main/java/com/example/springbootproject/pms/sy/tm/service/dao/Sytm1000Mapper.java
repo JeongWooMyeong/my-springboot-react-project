@@ -32,4 +32,8 @@ public interface Sytm1000Mapper {
                               @Param("ntnid") String ntnid,
                               @Param("updpn") String updpn,
                               @Param("clcds") List<String> clcds);
+
+    void insertClassification(Sytm1000Dto dto);
+    void updateClassification(Sytm1000Dto dto);
+    void deleteClassification(@Param("clcds") List<String> clcds);
 }

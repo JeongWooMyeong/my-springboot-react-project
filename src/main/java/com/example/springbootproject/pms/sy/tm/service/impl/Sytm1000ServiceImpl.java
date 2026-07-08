@@ -124,4 +124,19 @@ public class Sytm1000ServiceImpl implements Sytm1000Service {
         mapper.insertActiveChildren(baseJijum, coid, ntnid, updpn, clcds);
     }
 
+    @Override
+    public void addClassification(Sytm1000Dto dto) {
+        mapper.insertClassification(dto);
+    }
+
+    @Override
+    public void updateClassification(Sytm1000Dto dto) {
+        mapper.updateClassification(dto);
+    }
+
+    @Override
+    public void deleteClassification(List<String> clcds) {
+        mapper.deleteClassification(clcds);
+    }
+
 }
