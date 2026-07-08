@@ -57,4 +57,10 @@ public class Sytm1000Controller {
     public void deactivate(@RequestParam String clcd, @RequestParam String jijumcd) {
         sytm1000Service.deactivate(clcd, jijumcd);
     }
+
+    // 활성화 등록
+    @PostMapping("/activate/children")
+    public void activateChidren(@RequestBody List<Sytm1010Dto> dtos, HttpServletRequest request) {
+        sytm1000Service.activateChildren(dtos);
+    }
 }

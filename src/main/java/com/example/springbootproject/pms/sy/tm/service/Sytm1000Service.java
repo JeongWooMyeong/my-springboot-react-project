@@ -14,4 +14,5 @@ public interface Sytm1000Service {
     List<Sytm1010Dto> getActiveByJijum(String jijumcd);
     void activate(List<Sytm1010Dto> dtos);
     void deactivate(String clcd, String jijumcd);
+    void activateChildren(List<Sytm1010Dto> dtos);
 }

@@ -118,31 +118,49 @@ const Sytm1000Page = () => {
     /**
      * 선택 지점 + 하위 지점 저장
      */
-    const handleSaveChildren = () => {
+    const handleSaveChildren = async () => {
 
         if (!jijumcd) {
             alert("지점을 선택하세요.");
             return;
         }
 
+        const user = JSON.parse(localStorage.getItem("user"));
 
-        axios.post("/api/sytm1000/activate/children", {
+        const coid = user?.coid;
 
-            // 기준 지점
+
+        const saveList = activeKeys.map(clcd => ({
+            coid: coid,
             jijumcd: jijumcd,
+            clcd: clcd,
+            ntnid: 'NL01'
+        }));
 
-            // 체크된 분류
-            clcds: activeKeys
 
-        })
+        axios.post("/api/sytm1000/activate/children", saveList)
             .then(() => {
-                alert("하위 포함 저장 완료");
+
+                alert("하위 지점 저장 완료");
+
+                return axios.get(
+                    `/api/sytm1000/active?jijumcd=${jijumcd}`
+                );
+
+            })
+            .then(res => {
+
+                setActiveKeys(
+                    res.data.map(item => String(item.clcd))
+                );
+
             })
             .catch(err => {
+
                 console.error(err);
                 alert("저장 실패");
-            });
 
+            });
     };
 
 

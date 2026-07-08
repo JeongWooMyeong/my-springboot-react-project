@@ -43,4 +43,69 @@
         WHERE jijumcd = #{jijumcd}
     </delete>
 
+    <select id="findChildren" parameterType="string" resultType="string">
+        WITH Hierarchy AS (
+            SELECT jijumcd, jijumname, jijumclcd
+            FROM syep1000t
+            WHERE jijumcd = #{jijumcd}
+            UNION ALL
+            SELECT j.jijumcd, j.jijumname, j.jijumclcd
+            FROM syep1000t j
+                     INNER JOIN Hierarchy h ON j.jijumclcd = h.jijumcd
+        )
+        SELECT jijumcd FROM Hierarchy
+    </select>
+
+    <!-- Batch Insert -->
+    <insert id="insertActiveBatch">
+        INSERT INTO pppo7000t (clcd, jijumcd, coid, ntnid, upddate, updpn)
+        VALUES
+        <foreach collection="list" item="dto" separator=",">
+            (#{dto.clcd}, #{dto.jijumcd}, #{dto.coid}, #{dto.ntnid}, #{dto.upddate}, #{dto.updpn})
+        </foreach>
+    </insert>
+
+    <!-- Batch Delete -->
+    <delete id="deleteActiveBatch">
+        DELETE FROM pppo7000t
+        WHERE jijumcd IN
+        <foreach collection="jijums" item="j" open="(" separator="," close=")">
+            #{j}
+        </foreach>
+    </delete>
+
+    <delete id="deleteActiveChildren">
+        WITH Hierarchy AS (
+            SELECT jijumcd, jijumname, jijumclcd
+            FROM syep1000t
+            WHERE jijumcd = #{jijumcd}
+            UNION ALL
+            SELECT j.jijumcd, j.jijumname, j.jijumclcd
+            FROM syep1000t j
+                     INNER JOIN Hierarchy h ON j.jijumclcd = h.jijumcd
+        )
+        DELETE FROM pppo7000t
+        WHERE jijumcd IN (SELECT jijumcd FROM Hierarchy)
+    </delete>
+
+    <insert id="insertActiveChildren">
+        WITH Hierarchy AS (
+        SELECT jijumcd, jijumname, jijumclcd
+        FROM syep1000t
+        WHERE jijumcd = #{jijumcd}
+        UNION ALL
+        SELECT j.jijumcd, j.jijumname, j.jijumclcd
+        FROM syep1000t j
+        INNER JOIN Hierarchy h ON j.jijumclcd = h.jijumcd
+        )
+        INSERT INTO pppo7000t (clcd, jijumcd, coid, ntnid, upddate, updpn)
+        SELECT c.clcd, h.jijumcd, #{coid}, #{ntnid}, GETDATE(), #{updpn}
+        FROM Hierarchy h
+        CROSS JOIN (
+        <foreach collection="clcds" item="c" separator=" UNION ALL ">
+            SELECT #{c} AS clcd
+        </foreach>
+        ) AS c
+    </insert>
+
 </mapper>

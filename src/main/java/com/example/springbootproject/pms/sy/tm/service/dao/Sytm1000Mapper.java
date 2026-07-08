@@ -17,4 +17,19 @@ public interface Sytm1000Mapper {
     List<Sytm1010Dto> selectActiveByJijum(@Param("jijumcd") String jijumcd);
     void insertActive(Sytm1010Dto dto);
     void deleteActive(@Param("clcd") String clcd, @Param("jijumcd") String jijumcd);
+
+    List<String> findChildren(@Param("jijumcd") String jijumcd);
+
+    void deleteActiveBatch(@Param("jijums") List<String> jijums,
+                           @Param("clcds") List<String> clcds);
+
+    void insertActiveBatch(@Param("list") List<Sytm1010Dto> list);
+
+    void deleteActiveChildren(@Param("jijumcd") String jijumcd);
+
+    void insertActiveChildren(@Param("jijumcd") String jijumcd,
+                              @Param("coid") String coid,
+                              @Param("ntnid") String ntnid,
+                              @Param("updpn") String updpn,
+                              @Param("clcds") List<String> clcds);
 }
