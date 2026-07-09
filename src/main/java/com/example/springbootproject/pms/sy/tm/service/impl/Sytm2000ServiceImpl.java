@@ -39,6 +39,15 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
 
         mapper.insert(dto);
 
+        Sytm2000Dto active = new Sytm2000Dto();
+        active.setTmpno(dto.getId());   // SYTM2000 PK 참조
+        active.setClcd(dto.getClcd());
+        //active.setActive(true);
+        //active.setCreatedAt(LocalDateTime.now());
+
+        mapper.insertActive(active);
+
+
         return dto.getId();
     }
 

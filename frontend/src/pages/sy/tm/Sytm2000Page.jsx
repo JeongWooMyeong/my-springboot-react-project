@@ -1,373 +1,151 @@
-import { useEffect, useState, useRef } from "react";
-import { Stage, Rect, Layer, Text, Image as KonvaImage } from "react-konva";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import useImage from "use-image";
+import { Modal, Checkbox, Pagination } from "antd";
+import ClassificationSelectTree from "../../components/ClassificationSelectTree";
+import TemplateEditor from "../../components/TemplateEditor";
 
-export default function Sytm2000Page({ templateData, dataMap = {} }) {
+const Sytm2000Page = () => {
+    const [treeData, setTreeData] = useState([]);
+    const [selectedKeys, setSelectedKeys] = useState([]);
+    const [templates, setTemplates] = useState([]);
+    const [selectedTemplates, setSelectedTemplates] = useState([]);
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [editingTemplate, setEditingTemplate] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+    const pageSize = 6; // 페이지당 6개
 
-    const [elements, setElements] = useState([]);
-    const [selectedId, setSelectedId] = useState(null);
-    const [title, setTitle] = useState("");
 
-    const stageRef = useRef(null);
-
-    const selectedElement = elements.find(el => el.id === selectedId);
-
-    // ----------------------------
-    // INIT
-    // ----------------------------
+    // 분류 트리 데이터 로드
     useEffect(() => {
-        if (!templateData) return;
+        axios.get("/api/sytm1000")
+            .then(res => setTreeData(res.data))
+            .catch(err => console.error(err));
+    }, []);
 
-        setElements(templateData.canvasData || []);
-        setTitle(templateData.title || "");
-    }, [templateData]);
-
-    // ----------------------------
-    // ADD TEXT
-    // ----------------------------
-    const addText = () => {
-        const newEl = {
-            id: Date.now(),
-            type: "text",
-            text: "텍스트",
-            fieldName: `field_${Date.now()}`,
-            x: 100,
-            y: 100,
-            fontSize: 20,
-            fill: "black"
-        };
-
-        setElements(prev => [...prev, newEl]);
-    };
-
-    // ----------------------------
-    // ADD IMAGE (fieldName만 저장)
-    // ----------------------------
-    const addImage = () => {
-        const newEl = {
-            id: Date.now(),
-            type: "image",
-            fieldName: `image_${Date.now()}`, // ⭐ 핵심
-            x: 100,
-            y: 100,
-            width: 150,
-            height: 120
-        };
-
-        setElements(prev => [...prev, newEl]);
-    };
-
-    // ----------------------------
-    // UPDATE ELEMENT
-    // ----------------------------
-    const updateElement = (id, attrs) => {
-        setElements(prev =>
-            prev.map(el =>
-                el.id === id ? { ...el, ...attrs } : el
-            )
-        );
-    };
-
-    const updateText = (value) => {
-        setElements(prev =>
-            prev.map(el =>
-                el.id === selectedId
-                    ? { ...el, text: value }
-                    : el
-            )
-        );
-    };
-
-    const updateFieldName = (value) => {
-        setElements(prev =>
-            prev.map(el =>
-                el.id === selectedId
-                    ? { ...el, fieldName: value }
-                    : el
-            )
-        );
-    };
-
-    // ----------------------------
-    // DELETE
-    // ----------------------------
-    const deleteElement = () => {
-        if (!selectedId) return;
-
-        setElements(prev =>
-            prev.filter(el => el.id !== selectedId)
-        );
-
-        setSelectedId(null);
-    };
-
-    // ----------------------------
-    // SAVE TEMPLATE + THUMBNAIL
-    // ----------------------------
-    const saveTemplate = async () => {
-
-        try {
-
-            const thumbnailDataUrl = stageRef.current.toDataURL({
-                pixelRatio: 0.3
-            });
-
-            const blob = dataURLToBlob(thumbnailDataUrl);
-
-            const template = {
-                id: templateData?.id,
-                title: title,
-                canvasData: JSON.stringify(elements)
-            };
-
-            const formData = new FormData();
-
-            formData.append(
-                "template",
-                new Blob([JSON.stringify(template)], {
-                    type: "application/json"
+    // 분류 선택 시 템플릿 리스트 로드
+    useEffect(() => {
+        if (selectedKeys.length > 0) {
+            const categoryId = selectedKeys[0];
+            axios.get(`/api/sytm2010/category/${categoryId}`)
+                .then(res => {
+                    setTemplates(res.data);
+                    setCurrentPage(1); // 분류 바뀌면 첫 페이지로
                 })
-            );
+                .catch(err => console.error(err));
+        } else {
+            setTemplates([]);
+        }
+    }, [selectedKeys]);
 
-            formData.append("thumbnail", blob, "thumbnail.png");
+    // 템플릿 삭제
+    const handleDelete = (id) => {
+        axios.delete(`/api/sytm2000/${id}`)
+            .then(() => setTemplates(prev => prev.filter(t => t.id !== id)))
+            .catch(err => console.error(err));
+    };
 
-            if (template.id) {
-                await axios.put(`/api/sytm2000/${template.id}`, formData);
-            } else {
-                await axios.post("/api/sytm2000", formData);
-            }
-
-            alert("저장 완료");
-
-        } catch (e) {
-            console.error(e);
-            alert("저장 실패");
+    // 템플릿 저장 후 리스트 갱신
+    const handleEditorSave = () => {
+        setIsEditorOpen(false);
+        setEditingTemplate(null);
+        if (selectedKeys.length > 0) {
+            const categoryId = selectedKeys[0];
+            axios.get(`/api/sytm2010/category/${categoryId}`)
+                .then(res => setTemplates(res.data));
         }
     };
 
-    // ----------------------------
-    // UTIL
-    // ----------------------------
-    const dataURLToBlob = (dataURL) => {
-        const arr = dataURL.split(",");
-        const mime = arr[0].match(/:(.*?);/)[1];
-        const bstr = atob(arr[1]);
-
-        let n = bstr.length;
-        const u8arr = new Uint8Array(n);
-
-        while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-        }
-
-        return new Blob([u8arr], { type: mime });
+    // 체크박스 선택/해제
+    const handleCheck = (id, checked) => {
+        setSelectedTemplates(prev =>
+            checked ? [...prev, id] : prev.filter(t => t !== id)
+        );
     };
 
-    // ----------------------------
-    // UI
-    // ----------------------------
+    // 현재 페이지에 보여줄 템플릿 slice
+    const startIndex = (currentPage - 1) * pageSize;
+    const currentTemplates = templates.slice(startIndex, startIndex + pageSize);
+
     return (
-        <div style={{ display: "flex", gap: 20, padding: 20 }}>
-
-            {/* LEFT */}
-            <div style={{ width: 250 }}>
-
-                <h3>템플릿</h3>
-
-                <input
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    placeholder="템플릿 이름"
-                    style={{ width: "100%", padding: 6 }}
+        <div style={{ display: "flex" }}>
+            {/* 분류 트리 */}
+            <div style={{ width: "300px", borderRight: "1px solid #ddd", padding: "10px" }}>
+                <h3>템플릿 분류</h3>
+                <ClassificationSelectTree
+                    data={treeData}
+                    selectedKeys={selectedKeys}
+                    onSelect={(keys) => setSelectedKeys(keys)}
                 />
+            </div>
 
-                <h3>툴</h3>
+            {/* 템플릿 리스트 */}
+            {templates.length > 0 && (
+                <div style={{ flex: 1, padding: "20px" }}>
+                    <h3>템플릿 리스트</h3>
+                    <button onClick={() => {
+                        setEditingTemplate(null);
+                        setIsEditorOpen(true);
+                    }}>새 템플릿 등록</button>
 
-                <button onClick={addText}>+ 텍스트</button>
-                <button onClick={addImage}>+ 이미지</button>
-
-                <br /><br />
-
-                <button onClick={deleteElement} style={{ color: "red" }}>
-                    삭제
-                </button>
-
-                <button onClick={saveTemplate}>
-                    저장
-                </button>
-
-                <hr />
-
-                {/* 속성 */}
-                {selectedElement && (
-                    <div>
-                        <h4>속성</h4>
-
-                        {selectedElement.type === "text" && (
-                            <>
-                                <input
-                                    value={selectedElement.text}
-                                    onChange={(e) => updateText(e.target.value)}
-                                    placeholder="텍스트"
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", marginTop: "20px" }}>
+                        {currentTemplates.map(t => (
+                            <div key={t.id} style={{ border: "1px solid #ccc", padding: "10px" }}>
+                                <img
+                                    src={`${import.meta.env.VITE_API_BASE_URL}${t.thumbnailpath}`}
+                                    alt={t.title}
+                                    style={{ width: "100%" }}
                                 />
-
-                                <input
-                                    value={selectedElement.fieldName}
-                                    onChange={(e) => updateFieldName(e.target.value)}
-                                    placeholder="fieldName"
-                                />
-                            </>
-                        )}
-
-                        {selectedElement.type === "image" && (
-                            <input
-                                value={selectedElement.fieldName || ""}
-                                onChange={(e) => updateFieldName(e.target.value)}
-                                placeholder="image fieldName"
-                            />
-                        )}
+                                <p>{t.title}</p>
+                                <p style={{ color: t.active ? "green" : "gray" }}>
+                                    {t.active ? "활성화됨" : "비활성화"}
+                                </p>
+                                <Checkbox
+                                    checked={selectedTemplates.includes(t.id)}
+                                    onChange={(e) => handleCheck(t.id, e.target.checked)}
+                                >
+                                    선택
+                                </Checkbox>
+                                <button onClick={() => handleDelete(t.id)}>삭제</button>
+                                <button onClick={() => {
+                                    setEditingTemplate(t);
+                                    setIsEditorOpen(true);
+                                }}>수정</button>
+                            </div>
+                        ))}
                     </div>
-                )}
 
-                <hr />
+                    {/* 페이징 */}
+                    <Pagination
+                        current={currentPage}
+                        pageSize={pageSize}
+                        total={templates.length}
+                        onChange={(page) => setCurrentPage(page)}
+                        style={{ marginTop: "20px", textAlign: "center" }}
+                    />
 
-                <pre style={{ fontSize: 11 }}>
-                    {JSON.stringify(elements, null, 2)}
-                </pre>
-            </div>
+                </div>
+            )}
 
-            {/* CANVAS */}
-            <div>
-                <Stage
-                    ref={stageRef}
-                    width={800}
-                    height={600}
-                    style={{ border: "1px solid #ccc" }}
-                >
-                    <Layer>
-
-                        {elements.map(el => {
-
-                            if (el.type === "text") {
-                                return (
-                                    <Text
-                                        key={el.id}
-                                        text={`${el.text} ({{${el.fieldName}}})`}
-                                        x={el.x}
-                                        y={el.y}
-                                        fontSize={el.fontSize}
-                                        fill={el.fill}
-                                        draggable
-                                        onClick={() => setSelectedId(el.id)}
-                                        onDragEnd={(e) =>
-                                            updateElement(el.id, {
-                                                x: e.target.x(),
-                                                y: e.target.y()
-                                            })
-                                        }
-                                        stroke={selectedId === el.id ? "blue" : null}
-                                        strokeWidth={selectedId === el.id ? 2 : 0}
-                                    />
-                                );
-                            }
-
-                            if (el.type === "image") {
-                                return (
-                                    <CanvasImage
-                                        key={el.id}
-                                        el={el}
-                                        dataMap={dataMap}
-                                        updateElement={updateElement}
-                                        selectedId={selectedId}
-                                        setSelectedId={setSelectedId}
-                                    />
-                                );
-                            }
-
-                            return null;
-                        })}
-
-                    </Layer>
-                </Stage>
-            </div>
-
+            {/* 모달 에디터 */}
+            <Modal
+                open={isEditorOpen}
+                onCancel={() => {
+                    setIsEditorOpen(false);
+                    setEditingTemplate(null);
+                }}
+                footer={null}
+                width="80%"
+                destroyOnHidden
+            >
+                <TemplateEditor
+                    template={editingTemplate}
+                    clcd={selectedKeys[0]}   // 현재 선택된 분류 코드 전달
+                    onSave={handleEditorSave}   // 저장 후 모달 닫기 + 리스트 갱신
+                    isOpen={isEditorOpen}   // ✅ 모달 열림 여부 내려줌
+                />
+            </Modal>
         </div>
     );
-}
+};
 
-// ----------------------------
-// IMAGE COMPONENT (핵심)
-// ----------------------------
-function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId }) {
-
-    const src = dataMap?.[el.fieldName];
-    const [img] = useImage(src || "");
-
-    const isEmpty = !src;
-
-    const isSelected = selectedId === el.id;
-
-    return (
-        <>
-            {/* =========================
-                IMAGE 존재할 때
-            ========================= */}
-            {!isEmpty && (
-                <KonvaImage
-                    image={img}
-                    x={el.x}
-                    y={el.y}
-                    width={el.width}
-                    height={el.height}
-                    draggable
-                    onClick={() => setSelectedId(el.id)}
-                    onDragEnd={(e) =>
-                        updateElement(el.id, {
-                            x: e.target.x(),
-                            y: e.target.y()
-                        })
-                    }
-                    stroke={isSelected ? "#1976d2" : null}
-                    strokeWidth={2}
-                />
-            )}
-
-            {/* =========================
-                PLACEHOLDER (점선 박스)
-            ========================= */}
-            {isEmpty && (
-                <>
-                    <Rect
-                        x={el.x}
-                        y={el.y}
-                        width={el.width}
-                        height={el.height}
-                        fill="#fafafa"
-                        stroke={isSelected ? "#1976d2" : "#bbb"}
-                        strokeWidth={1}
-                        dash={[6, 4]}   // ⭐ 핵심: 점선
-                        draggable
-                        onClick={() => setSelectedId(el.id)}
-                        onDragEnd={(e) =>
-                            updateElement(el.id, {
-                                x: e.target.x(),
-                                y: e.target.y()
-                            })
-                        }
-                    />
-
-                    <Text
-                        x={el.x}
-                        y={el.y + el.height / 2 - 7}
-                        width={el.width}
-                        text={el.fieldName || "IMAGE"}
-                        fontSize={12}
-                        fill="#888"
-                        align="center"
-                    />
-                </>
-            )}
-        </>
-    );
-}
+export default Sytm2000Page;

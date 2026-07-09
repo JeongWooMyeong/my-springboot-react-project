@@ -18,4 +18,6 @@ public interface Sytm2000Mapper {
     int update(Sytm2000Dto dto);
 
     int delete(Long id);
+
+    int insertActive(Sytm2000Dto dto);
 }

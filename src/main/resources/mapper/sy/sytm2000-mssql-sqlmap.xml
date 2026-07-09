@@ -22,6 +22,16 @@
         #{thumbnailpath}
         )
     </insert>
+    <!-- 템플릿 해당 분류 활성화 -->
+    <insert id="insertActive">
+        INSERT INTO template_active (tmpno, UpdDate, Updpn, ClCd)
+        VALUES (
+                   #{tmpno},
+                   getdate(),
+                   'systemadmin',
+                   #{clcd}
+               )
+    </insert>
 
     <!-- LIST -->
     <select id="selectList" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
