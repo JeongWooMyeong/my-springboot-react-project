@@ -1,5 +1,6 @@
 package com.example.springbootproject.pms.sy.tm.service.impl;
 
+import com.example.springbootproject.pms.sy.tm.dto.Sytm1000Dto;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm2000Service;
 import com.example.springbootproject.pms.sy.tm.service.dao.Sytm2000Mapper;
@@ -54,8 +55,8 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
     }
 
     @Override
-    public List<Sytm2000Dto> list() {
-        return mapper.selectList();
+    public List<Sytm2000Dto> list(String clcd, String jijumcd) {
+        return mapper.selectList(clcd, jijumcd);
     }
 
     @Override
@@ -98,5 +99,10 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
 
         // DB에 저장할 값 (URL)
         return "/upload/thumb/" + fileName;
+    }
+
+    @Override
+    public List<Sytm1000Dto> getCategoriesByParent(String parentClCd, String jijumcd) {
+        return mapper.findByParent(parentClCd, jijumcd);
     }
 }

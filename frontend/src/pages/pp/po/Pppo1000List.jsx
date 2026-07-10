@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function Pppo1000List({ onSelect }) {
+export default function Pppo1000List({ onSelect, clcd }) {
 
     const [list, setList] = useState([]);
 
     useEffect(() => {
-        axios.get("/api/sytm2000")
+        if (!clcd) return; // 분류가 선택되지 않았으면 호출 안 함
+
+        axios.get(`/api/sytm2000?clcd=${clcd}`, {
+            headers: {
+                "Authorization": `Bearer ${JSON.parse(localStorage.getItem("user"))?.token?.trim()}`
+            }
+        })
             .then(res => {
                 setList(res.data);
             })
             .catch(err => {
                 console.error("list load error", err);
             });
-    }, []);
+    }, [clcd]); // clcd가 바뀔 때마다 다시 호출
 
     return (
         <div style={{ padding: 20 }}>

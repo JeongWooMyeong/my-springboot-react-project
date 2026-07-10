@@ -1,7 +1,10 @@
 package com.example.springbootproject.pms.sy.tm.controller;
 
+import com.example.springbootproject.pms.login.dto.Syep4000VO;
+import com.example.springbootproject.pms.sy.tm.dto.Sytm1000Dto;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm2000Service;
+import com.example.springbootproject.pms.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +29,20 @@ public class Sytm2000Controller {
     }
 
     @GetMapping
-    public List<Sytm2000Dto> list() {
-        return service.list();
+    public List<Sytm2000Dto> list(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestParam(required = false) String clcd
+    ) {
+        String token = authHeader.replace("Bearer ", "");
+        Syep4000VO user = JwtUtil.parseToken(token);
+        String jijumcd = user.getJijumcd();
+
+        // 관리자라면 모든 지점 조회
+//        if ("ADMIN".equals(user.getRole())) {
+//            jijumcd = "0";
+//        }
+
+        return service.list(clcd, jijumcd);
     }
 
     @GetMapping("/{id}")
@@ -49,4 +64,14 @@ public class Sytm2000Controller {
     public int delete(@PathVariable Long id, @PathVariable Long clcd) {
         return service.delete(id, clcd);
     }
+
+    @GetMapping("/categories")
+    public List<Sytm1000Dto> getCategories(@RequestHeader("Authorization") String authHeader, @RequestParam(defaultValue = "0") String parent) {
+        String token = authHeader.replace("Bearer ", "");
+        Syep4000VO user = JwtUtil.parseToken(token);
+        String jijumcd = user.getJijumcd();
+
+        return service.getCategoriesByParent(parent, jijumcd);
+    }
+
 }

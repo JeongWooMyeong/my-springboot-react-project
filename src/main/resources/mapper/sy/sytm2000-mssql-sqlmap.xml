@@ -42,7 +42,8 @@
         created_at AS createdAt,
         updated_at AS updatedAt,
         thumbnailpath
-        FROM template
+        FROM template a
+        inner join template_active b on a.id = b.tmpno and b.clcd = #{clcd}
         ORDER BY id DESC
     </select>
 
@@ -82,5 +83,29 @@
     <delete id="delete">
         DELETE FROM template WHERE id = #{id}
     </delete>
+
+    <select id="findByParent" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm1000Dto">
+        SELECT
+        a.ClCd,
+        a.ClName,
+        a.PrdnClCd,
+        a.Xpn,
+        a.UseEan,
+        a.ClDv,
+        a.QeeSqo,
+        a.UpdDate,
+        a.Updpn,
+        a.DirPath
+        FROM pppo7010t a
+        <if test='jijumcd != "0"'>
+            INNER JOIN pppo7000t b
+            ON a.ClCd = b.ClCd
+            AND b.jijumcd = #{jijumcd}
+        </if>
+        WHERE a.PrdnClCd = #{clcd}
+        AND a.UseEan = 'Y'
+        ORDER BY a.ClCd
+    </select>
+
 
 </mapper>
