@@ -3,6 +3,7 @@ package com.example.springbootproject.pms.sy.tm.service.impl;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm2000Service;
 import com.example.springbootproject.pms.sy.tm.service.dao.Sytm2000Mapper;
+import com.example.springbootproject.pms.sy.tm.service.dao.Sytm2010Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public class Sytm2000ServiceImpl implements Sytm2000Service {
 
     private final Sytm2000Mapper mapper;
+    private final Sytm2010Mapper mapper2010;
     private final String uploadDir =
             "upload/thumb/";
 
@@ -77,7 +79,10 @@ public class Sytm2000ServiceImpl implements Sytm2000Service {
     }
 
     @Override
-    public int delete(Long id) {
+    public int delete(Long id, Long  clcd) {
+
+        mapper2010.deleteTemplateActive(id, clcd);
+
         return mapper.delete(id);
     }
 

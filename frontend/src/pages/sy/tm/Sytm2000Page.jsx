@@ -38,10 +38,16 @@ const Sytm2000Page = () => {
     }, [selectedKeys]);
 
     // 템플릿 삭제
-    const handleDelete = (id) => {
-        axios.delete(`/api/sytm2000/${id}`)
-            .then(() => setTemplates(prev => prev.filter(t => t.id !== id)))
-            .catch(err => console.error(err));
+    const handleDelete = (id, clcd) => {
+        axios.delete(`/api/sytm2000/${id}/${clcd}`)
+            .then(() => {
+                setTemplates(prev => prev.filter(t => t.id !== id));
+                alert("삭제 완료");   // 성공 메시지
+            })
+            .catch(err => {
+                console.error(err);
+                alert("삭제 실패");   // 실패 메시지
+            });
     };
 
     // 템플릿 저장 후 리스트 갱신
@@ -105,8 +111,9 @@ const Sytm2000Page = () => {
                                 >
                                     선택
                                 </Checkbox>
-                                <button onClick={() => handleDelete(t.id)}>삭제</button>
+                                <button onClick={() => handleDelete(t.id, t.clcd)}>삭제</button>
                                 <button onClick={() => {
+                                    console.log("수정 버튼 클릭:", t);
                                     setEditingTemplate(t);
                                     setIsEditorOpen(true);
                                 }}>수정</button>

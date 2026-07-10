@@ -15,5 +15,5 @@ public interface Sytm2000Service {
 
     int update(Sytm2000Dto dto, MultipartFile thumbnail) throws Exception;
 
-    int delete(Long id);
+    int delete(Long id, Long clcd);
 }

@@ -7,7 +7,7 @@
 
     <!-- 분류별 템플릿 전체 조회 -->
     <select id="selectTemplatesByCategory" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
-        SELECT t.id, t.title, t.thumbnailpath, t.canvas_data,
+        SELECT t.id, t.title, t.thumbnailpath, t.canvas_data as canvasData,
                t.created_at, t.updated_at,
                a.ClCd, a.UpdDate, a.Updpn,
                CASE WHEN a.TmpNo IS NOT NULL THEN 1 ELSE 0 END AS active
@@ -18,7 +18,7 @@
 
     <!-- 분류별 활성화된 템플릿 조회 -->
     <select id="selectActiveTemplatesByCategory" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
-        SELECT t.id, t.title, t.thumbnailpath, t.canvas_data,
+        SELECT t.id, t.title, t.thumbnailpath, t.canvas_data as canvasData,
                t.created_at, t.updated_at,
                a.ClCd, a.UpdDate, a.Updpn,
                1 AS active

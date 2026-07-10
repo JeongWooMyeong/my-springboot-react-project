@@ -63,7 +63,7 @@
     <update id="update"
             parameterType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
 
-        UPDATE SYTM2000
+        UPDATE template
 
         SET
         title = #{title},
@@ -71,7 +71,7 @@
         updated_at = #{updatedAt}
 
         <if test="thumbnailpath != null">
-            , thumbnail_path = #{thumbnailpath}
+            , thumbnailpath = #{thumbnailpath}
         </if>
 
         WHERE id = #{id}

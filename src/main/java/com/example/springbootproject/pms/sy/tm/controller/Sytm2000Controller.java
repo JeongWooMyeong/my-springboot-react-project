@@ -45,8 +45,8 @@ public class Sytm2000Controller {
         return service.update(dto, thumbnail);
     }
 
-    @DeleteMapping("/{id}")
-    public int delete(@PathVariable Long id) {
-        return service.delete(id);
+    @DeleteMapping("/{id}/{clcd}")
+    public int delete(@PathVariable Long id, @PathVariable Long clcd) {
+        return service.delete(id, clcd);
     }
 }

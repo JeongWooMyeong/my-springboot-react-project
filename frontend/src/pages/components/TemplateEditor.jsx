@@ -3,7 +3,7 @@ import { Stage, Rect, Layer, Text, Image as KonvaImage } from "react-konva";
 import axios from "axios";
 import useImage from "use-image";
 
-export default function TemplateEditor({ templateData, dataMap = {}, clcd, onSave, isOpen }) {
+export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, isOpen }) {
 
     const [elements, setElements] = useState([]);
     const [selectedId, setSelectedId] = useState(null);
@@ -26,11 +26,13 @@ export default function TemplateEditor({ templateData, dataMap = {}, clcd, onSav
     // INIT
     // ----------------------------
     useEffect(() => {
-        if (!templateData) return;
-
-        setElements(templateData.canvasData || []);
-        setTitle(templateData.title || "");
-    }, [templateData]);
+        if (!template) return;
+        const parsed = typeof template.canvasData === "string"
+            ? JSON.parse(template.canvasData)
+            : template.canvasData;
+        setElements(parsed || []);
+        setTitle(template.title || "");
+    }, [template]);
 
     // ----------------------------
     // ADD TEXT
@@ -115,17 +117,50 @@ export default function TemplateEditor({ templateData, dataMap = {}, clcd, onSav
     // SAVE TEMPLATE + THUMBNAIL
     // ----------------------------
     const saveTemplate = async () => {
-
         try {
+            const thumbnailDataUrl = stageRef.current.toDataURL({ pixelRatio: 0.3 });
+            const blob = dataURLToBlob(thumbnailDataUrl);
 
+            const templatePayload = {
+                id: template?.id,   // null일 수도 있으니 optional chaining
+                title,
+                canvasData: JSON.stringify(elements),
+                clcd,
+                active: true
+            };
+
+            const formData = new FormData();
+            formData.append(
+                "template",
+                new Blob([JSON.stringify(templatePayload)], { type: "application/json" })
+            );
+            formData.append("thumbnail", blob, "thumbnail.png");
+
+            if (template?.id) {
+                await axios.put(`/api/sytm2000/${template.id}`, formData);
+            } else {
+                await axios.post("/api/sytm2000", formData);
+            }
+
+            alert("저장 완료");
+            onSave?.();
+        } catch (e) {
+            console.error("저장 실패:", e);
+            alert("저장 실패");
+        }
+    };
+
+
+    const updateTemplate = async () => {
+        try {
             const thumbnailDataUrl = stageRef.current.toDataURL({
                 pixelRatio: 0.3
             });
 
             const blob = dataURLToBlob(thumbnailDataUrl);
 
-            const template = {
-                id: templateData?.id,
+            const templatepayload = {
+                id: template?.id,
                 title: title,
                 canvasData: JSON.stringify(elements),
                 clcd: clcd,   // 현재 선택된 분류 코드
@@ -136,33 +171,25 @@ export default function TemplateEditor({ templateData, dataMap = {}, clcd, onSav
 
             formData.append(
                 "template",
-                new Blob([JSON.stringify(template)], {
+                new Blob([JSON.stringify(templatepayload)], {
                     type: "application/json"
                 })
             );
 
             formData.append("thumbnail", blob, "thumbnail.png");
 
-            if (template.id) {
-                await axios.put(`/api/sytm2000/${template.id}`, formData);
-            } else {
-                await axios.post("/api/sytm2000", formData);
-            }
+            await fetch(`/api/sytm2000/${template.id}`, {
+                method: "PUT",
+                body: formData
+            });
 
-            alert("저장 완료");
-
-            // ✅ 저장 후 부모 콜백 호출 → 모달 닫기 + 리스트 갱신
+            alert("수정 완료!");
             onSave?.();
-
-        } catch (e) {
-            console.error(e);
-            alert("저장 실패");
+        } catch (err) {
+            console.error("수정 실패:", err);
         }
     };
 
-    // ----------------------------
-    // UTIL
-    // ----------------------------
     const dataURLToBlob = (dataURL) => {
         const arr = dataURL.split(",");
         const mime = arr[0].match(/:(.*?);/)[1];
@@ -177,6 +204,7 @@ export default function TemplateEditor({ templateData, dataMap = {}, clcd, onSav
 
         return new Blob([u8arr], { type: mime });
     };
+
 
     // ----------------------------
     // UI
@@ -207,8 +235,8 @@ export default function TemplateEditor({ templateData, dataMap = {}, clcd, onSav
                     삭제
                 </button>
 
-                <button onClick={saveTemplate}>
-                    저장
+                <button onClick={template?.id ? updateTemplate : saveTemplate}>
+                    {template?.id ? "수정" : "저장"}
                 </button>
 
                 <hr />
