@@ -14,19 +14,16 @@ export default function Pppo1000Page() {
 
     const token = JSON.parse(localStorage.getItem("user"))?.token;
 
-    // 분류1 불러오기 (최상위)
+    // 분류1 불러오기
     useEffect(() => {
         if (!token) return;
         fetch("/api/sytm2000/categories?parent=0", {
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
+            headers: { "Authorization": `Bearer ${token}` }
         })
             .then(res => res.json())
             .then(data => setLevel1List(data));
     }, []);
 
-    // 분류1 클릭 → 분류2 불러오기
     const handleLevel1Click = (clcd) => {
         setSelectedLevel1(clcd);
         setSelectedLevel2(null);
@@ -41,7 +38,6 @@ export default function Pppo1000Page() {
             .then(data => setLevel2List(data));
     };
 
-    // 분류2 클릭 → 분류3 불러오기
     const handleLevel2Click = (clcd) => {
         setSelectedLevel2(clcd);
         setSelectedLevel3(null);
@@ -54,7 +50,6 @@ export default function Pppo1000Page() {
             .then(data => setLevel3List(data));
     };
 
-    // 분류3 클릭
     const handleLevel3Click = (clcd) => {
         setSelectedLevel3(clcd);
     };
@@ -64,78 +59,71 @@ export default function Pppo1000Page() {
     return (
         <div>
             {/* 상단 분류 영역 */}
-            <div style={{ display: "flex", gap: 20, marginBottom: 20 }}>
-
-                {/* 분류1 영역 */}
-                <div style={{ flex: 1, border: "1px solid #ddd", padding: 10 }}>
+            <div style={{ display: "flex", gap: 20, marginBottom: 20, width: "100%" }}>
+                {/* 분류1 */}
+                <div style={{ width: "350px", border: "1px solid #ddd", padding: 10, maxHeight: "300px", overflowY: "auto" }}>
                     <h4>분류1</h4>
-                    <div style={{ display: "flex", overflowX: "auto", gap: 10 }}>
-                        {level1List.map(cat => (
-                            <div
-                                key={cat.clcd}
-                                onClick={() => handleLevel1Click(cat.clcd)}
-                                style={{
-                                    flex: "0 0 auto",
-                                    padding: "10px 20px",
-                                    border: "1px solid #ccc",
-                                    borderRadius: 6,
-                                    cursor: "pointer",
-                                    background: selectedLevel1 === cat.clcd ? "#007bff" : "#f9f9f9",
-                                    color: selectedLevel1 === cat.clcd ? "#fff" : "#000"
-                                }}
-                            >
-                                {cat.clname}
-                            </div>
-                        ))}
-                    </div>
+                    {level1List.map(cat => (
+                        <div
+                            key={cat.clcd}
+                            onClick={() => handleLevel1Click(cat.clcd)}
+                            style={{
+                                padding: "10px",
+                                marginBottom: "5px",
+                                border: "1px solid #ccc",
+                                borderRadius: 6,
+                                cursor: "pointer",
+                                background: selectedLevel1 === cat.clcd ? "#007bff" : "#f9f9f9",
+                                color: selectedLevel1 === cat.clcd ? "#fff" : "#000"
+                            }}
+                        >
+                            {cat.clname}
+                        </div>
+                    ))}
                 </div>
 
-                {/* 분류2 영역 */}
-                <div style={{ flex: 1, border: "1px solid #ddd", padding: 10 }}>
+                {/* 분류2 */}
+                <div style={{ width: "350px", border: "1px solid #ddd", padding: 10, maxHeight: "300px", overflowY: "auto" }}>
                     <h4>분류2</h4>
-                    <div style={{ display: "flex", overflowX: "auto", gap: 10 }}>
-                        {level2List.map(child => (
-                            <div
-                                key={child.clcd}
-                                onClick={() => handleLevel2Click(child.clcd)}
-                                style={{
-                                    flex: "0 0 auto",
-                                    padding: "10px 20px",
-                                    border: "1px solid #ccc",
-                                    borderRadius: 6,
-                                    cursor: "pointer",
-                                    background: selectedLevel2 === child.clcd ? "#007bff" : "#f9f9f9",
-                                    color: selectedLevel2 === child.clcd ? "#fff" : "#000"
-                                }}
-                            >
-                                {child.clname}
-                            </div>
-                        ))}
-                    </div>
+                    {level2List.map(child => (
+                        <div
+                            key={child.clcd}
+                            onClick={() => handleLevel2Click(child.clcd)}
+                            style={{
+                                padding: "10px",
+                                marginBottom: "5px",
+                                border: "1px solid #ccc",
+                                borderRadius: 6,
+                                cursor: "pointer",
+                                background: selectedLevel2 === child.clcd ? "#007bff" : "#f9f9f9",
+                                color: selectedLevel2 === child.clcd ? "#fff" : "#000"
+                            }}
+                        >
+                            {child.clname}
+                        </div>
+                    ))}
                 </div>
 
-                {/* 분류3 영역 */}
-                <div style={{ flex: 1, border: "1px solid #ddd", padding: 10 }}>
+                {/* 분류3 */}
+                <div style={{ width: "350px", border: "1px solid #ddd", padding: 10, maxHeight: "300px", overflowY: "auto" }}>
                     <h4>분류3</h4>
-                    <div style={{ display: "flex", overflowX: "auto", gap: 10 }}>
-                        {level3List.map(child => (
-                            <div
-                                key={child.clcd}
-                                onClick={() => handleLevel3Click(child.clcd)}
-                                style={{
-                                    flex: "0 0 auto",
-                                    padding: "10px 20px",
-                                    border: "1px solid #ccc",
-                                    borderRadius: 6,
-                                    cursor: "pointer",
-                                    background: selectedLevel3 === child.clcd ? "#007bff" : "#f9f9f9",
-                                    color: selectedLevel3 === child.clcd ? "#fff" : "#000"
-                                }}
-                            >
-                                {child.clname}
-                            </div>
-                        ))}
-                    </div>
+                    {level3List.map(child => (
+                        <div
+                            key={child.clcd}
+                            onClick={() => handleLevel3Click(child.clcd)}
+                            style={{
+                                padding: "10px",
+                                marginBottom: "5px",
+                                border: "1px solid #ccc",
+                                borderRadius: 6,
+                                cursor: "pointer",
+                                background: selectedLevel3 === child.clcd ? "#007bff" : "#f9f9f9",
+                                color: selectedLevel3 === child.clcd ? "#fff" : "#000"
+                            }}
+                        >
+                            {child.clname}
+                        </div>
+                    ))}
                 </div>
             </div>
 
