@@ -22,10 +22,10 @@
         )
         VALUES (
                    #{ordno},
-                   #{ordstate},
-                   #{rgdate},
+                   '10',
+                   getdate(),
                    #{rgr},
-                   #{upddate},
+                   getdate(),
                    #{updpn},
                    #{autoapvean},
                    #{jijumcd},
