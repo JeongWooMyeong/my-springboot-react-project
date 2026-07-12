@@ -39,7 +39,7 @@ export default function Syep4000Grid() {
 
     const [roles, setRoles] = useState([]);
     const [userRoles, setUserRoles] = useState([]); // 체크된 role ids
-    const [setSelectedUser] = useState(null);
+    const [selectedUser,setSelectedUser] = useState(null);
     const [searchForm] = Form.useForm();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
