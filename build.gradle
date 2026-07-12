@@ -47,6 +47,10 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
 
+    // iText7 PDF 라이브러리 (최신 안정 버전)
+    implementation 'com.itextpdf:itext7-core:9.7.0'
+
+
     //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
     //testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
     //testImplementation 'org.springframework.boot:spring-boot-starter-security-test'

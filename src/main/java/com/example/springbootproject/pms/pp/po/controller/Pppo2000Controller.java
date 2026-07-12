@@ -4,10 +4,14 @@ import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/pppo2000")
@@ -33,6 +37,30 @@ public class Pppo2000Controller {
             @RequestParam(required = false) String status
     ) {
         return pppo2000Service.searchRequests(jijumcd, status);
+    }
+
+    // 단건 PDF 생성
+    @PostMapping("/pdf")
+    public ResponseEntity<byte[]> generatePdf(@RequestBody Map<String, String> req) {
+        String ordno = req.get("ordno");
+        byte[] pdfBytes = pppo2000Service.generatePdf(ordno);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + ordno + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdfBytes);
+    }
+
+    // 여러건 PDF → ZIP 생성
+    @PostMapping("/pdf/bulk")
+    public ResponseEntity<byte[]> generateZip(@RequestBody Map<String, List<String>> req) {
+        List<String> ordnos = req.get("ordnos");
+        byte[] zipBytes = pppo2000Service.generateZip(ordnos);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=pppo2000_pdfs.zip")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(zipBytes);
     }
 
 }

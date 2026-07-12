@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function Pppo2000List({ data = [], onSelect, onCheck }) {
+export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, onReject, onPdf }) {
     const [requests, setRequests] = useState(data);
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
@@ -20,9 +20,9 @@ export default function Pppo2000List({ data = [], onSelect, onCheck }) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <h3 style={{ margin: 0 }}>신청내역</h3>
                 <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={() => console.log("승인", requests)}>승인</button>
-                    <button onClick={() => console.log("반려", requests)}>반려</button>
-                    <button onClick={() => console.log("PDF 생성", requests)}>PDF</button>
+                    <button onClick={onApprove}>승인</button>
+                    <button onClick={onReject}>반려</button>
+                    <button onClick={onPdf}>PDF</button>
                 </div>
             </div>
 

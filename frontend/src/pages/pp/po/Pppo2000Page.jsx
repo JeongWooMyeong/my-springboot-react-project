@@ -45,7 +45,44 @@ export default function Pppo2000Page() {
         console.log("반려 처리:", selectedOrdnos);
     };
     const handlePdf = () => {
-        console.log("PDF 생성:", selectedOrdnos);
+        if (selectedOrdnos.length === 0) {
+            alert("선택된 신청내역이 없습니다.");
+            return;
+        }
+
+        if (selectedOrdnos.length === 1) {
+            // 단건 PDF 요청
+            fetch("/api/pppo2000/pdf", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ordno: selectedOrdnos[0] })
+            })
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `${selectedOrdnos[0]}.pdf`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                });
+        } else {
+            // 여러건 → zip 요청
+            fetch("/api/pppo2000/pdf/bulk", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ordnos: selectedOrdnos })
+            })
+                .then(res => res.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "pppo2000_pdfs.zip";
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                });
+        }
     };
 
     return (
@@ -80,6 +117,9 @@ export default function Pppo2000Page() {
                         data={requestList}          // ✅ 조회 결과 전달
                         onSelect={handleSelect}
                         onCheck={handleCheckboxChange}
+                        onApprove={handleApprove}
+                        onReject={handleReject}
+                        onPdf={handlePdf}
                     />
                 </div>
 
