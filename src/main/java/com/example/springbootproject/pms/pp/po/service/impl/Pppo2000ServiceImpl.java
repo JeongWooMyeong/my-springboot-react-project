@@ -24,4 +24,9 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
     public Pppo2000DetailDto getRequestDetail(String ordno) {
         return pppo2000Mapper.selectRequestDetail(ordno);
     }
+
+    @Override
+    public List<Pppo2000Dto> searchRequests(String jijumcd, String status) {
+        return pppo2000Mapper.searchRequests(jijumcd, status);
+    }
 }

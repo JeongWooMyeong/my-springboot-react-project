@@ -39,4 +39,28 @@
         WHERE a.ordno = #{ordno}
     </select>
 
+    <select id="searchRequests" resultType="com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto">
+        SELECT
+        ordno,
+        ordstate,
+        rgdate,
+        rgr,
+        upddate,
+        updpn,
+        autoapvean AS autoapvean,
+        jijumcd AS jijumcd,
+        coid AS coid,
+        ntnid AS ntnid,
+        memo,
+        ordnore AS ordnore
+        FROM pppo1000t
+        WHERE 1=1
+        <if test="jijumcd != null and jijumcd != 'ALL'">
+            AND jijumcd = #{jijumcd}
+        </if>
+        <if test="status != null and status != ''">
+            AND ordstate = #{status}
+        </if>
+    </select>
+
 </mapper>

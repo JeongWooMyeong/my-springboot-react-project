@@ -4,10 +4,7 @@ import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +24,15 @@ public class Pppo2000Controller {
     @GetMapping("/{ordno}")
     public Pppo2000DetailDto getRequestDetail(@PathVariable String ordno) {
         return pppo2000Service.getRequestDetail(ordno);
+    }
+
+    // 조회 API (지점, 상태 필터)
+    @GetMapping("/search")
+    public List<Pppo2000Dto> searchRequests(
+            @RequestParam(required = false) String jijumcd,
+            @RequestParam(required = false) String status
+    ) {
+        return pppo2000Service.searchRequests(jijumcd, status);
     }
 
 }
