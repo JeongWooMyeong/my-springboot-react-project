@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useUser } from "../../../context/UserContext";
 
 export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, onReject, onPdf }) {
     const [requests, setRequests] = useState(data);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedRequest, setSelectedRequest] = useState(null); // 선택된 신청내역
     const itemsPerPage = 10;
 
     useEffect(() => {
@@ -15,14 +17,40 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
 
     const totalPages = Math.ceil(requests.length / itemsPerPage);
 
+    const userinfo = useUser();
+
+    // 권한 체크 함수
+    const canApproveReject = (req) => {
+        console.log("userinfo:", userinfo);
+        console.log("req:", req);
+
+        if (!userinfo?.roles) {
+            console.log("roles 없음");
+            return false;
+        }
+
+        const hasSystemRole = userinfo.roles.some(role => role.rolename === "시스템총괄");
+        console.log("hasSystemRole:", hasSystemRole);
+        console.log("ordstate:", req?.ordstate);
+
+        return hasSystemRole && req?.ordstate === "10";
+    };
+
     return (
         <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <h3 style={{ margin: 0 }}>신청내역</h3>
                 <div style={{ display: "flex", gap: 8 }}>
-                    <button onClick={onApprove}>승인</button>
-                    <button onClick={onReject}>반려</button>
-                    <button onClick={onPdf}>PDF</button>
+                    {/* 선택된 신청내역이 있고 조건을 만족할 때만 버튼 노출 */}
+                    {selectedRequest && canApproveReject(selectedRequest) && (
+                        <>
+                            <button onClick={() => onApprove(selectedRequest)}>승인</button>
+                            <button onClick={() => onReject(selectedRequest)}>반려</button>
+                        </>
+                    )}
+                    {selectedRequest && (Number(selectedRequest.ordstate) === 20 || Number(selectedRequest.ordstate) === 30) && (
+                        <button onClick={onPdf}>PDF</button>
+                    )}
                 </div>
             </div>
 
@@ -42,7 +70,12 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
                         </thead>
                         <tbody>
                         {currentItems.map(req => (
-                            <tr key={req.ordno} style={{ cursor: "pointer" }}>
+                            <tr key={req.ordno} style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                    setSelectedRequest(req);
+                                    onSelect(req);
+                                }
+                            }>
                                 <td style={{ border: "1px solid #ccc", padding: 8 }}>
                                     <input
                                         type="checkbox"
@@ -50,10 +83,10 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
                                         onChange={(e) => onCheck(req.ordno, e.target.checked)}
                                     />
                                 </td>
-                                <td style={{ border: "1px solid #ccc", padding: 8 }} onClick={() => onSelect(req)}>{req.ordno}</td>
-                                <td style={{ border: "1px solid #ccc", padding: 8 }} onClick={() => onSelect(req)}>{req.rgr}</td>
-                                <td style={{ border: "1px solid #ccc", padding: 8 }} onClick={() => onSelect(req)}>{req.rgdate}</td>
-                                <td style={{ border: "1px solid #ccc", padding: 8 }} onClick={() => onSelect(req)}>{req.ordstate}</td>
+                                <td style={{ border: "1px solid #ccc", padding: 8 }}>{req.ordno}</td>
+                                <td style={{ border: "1px solid #ccc", padding: 8 }}>{req.rgr}</td>
+                                <td style={{ border: "1px solid #ccc", padding: 8 }}>{req.rgdate}</td>
+                                <td style={{ border: "1px solid #ccc", padding: 8 }}>{req.ordstate}</td>
                             </tr>
                         ))}
                         </tbody>

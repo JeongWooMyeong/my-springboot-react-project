@@ -7,6 +7,7 @@ import Layout from "./layout/Layout.jsx";
 import SidebarLayout from "./layout/SidebarLayout.jsx"; // 새로 만든 사이드바 레이아웃
 import { componentMap } from "./pages/routes/routes.jsx";
 import { MenuProvider, useMenu } from "./context/MenuContext.jsx";
+import { UserContext } from "./context/UserContext";
 
 function AppRoutes() {
     const { routesFromDB } = useMenu();
@@ -52,10 +53,14 @@ function AppRoutes() {
 }
 
 function App() {
+    const userinfo = JSON.parse(localStorage.getItem("user"));
+
     return (
         <Router>
             <MenuProvider>
-                <AppRoutes />
+                <UserContext.Provider value={userinfo}>
+                    <AppRoutes />
+                </UserContext.Provider>
             </MenuProvider>
         </Router>
     );

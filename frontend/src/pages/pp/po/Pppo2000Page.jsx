@@ -11,11 +11,17 @@ export default function Pppo2000Page() {
     const [status, setStatus] = useState("");
     const [requestList, setRequestList] = useState([]); // ✅ 조회 결과 상태 추가
 
-    // 신청내역 클릭 시 상세 데이터 가져오기
     const handleSelect = (req) => {
         fetch(`/api/pppo2000/${req.ordno}`)
-            .then(res => res.json())
-            .then(data => setSelectedDetail(data));
+            .then(async res => {
+                if (!res.ok) throw new Error("서버 에러");
+                const text = await res.text();
+                return text ? JSON.parse(text) : null;
+            })
+            .then(data => {
+                setSelectedDetail(data);
+            })
+            .catch(err => console.error("상세 조회 에러:", err));
     };
 
     // 체크박스 선택 처리
@@ -128,7 +134,7 @@ export default function Pppo2000Page() {
                     {selectedDetail ? (
                         <TemplatePreview request={selectedDetail} />
                     ) : (
-                        <p>신청내역을 선택하면 오른쪽에 템플릿 미리보기가 표시됩니다.</p>
+                        <p>미리보기 상세 데이터가 없습니다.</p>
                     )}
                 </div>
             </div>
