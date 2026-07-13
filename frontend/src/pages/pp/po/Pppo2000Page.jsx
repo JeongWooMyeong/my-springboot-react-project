@@ -44,15 +44,75 @@ export default function Pppo2000Page() {
     };
 
     // 승인/반려/PDF 버튼
+    // 승인 처리
     const handleApprove = () => {
-        console.log("승인 처리:", selectedOrdnos);
+        if (selectedOrdnos.length === 0) {
+            alert("선택된 신청내역이 없습니다.");
+            return;
+        }
+
+        // 선택된 건 중 상태가 10이 아닌 게 있는지 확인
+        const invalid = requestList.filter(req => selectedOrdnos.includes(req.ordno) && req.ordstate !== "10");
+        if (invalid.length > 0) {
+            alert("승인할 수 없는 상태의 신청내역이 포함되어 있습니다.");
+            return;
+        }
+
+        fetch("/api/pppo2000/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ordnos: selectedOrdnos,
+                ordstate: 20   // 승인 상태 코드
+            })
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log("승인 결과:", result);
+                handleSearch(); // 리스트 갱신
+            })
+            .catch(err => console.error("승인 에러:", err));
     };
+
+    // 반려 처리
     const handleReject = () => {
-        console.log("반려 처리:", selectedOrdnos);
+        if (selectedOrdnos.length === 0) {
+            alert("선택된 신청내역이 없습니다.");
+            return;
+        }
+
+        // 선택된 건 중 상태가 10이 아닌 게 있는지 확인
+        const invalid = requestList.filter(req => selectedOrdnos.includes(req.ordno) && req.ordstate !== "10");
+        if (invalid.length > 0) {
+            alert("승인할 수 없는 상태의 신청내역이 포함되어 있습니다.");
+            return;
+        }
+
+        fetch("/api/pppo2000/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                ordnos: selectedOrdnos,
+                ordstate: 50   // 반려 상태 코드
+            })
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log("반려 결과:", result);
+                handleSearch(); // 리스트 갱신
+            })
+            .catch(err => console.error("반려 에러:", err));
     };
+
     const handlePdf = () => {
         if (selectedOrdnos.length === 0) {
             alert("선택된 신청내역이 없습니다.");
+            return;
+        }
+
+        const invalid = requestList.filter(req => selectedOrdnos.includes(req.ordno) && req.ordstate !== "30");
+        if (invalid.length > 0) {
+            alert("PDF 생성 할 수 없는 상태의 신청내역이 포함되어 있습니다.");
             return;
         }
 
@@ -126,6 +186,7 @@ export default function Pppo2000Page() {
                         onApprove={handleApprove}
                         onReject={handleReject}
                         onPdf={handlePdf}
+                        selectedOrdnos={selectedOrdnos}   // ✅ 추가
                     />
                 </div>
 

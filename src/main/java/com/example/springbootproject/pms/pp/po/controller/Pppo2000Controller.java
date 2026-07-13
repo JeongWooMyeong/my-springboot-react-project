@@ -63,4 +63,20 @@ public class Pppo2000Controller {
                 .body(zipBytes);
     }
 
+    // 승인/반려 처리 (여러 건 일괄 업데이트)
+    @PostMapping("/update")
+    public ResponseEntity<Map<String, Object>> updateOrdstate(@RequestBody Map<String, Object> req) {
+        List<String> ordnos = (List<String>) req.get("ordnos");
+        Integer ordstate = (Integer) req.get("ordstate");
+
+        pppo2000Service.updateOrdstate(ordnos, ordstate);
+
+        Map<String, Object> result = Map.of(
+                "success", true,
+                "message", "처리 완료"
+        );
+
+        return ResponseEntity.ok(result);
+    }
+
 }

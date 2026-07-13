@@ -14,4 +14,7 @@ public interface Pppo2000Mapper {
     // 조회용 메서드
     List<Pppo2000Dto> searchRequests(@Param("jijumcd") String jijumcd,
                                      @Param("status") String status);
+
+    // ✅ 승인/반려 추가
+    void updateOrdstate(@Param("ordnos") List<String> ordnos, @Param("ordstate") Integer ordstate);
 }

@@ -63,4 +63,13 @@
         </if>
     </select>
 
+    <update id="updateOrdstate">
+        UPDATE pppo1000t
+        SET ordstate = #{ordstate}
+        WHERE ordno IN
+        <foreach collection="ordnos" item="ordno" open="(" separator="," close=")">
+            #{ordno}
+        </foreach>
+    </update>
+
 </mapper>

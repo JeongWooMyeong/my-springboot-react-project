@@ -126,4 +126,10 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
             throw new RuntimeException("ZIP 생성 실패", e);
         }
     }
+
+    @Override
+    public void updateOrdstate(List<String> ordnos, Integer ordstate) {
+        if (ordnos == null || ordnos.isEmpty()) return;
+        pppo2000Mapper.updateOrdstate(ordnos, ordstate);
+    }
 }
