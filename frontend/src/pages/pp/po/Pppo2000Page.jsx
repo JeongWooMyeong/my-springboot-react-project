@@ -110,7 +110,7 @@ export default function Pppo2000Page() {
             return;
         }
 
-        const invalid = requestList.filter(req => selectedOrdnos.includes(req.ordno) && req.ordstate !== "30");
+        const invalid = requestList.filter(req => selectedOrdnos.includes(req.ordno) && req.ordstate !== "30" && req.ordstate !== "20");
         if (invalid.length > 0) {
             alert("PDF 생성 할 수 없는 상태의 신청내역이 포함되어 있습니다.");
             return;

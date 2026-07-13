@@ -46,64 +46,207 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
     @Override
     public byte[] generatePdf(String ordno) {
+
         Pppo2000DetailDto detail = pppo2000Mapper.selectRequestDetail(ordno);
 
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
             PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
             Document document = new Document(pdfDoc);
 
             ObjectMapper mapper = new ObjectMapper();
-            Map<String, Object> data = mapper.readValue(detail.getData(), Map.class);
-            List<Map<String, Object>> fields = mapper.readValue(detail.getCanvasData(), List.class);
+
+            Map<String, Object> data =
+                    mapper.readValue(detail.getData(), Map.class);
+
+            List<Map<String, Object>> fields =
+                    mapper.readValue(detail.getCanvasData(), List.class);
+
 
             PdfPage page = pdfDoc.addNewPage();
-            PdfCanvas canvas = new PdfCanvas(page);
+
 
             float pageWidth = page.getPageSize().getWidth();
             float pageHeight = page.getPageSize().getHeight();
 
+
+            // ==========================
+            // Konva Stage 기준
+            // ==========================
+            float canvasWidth = 800f;
+            float canvasHeight = 600f;
+
+
+            // Stage -> PDF Scale
+            float scaleX = pageWidth / canvasWidth;
+            float scaleY = pageHeight / canvasHeight;
+
+
+
             for (Map<String, Object> field : fields) {
+
+
                 String type = (String) field.get("type");
                 String fieldName = (String) field.get("fieldName");
 
-                if ("text".equals(type)) {
-                    String value = (String) data.get(fieldName);
-                    float x = ((Number) field.get("x")).floatValue();
-                    float yCanvas = ((Number) field.get("y")).floatValue();
-                    float fontSize = ((Number) field.get("fontSize")).floatValue();
 
-                    // 좌표 변환 (캔버스 → PDF)
-                    float yPdf = pageHeight - yCanvas - fontSize;
+                // ======================
+                // TEXT
+                // ======================
+                if ("text".equals(type)) {
+
+
+                    String value = (String) data.get(fieldName);
+
+                    if (value == null) {
+                        value = "";
+                    }
+
+
+                    float x =
+                            ((Number) field.get("x")).floatValue()
+                                    * scaleX;
+
+
+                    float y =
+                            ((Number) field.get("y")).floatValue()
+                                    * scaleY;
+
+
+                    float fontSize =
+                            ((Number) field.get("fontSize")).floatValue()
+                                    * scaleY;
+
+
+                    float yPdf =
+                            pageHeight - y - fontSize;
+
+
+
+                    PdfCanvas canvas = new PdfCanvas(page);
+
 
                     canvas.beginText()
-                            .setFontAndSize(PdfFontFactory.createFont(), fontSize)
+                            .setFontAndSize(
+                                    PdfFontFactory.createFont(),
+                                    fontSize
+                            )
                             .moveText(x, yPdf)
-                            .showText(value != null ? value : "")
+                            .showText(value)
                             .endText();
-                } else if ("image".equals(type)) {
-                    String imageUrl = (String) data.get(fieldName);
-                    if (imageUrl != null) {
-                        float x = ((Number) field.get("x")).floatValue();
-                        float yCanvas = ((Number) field.get("y")).floatValue();
-                        float width = ((Number) field.get("width")).floatValue();
-                        float height = ((Number) field.get("height")).floatValue();
 
-                        // 좌표 변환 (캔버스 → PDF)
-                        float yPdf = pageHeight - yCanvas - height;
 
-                        ImageData imgData = ImageDataFactory.create(imageUrl);
-                        Image img = new Image(imgData)
-                                .setFixedPosition(x, yPdf)
-                                .scaleAbsolute(width, height);
-                        document.add(img);
-                    }
                 }
+
+
+
+                // ======================
+                // IMAGE
+                // ======================
+                else if ("image".equals(type)) {
+
+
+                    String imageUrl =
+                            (String) data.get(fieldName);
+
+
+                    if (imageUrl == null) {
+                        continue;
+                    }
+
+
+                    float x =
+                            ((Number) field.get("x")).floatValue()
+                                    * scaleX;
+
+
+                    float y =
+                            ((Number) field.get("y")).floatValue()
+                                    * scaleY;
+
+
+                    float boxWidth =
+                            ((Number) field.get("width")).floatValue()
+                                    * scaleX;
+
+
+                    float boxHeight =
+                            ((Number) field.get("height")).floatValue()
+                                    * scaleY;
+
+
+
+                    // Canvas 좌표 -> PDF 좌표
+                    float yPdf =
+                            pageHeight - y - boxHeight;
+
+
+
+                    ImageData imageData =
+                            ImageDataFactory.create(imageUrl);
+
+
+
+                    Image image =
+                            new Image(imageData);
+
+
+
+                    /*
+                     * ⭐ 원본 비율 유지
+                     * object-fit: contain 과 동일
+                     */
+                    image.scaleToFit(
+                            boxWidth,
+                            boxHeight
+                    );
+
+
+
+                    float imageWidth =
+                            image.getImageScaledWidth();
+
+
+                    float imageHeight =
+                            image.getImageScaledHeight();
+
+
+
+                    // 영역 중앙 배치
+                    float offsetX =
+                            (boxWidth - imageWidth) / 2;
+
+
+                    float offsetY =
+                            (boxHeight - imageHeight) / 2;
+
+
+
+                    image.setFixedPosition(
+                            x + offsetX,
+                            yPdf + offsetY
+                    );
+
+
+
+                    document.add(image);
+
+                }
+
             }
 
+
             document.close();
+
             return baos.toByteArray();
+
+
         } catch (Exception e) {
-            throw new RuntimeException("PDF 생성 실패", e);
+
+            throw new RuntimeException(
+                    "PDF 생성 실패",
+                    e
+            );
         }
     }
 

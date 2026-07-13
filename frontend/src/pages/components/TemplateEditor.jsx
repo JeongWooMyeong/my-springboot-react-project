@@ -1,7 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-import { Stage, Rect, Layer, Text, Image as KonvaImage } from "react-konva";
+import {Stage, Rect, Layer, Text, Image as KonvaImage, Line} from "react-konva";
 import axios from "axios";
 import useImage from "use-image";
+import { mmToPx } from"../../util/Utils";
 
 export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, isOpen }) {
 
@@ -12,6 +13,29 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
     const stageRef = useRef(null);
 
     const selectedElement = elements.find(el => el.id === selectedId);
+    //2026.07.13 용지크기 추가
+    const [papersize, setPapersize] = useState("A4");
+
+    const paperSizes = {
+        A4: { widthMm: 210, heightMm: 297 },       // A4 = 210 × 297 mm
+        Letter: { widthMm: 216, heightMm: 279 },   // Letter = 8.5 × 11 inch ≈ 216 × 279 mm
+        Legal: { widthMm: 216, heightMm: 356 }     // Legal = 8.5 × 14 inch ≈ 216 × 356 mm
+    };
+
+// 예시 사용
+    const selected = paperSizes[papersize]; // 예: A4
+    const widthPx = mmToPx(selected.widthMm);
+    const heightPx = mmToPx(selected.heightMm);
+
+    // 그대로 DB 저장용 mm 값
+    const paperwidth = selected.widthMm;
+    const paperheight = selected.heightMm;
+
+
+    const stageWidth = 800;
+    const stageHeight = 600;
+    const scaleX = stageWidth / widthPx;
+    const scaleY = stageHeight / heightPx;
 
     useEffect(() => {
         //alert(isOpen);
@@ -125,6 +149,9 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                 id: template?.id,   // null일 수도 있으니 optional chaining
                 title,
                 canvasData: JSON.stringify(elements),
+                papersize,              // ✅ 용지 크기 추가
+                paperwidth,
+                paperheight,
                 clcd,
                 active: true
             };
@@ -163,6 +190,9 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                 id: template?.id,
                 title: title,
                 canvasData: JSON.stringify(elements),
+                papersize,              // ✅ 용지 크기 추가
+                paperwidth,
+                paperheight,
                 clcd: clcd,   // 현재 선택된 분류 코드
                 active: true             // 신규 등록 시 기본 활성화
             };
@@ -224,6 +254,12 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                     style={{ width: "100%", padding: 6 }}
                 />
 
+                <h3>용지 크기</h3>
+                <select value={papersize} onChange={(e) => setPapersize(e.target.value)}>
+                    <option value="A4">A4</option>
+                    <option value="Letter">Letter</option>
+                </select>
+
                 <h3>툴</h3>
 
                 <button onClick={addText}>+ 텍스트</button>
@@ -283,14 +319,14 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
             <div>
                 <Stage
                     ref={stageRef}
-                    width={800}
-                    height={600}
+                    width={stageWidth}
+                    height={stageHeight}
+                    scaleX={scaleX}
+                    scaleY={scaleY}
                     style={{ border: "1px solid #ccc" }}
                 >
                     <Layer>
-
                         {elements.map(el => {
-
                             if (el.type === "text") {
                                 return (
                                     <Text
@@ -304,8 +340,8 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                                         onClick={() => setSelectedId(el.id)}
                                         onDragEnd={(e) =>
                                             updateElement(el.id, {
-                                                x: e.target.x(),
-                                                y: e.target.y()
+                                                x: e.target.x() / scaleX,
+                                                y: e.target.y() / scaleY
                                             })
                                         }
                                         stroke={selectedId === el.id ? "blue" : null}
@@ -323,13 +359,14 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                                         updateElement={updateElement}
                                         selectedId={selectedId}
                                         setSelectedId={setSelectedId}
+                                        scaleX={scaleX}
+                                        scaleY={scaleY}
                                     />
                                 );
                             }
 
                             return null;
                         })}
-
                     </Layer>
                 </Stage>
             </div>
@@ -341,7 +378,7 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
 // ----------------------------
 // IMAGE COMPONENT (핵심)
 // ----------------------------
-function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId }) {
+function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, scaleX, scaleY }) {
 
     const src = dataMap?.[el.fieldName];
     const [img] = useImage(src || "");
@@ -366,8 +403,8 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId }) 
                     onClick={() => setSelectedId(el.id)}
                     onDragEnd={(e) =>
                         updateElement(el.id, {
-                            x: e.target.x(),
-                            y: e.target.y()
+                            x: e.target.x() / scaleX,
+                            y: e.target.y() / scaleY
                         })
                     }
                     stroke={isSelected ? "#1976d2" : null}
@@ -393,8 +430,8 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId }) 
                         onClick={() => setSelectedId(el.id)}
                         onDragEnd={(e) =>
                             updateElement(el.id, {
-                                x: e.target.x(),
-                                y: e.target.y()
+                                x: e.target.x() / scaleX,
+                                y: e.target.y() / scaleY
                             })
                         }
                     />
@@ -407,6 +444,12 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId }) 
                         fontSize={12}
                         fill="#888"
                         align="center"
+                        onDragEnd={(e) =>
+                            updateElement(el.id, {
+                                x: e.target.x() / scaleX,
+                                y: e.target.y() / scaleY
+                            })
+                        }
                     />
                 </>
             )}

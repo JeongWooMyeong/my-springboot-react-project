@@ -27,5 +27,10 @@ public class Sytm2000Dto {
     private String updpn;         // template_active.Updpn
     private Long clcd;            // template_active.ClCd
 
+    // ✅ 용지 크기 관련 필드 추가
+    private String papersize;     // "A4", "Letter" 등 문자열
+    private Double paperwidth;  // mm 단위 너비
+    private Double paperheight; // mm 단위 높이
+
 
 }

@@ -12,14 +12,20 @@
         canvas_data,
         created_at,
         updated_at,
-        thumbnailpath
+        thumbnailpath,
+        papersize,
+        paperwidth,
+        paperheight
         )
         VALUES (
         #{title},
         #{canvasData},
         #{createdAt},
         #{updatedAt},
-        #{thumbnailpath}
+        #{thumbnailpath},
+        #{papersize},
+        #{paperwidth},
+        #{paperheight}
         )
     </insert>
     <!-- 템플릿 해당 분류 활성화 -->
@@ -69,7 +75,10 @@
         SET
         title = #{title},
         canvas_data = #{canvasData},
-        updated_at = #{updatedAt}
+        updated_at = #{updatedAt},
+        papersize = #{papersize},
+        paperwidth = #{paperwidth},
+        paperheight = #{paperheight}
 
         <if test="thumbnailpath != null">
             , thumbnailpath = #{thumbnailpath}
