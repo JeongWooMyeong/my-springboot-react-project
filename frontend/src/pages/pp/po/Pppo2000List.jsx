@@ -57,8 +57,12 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
                 <h3 style={{ margin: 0 }}>신청내역</h3>
                 <div style={{ display: "flex", gap: 8 }}>
-                    {/* 체크된 리스트 중 ordstate=10이 있으면 승인/반려 버튼 노출 */}
-                    {requests.some(req => selectedOrdnos.includes(req.ordno) && String(req.ordstate) === "10") && (
+                    {(
+                        // 체크된 리스트 중 ordstate=10이 있거나
+                        // 선택된 단일 row의 ordstate가 10인 경우
+                        requests.some(req => selectedOrdnos.includes(req.ordno) && String(req.ordstate) === "10") ||
+                        (selectedRequest && String(selectedRequest.ordstate) === "10")
+                    ) && (
                         <>
                             <button onClick={() => onApprove(selectedOrdnos)}>승인</button>
                             <button onClick={() => onReject(selectedOrdnos)}>반려</button>
