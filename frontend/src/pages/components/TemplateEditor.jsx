@@ -18,6 +18,7 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
 
     const paperSizes = {
         A4: { widthMm: 210, heightMm: 297 },       // A4 = 210 × 297 mm
+        A3: { widthMm: 297, heightMm: 420},
         Letter: { widthMm: 216, heightMm: 279 },   // Letter = 8.5 × 11 inch ≈ 216 × 279 mm
         Legal: { widthMm: 216, heightMm: 356 }     // Legal = 8.5 × 14 inch ≈ 216 × 356 mm
     };
@@ -257,6 +258,7 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                 <h3>용지 크기</h3>
                 <select value={papersize} onChange={(e) => setPapersize(e.target.value)}>
                     <option value="A4">A4</option>
+                    <option value="A3">A3</option>
                     <option value="Letter">Letter</option>
                 </select>
 
@@ -340,8 +342,8 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                                         onClick={() => setSelectedId(el.id)}
                                         onDragEnd={(e) =>
                                             updateElement(el.id, {
-                                                x: e.target.x() / scaleX,
-                                                y: e.target.y() / scaleY
+                                                x: e.target.x(),
+                                                y: e.target.y()
                                             })
                                         }
                                         stroke={selectedId === el.id ? "blue" : null}
@@ -403,8 +405,8 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
                     onClick={() => setSelectedId(el.id)}
                     onDragEnd={(e) =>
                         updateElement(el.id, {
-                            x: e.target.x() / scaleX,
-                            y: e.target.y() / scaleY
+                            x: e.target.x(),
+                            y: e.target.y()
                         })
                     }
                     stroke={isSelected ? "#1976d2" : null}
@@ -430,8 +432,8 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
                         onClick={() => setSelectedId(el.id)}
                         onDragEnd={(e) =>
                             updateElement(el.id, {
-                                x: e.target.x() / scaleX,
-                                y: e.target.y() / scaleY
+                                x: e.target.x(),
+                                y: e.target.y()
                             })
                         }
                     />
@@ -446,8 +448,8 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
                         align="center"
                         onDragEnd={(e) =>
                             updateElement(el.id, {
-                                x: e.target.x() / scaleX,
-                                y: e.target.y() / scaleY
+                                x: e.target.x(),
+                                y: e.target.y()
                             })
                         }
                     />
