@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -61,11 +62,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
         try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
 
-            /*
-             * ============================
-             * 한글 폰트
-             * ============================
-             */
             PdfFont koreanFont =
                     PdfFontFactory.createFont(
                             "fonts/NanumGothic.ttf",
@@ -98,16 +94,19 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
             /*
              * ============================
-             * 용지 크기 생성
-             * mm -> pt
+             * 용지 크기
+             * DB mm -> PDF pt
              * ============================
              */
-            float mmToPt = 72f / 25.4f;
+            float mmToPt =
+                    72f / 25.4f;
+
 
 
             float pdfWidth =
                     detail.getPaperwidth()
                             * mmToPt;
+
 
 
             float pdfHeight =
@@ -147,9 +146,11 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
+
+
             /*
              * ============================
-             * Konva 기준
+             * TemplateEditor 기준
              * ============================
              */
             float stageWidth = 800f;
@@ -158,10 +159,11 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
             /*
-             * Canvas -> PDF Scale
+             * 800x600 좌표 -> PDF 좌표
              */
             float scaleX =
                     pdfWidth / stageWidth;
+
 
 
             float scaleY =
@@ -170,100 +172,119 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
+
             for(Map<String,Object> field : fields){
 
 
-
                 String type =
-                        (String)field.get("type");
+                        String.valueOf(
+                                field.get("type")
+                        );
 
 
 
                 String fieldName =
-                        (String)field.get("fieldName");
+                        String.valueOf(
+                                field.get("fieldName")
+                        );
+
+
+
+                float x =
+                        ((Number)field.get("x"))
+                                .floatValue()
+                                * scaleX;
+
+
+
+                float y =
+                        ((Number)field.get("y"))
+                                .floatValue()
+                                * scaleY;
+
+
+
+                float width =
+                        ((Number)field.get("width"))
+                                .floatValue()
+                                * scaleX;
+
+
+
+                float height =
+                        ((Number)field.get("height"))
+                                .floatValue()
+                                * scaleY;
 
 
 
 
 
                 /*
-                 * ==========================
+                 * ========================
                  * TEXT
-                 * ==========================
+                 * ========================
                  */
                 if("text".equals(type)){
 
 
 
+                    Object obj =
+                            data.get(fieldName);
+
+
+
                     String value =
-                            (String)data.get(fieldName);
+                            obj == null
+                                    ? ""
+                                    : obj.toString();
 
 
 
-                    if(value == null || value.isEmpty()){
+                    if(value.isEmpty()){
 
-                        value =
-                                (String)field.get("text");
+                        Object text =
+                                field.get("text");
+
+                        if(text != null){
+                            value =
+                                    text.toString();
+                        }
+                    }
+
+
+
+
+                    float fontSize = 20;
+
+
+
+                    Object fs =
+                            field.get("fontSize");
+
+
+                    if(fs != null){
+
+                        fontSize =
+                                ((Number)fs)
+                                        .floatValue();
 
                     }
 
 
 
-                    if(value == null){
-                        value="";
-                    }
+                    fontSize =
+                            fontSize * scaleY;
 
 
 
 
-
-                    float x =
-                            ((Number)field.get("x"))
-                                    .floatValue()
-                                    * scaleX;
-
-
-
-                    float y =
-                            ((Number)field.get("y"))
-                                    .floatValue()
-                                    * scaleY;
-
-
-
-                    float width =
-                            ((Number)field.get("width"))
-                                    .floatValue()
-                                    * scaleX;
-
-
-
-                    float height =
-                            ((Number)field.get("height"))
-                                    .floatValue()
-                                    * scaleY;
-
-
-
-
-                    float originalFontSize =
-                            ((Number)field.get("fontSize"))
-                                    .floatValue()
-                                    * scaleY;
-
-
-
-
-                    /*
-                     * Preview와 동일한
-                     * 자동 폰트 축소
-                     */
-                    float fontSize =
+                    fontSize =
                             getFitFontSize(
                                     value,
                                     width,
                                     height,
-                                    originalFontSize
+                                    fontSize
                             );
 
 
@@ -271,13 +292,15 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
                     /*
-                     * Konva Top 기준
-                     * PDF Bottom 기준 변환
+                     * Konva TOP
+                     * PDF BOTTOM
                      */
                     float pdfY =
                             pdfHeight
-                                    - y
-                                    - height;
+                                    -
+                                    y
+                                    -
+                                    height;
 
 
 
@@ -310,7 +333,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
                     canvas.add(paragraph);
 
-
                     canvas.close();
 
 
@@ -322,61 +344,52 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
                 /*
-                 * ==========================
+                 * ========================
                  * IMAGE
-                 * ==========================
+                 * ========================
                  */
                 else if("image".equals(type)){
 
 
 
-                    String imageUrl =
-                            (String)data.get(fieldName);
+                    Object img =
+                            data.get(fieldName);
 
 
 
-                    if(imageUrl == null){
+                    if(img == null)
                         continue;
+
+
+
+                    String imageUrl =
+                            img.toString();
+
+
+
+
+
+                    /*
+                     * /userimage 처리
+                     */
+                    if(imageUrl.startsWith("/")){
+
+                        imageUrl =
+                                "http://localhost:8081"
+                                        + imageUrl;
+
                     }
 
 
 
 
 
-                    float x =
-                            ((Number)field.get("x"))
-                                    .floatValue()
-                                    * scaleX;
-
-
-
-                    float y =
-                            ((Number)field.get("y"))
-                                    .floatValue()
-                                    * scaleY;
-
-
-
-                    float width =
-                            ((Number)field.get("width"))
-                                    .floatValue()
-                                    * scaleX;
-
-
-
-                    float height =
-                            ((Number)field.get("height"))
-                                    .floatValue()
-                                    * scaleY;
-
-
-
-
                     float pdfY =
                             pdfHeight
-                                    - y
-                                    - height;
-
+                                    -
+                                    y
+                                    -
+                                    height;
 
 
 
@@ -384,7 +397,9 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
                     Image image =
                             new Image(
-                                    ImageDataFactory.create(imageUrl)
+                                    ImageDataFactory.create(
+                                            new URL(imageUrl)
+                                    )
                             );
 
 
@@ -392,6 +407,7 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
                     /*
+                     * TemplatePreview와 동일
                      * contain
                      */
                     image.scaleToFit(
@@ -401,39 +417,28 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-                    float imageWidth =
+
+                    float imgWidth =
                             image.getImageScaledWidth();
 
 
 
-                    float imageHeight =
+                    float imgHeight =
                             image.getImageScaledHeight();
 
 
 
 
 
-                    float offsetX =
-                            (width - imageWidth) / 2;
-
-
-
-                    float offsetY =
-                            (height - imageHeight) / 2;
-
-
-
-
-
                     image.setFixedPosition(
-                            x + offsetX,
-                            pdfY + offsetY
+                            x + (width-imgWidth)/2,
+                            pdfY + (height-imgHeight)/2
                     );
 
 
 
-                    document.add(image);
 
+                    document.add(image);
 
                 }
 
@@ -445,11 +450,13 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
             document.close();
 
 
+
             return baos.toByteArray();
 
 
 
-        }catch(Exception e){
+        }
+        catch(Exception e){
 
 
             throw new RuntimeException(
@@ -460,7 +467,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
         }
 
     }
-
 
 
 

@@ -47,7 +47,10 @@
         canvas_data AS canvasData,
         created_at AS createdAt,
         updated_at AS updatedAt,
-        thumbnailpath
+        thumbnailpath,
+        papersize,
+        paperwidth,
+        paperheight
         FROM template a
         inner join template_active b on a.id = b.tmpno and b.clcd = #{clcd}
         ORDER BY id DESC
@@ -61,7 +64,10 @@
         canvas_data AS canvasData,
         created_at AS createdAt,
         updated_at AS updatedAt,
-        thumbnailpath
+        thumbnailpath,
+        papersize,
+        paperwidth,
+        paperheight
         FROM template
         WHERE id = #{id}
     </select>

@@ -1,73 +1,131 @@
+import {
+    Stage,
+    Layer,
+    Group,
+    Text,
+    Rect,
+    Image as KonvaImage
+} from "react-konva";
+
+import useImage from "use-image";
+import { mmToPx } from "../../util/Utils";
+
+
+
 export default function TemplatePreview({ request }) {
 
-    const data = JSON.parse(request.data || "{}");
-    const fields = JSON.parse(request.canvasData || "[]");
 
+    const data =
+        JSON.parse(request.data || "{}");
+
+
+    const fields =
+        JSON.parse(request.canvasData || "[]");
+
+
+
+    // =============================
+    // TemplateEditor 동일
+    // =============================
 
     const stageWidth = 800;
     const stageHeight = 600;
 
 
-    const previewScale = 0.7;
 
-    const previewWidth = stageWidth * previewScale;
-    const previewHeight = stageHeight * previewScale;
-
-
-
-    // -----------------------------
-    // 텍스트 자동 축소 계산
-    // -----------------------------
-    const getFitFontSize = (text, field)=>{
-
-        let size = field.fontSize || 20;
+    const paperWidthPx =
+        mmToPx(
+            Number(request.paperwidth || 210)
+        );
 
 
-        const maxWidth =
+    const paperHeightPx =
+        mmToPx(
+            Number(request.paperheight || 297)
+        );
+
+
+
+    const scaleX =
+        stageWidth / paperWidthPx;
+
+
+    const scaleY =
+        stageHeight / paperHeightPx;
+
+
+
+    // =============================
+    // TEXT FONT AUTO FIT
+    // =============================
+
+    const getFitFontSize = (
+        text,
+        field
+    )=>{
+
+
+        let size =
+            field.fontSize || 20;
+
+
+        const width =
             field.width || 100;
 
 
-        const maxHeight =
+        const height =
             field.height || 30;
 
 
 
         while(size > 8){
 
-            // 예상 글자 수
+
             const charsPerLine =
                 Math.floor(
-                    maxWidth / (size * 0.55)
+                    width /
+                    (size * 0.55)
                 );
+
 
 
             const lineCount =
                 Math.ceil(
-                    text.length / charsPerLine
+                    text.length /
+                    charsPerLine
                 );
 
 
+
             const totalHeight =
-                lineCount * size * 1.2;
+                lineCount *
+                size *
+                1.2;
 
 
 
-            if(totalHeight <= maxHeight){
+            if(totalHeight <= height){
                 break;
             }
 
 
-            size -= 1;
+            size--;
+
         }
 
 
         return size;
+
     };
 
 
 
+
+
     return (
+
         <div
+
             style={{
                 width:820,
                 height:650,
@@ -75,162 +133,265 @@ export default function TemplatePreview({ request }) {
                 background:"#eee",
                 padding:10
             }}
+
         >
+
 
             <h4>
                 템플릿명 : {request.title}
             </h4>
 
 
-            <div
+
+            <Stage
+
+                width={stageWidth}
+
+                height={stageHeight}
+
                 style={{
-                    position:"relative",
-                    width:previewWidth,
-                    height:previewHeight,
+
                     border:"2px dashed gray",
+
                     background:"#fff"
+
                 }}
+
             >
 
 
-                <div
-                    style={{
-                        position:"absolute",
-                        width:stageWidth,
-                        height:stageHeight,
-                        transform:`scale(${previewScale})`,
-                        transformOrigin:"top left"
-                    }}
-                >
+                <Layer>
 
 
-                    {fields.map(field=>{
+                    {/* TemplateEditor 동일 */}
+                    <Group
+
+                        scaleX={scaleX}
+
+                        scaleY={scaleY}
+
+                    >
 
 
-                        // =========================
-                        // TEXT
-                        // =========================
-                        if(field.type === "text"){
+                        {
+                            fields.map(field=>{
 
 
-                            const value =
-                                data[field.fieldName]
-                                ?? field.text
-                                ?? "";
+                                // =====================
+                                // TEXT
+                                // =====================
+
+                                if(field.type==="text"){
 
 
-
-                            const fitSize =
-                                getFitFontSize(
-                                    value,
-                                    field
-                                );
-
-
-
-                            return (
-                                <div
-                                    key={field.id}
-
-                                    style={{
-                                        position:"absolute",
-
-                                        left:field.x,
-                                        top:field.y,
-
-
-                                        width:field.width,
-                                        height:field.height,
-
-
-                                        fontSize:fitSize,
-
-                                        color:field.fill
-                                            || "black",
-
-
-                                        lineHeight:
-                                            `${fitSize * 1.2}px`,
-
-
-                                        whiteSpace:"pre-wrap",
-
-                                        wordBreak:"break-all",
-
-
-                                        overflow:"hidden"
-                                    }}
-                                >
-                                    {value}
-                                </div>
-                            );
-                        }
+                                    const value =
+                                        data[field.fieldName]
+                                        ??
+                                        field.text
+                                        ??
+                                        "";
 
 
 
-                        // =========================
-                        // IMAGE
-                        // =========================
-                        if(field.type === "image"){
+                                    return (
+
+                                        <Text
+
+                                            key={field.id}
 
 
-                            const imgSrc =
-                                data[field.fieldName];
+                                            x={field.x}
+
+                                            y={field.y}
 
 
+                                            width={field.width}
 
-                            return (
-                                <div
-                                    key={field.id}
-
-                                    style={{
-                                        position:"absolute",
-
-                                        left:field.x,
-                                        top:field.y,
+                                            height={field.height}
 
 
-                                        width:field.width,
-                                        height:field.height,
+                                            text={value}
 
 
-                                        border:
-                                            "1px dashed #aaa"
-                                    }}
-                                >
+                                            fontSize={
+                                                getFitFontSize(
+                                                    value,
+                                                    field
+                                                )
+                                            }
 
-                                    {imgSrc && (
 
-                                        <img
-                                            src={imgSrc}
-                                            alt=""
+                                            fill={
+                                                field.fill
+                                                ||
+                                                "black"
+                                            }
 
-                                            style={{
-                                                width:"100%",
-                                                height:"100%",
 
-                                                objectFit:"contain"
-                                            }}
+                                            wrap="word"
+
+
+                                            ellipsis={false}
+
+
                                         />
 
-                                    )}
+                                    );
 
-                                </div>
-                            );
+                                }
+
+
+
+
+
+                                // =====================
+                                // IMAGE
+                                // =====================
+
+                                if(field.type==="image"){
+
+                                    let imgSrc =
+                                        data[field.fieldName];
+
+
+                                    // JSON 문자열이면 변환
+                                    if(imgSrc){
+
+                                        try{
+
+                                            const parsed =
+                                                JSON.parse(imgSrc);
+
+
+                                            if(parsed.url){
+                                                imgSrc = parsed.url;
+                                            }
+
+                                        }catch(e){
+
+                                        }
+
+                                    }
+
+
+                                    // 상대경로 -> 절대경로
+                                    if(imgSrc && imgSrc.startsWith("/")){
+
+                                        imgSrc =
+                                            window.location.origin
+                                            + imgSrc;
+
+                                    }
+
+
+                                    return (
+
+                                        <PreviewImage
+
+                                            key={field.id}
+
+                                            field={field}
+
+                                            src={imgSrc}
+
+                                        />
+
+                                    );
+
+                                }
+
+
+
+                                return null;
+
+
+                            })
                         }
 
 
-                        return null;
 
-                    })}
-
-
-                </div>
+                    </Group>
 
 
-            </div>
+
+                </Layer>
+
+
+            </Stage>
+
 
 
         </div>
+
     );
+
+}
+
+
+
+
+
+function PreviewImage({
+                          field,
+                          src
+                      }){
+
+
+    const [img] =
+        useImage(
+            src || "",
+            "anonymous"
+        );
+
+
+
+    return (
+
+        <>
+
+
+            {/* 이미지 영역 */}
+
+            <Rect
+
+                x={field.x}
+
+                y={field.y}
+
+                width={field.width}
+
+                height={field.height}
+
+                stroke="#aaa"
+
+                dash={[6,4]}
+
+            />
+
+
+
+            {
+                img &&
+
+                <KonvaImage
+
+                    image={img}
+
+                    x={field.x}
+
+                    y={field.y}
+
+                    width={field.width}
+
+                    height={field.height}
+
+                />
+
+            }
+
+
+        </>
+
+    );
+
 }
