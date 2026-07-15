@@ -15,4 +15,6 @@ public class Pppo2000DetailDto {
     private String thumbnailpath;  // 템플릿 썸네일
     private String createdAt;
     private String updatedAt;
+    private float paperwidth;
+    private float paperheight;
 }

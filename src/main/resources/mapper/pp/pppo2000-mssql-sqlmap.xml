@@ -33,7 +33,9 @@
                b.canvas_data AS canvasData,
                b.thumbnailpath,
                b.created_at AS createdAt,
-               b.updated_at AS updatedAt
+               b.updated_at AS updatedAt,
+               paperwidth,
+               paperheight
         FROM pppo1100t a
                  JOIN template b ON a.templateid = b.id
         WHERE a.ordno = #{ordno}

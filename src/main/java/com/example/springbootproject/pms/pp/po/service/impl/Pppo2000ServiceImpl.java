@@ -5,15 +5,21 @@ import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import com.example.springbootproject.pms.pp.po.service.dao.Pppo2000Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
+import com.itextpdf.layout.element.Paragraph;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -47,158 +53,350 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
     @Override
     public byte[] generatePdf(String ordno) {
 
-        Pppo2000DetailDto detail = pppo2000Mapper.selectRequestDetail(ordno);
 
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+        Pppo2000DetailDto detail =
+                pppo2000Mapper.selectRequestDetail(ordno);
 
-            PdfDocument pdfDoc = new PdfDocument(new PdfWriter(baos));
-            Document document = new Document(pdfDoc);
+
+        try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+
+
+            /*
+             * ============================
+             * 한글 폰트
+             * ============================
+             */
+            PdfFont koreanFont =
+                    PdfFontFactory.createFont(
+                            "fonts/NanumGothic.ttf",
+                            PdfEncodings.IDENTITY_H,
+                            PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                    );
+
+
 
             ObjectMapper mapper = new ObjectMapper();
 
-            Map<String, Object> data =
-                    mapper.readValue(detail.getData(), Map.class);
-
-            List<Map<String, Object>> fields =
-                    mapper.readValue(detail.getCanvasData(), List.class);
 
 
-            PdfPage page = pdfDoc.addNewPage();
-
-
-            float pageWidth = page.getPageSize().getWidth();
-            float pageHeight = page.getPageSize().getHeight();
-
-
-            // ==========================
-            // Konva Stage 기준
-            // ==========================
-            float canvasWidth = 800f;
-            float canvasHeight = 600f;
-
-
-            // Stage -> PDF Scale
-            float scaleX = pageWidth / canvasWidth;
-            float scaleY = pageHeight / canvasHeight;
+            Map<String,Object> data =
+                    mapper.readValue(
+                            detail.getData(),
+                            Map.class
+                    );
 
 
 
-            for (Map<String, Object> field : fields) {
+            List<Map<String,Object>> fields =
+                    mapper.readValue(
+                            detail.getCanvasData(),
+                            List.class
+                    );
 
 
-                String type = (String) field.get("type");
-                String fieldName = (String) field.get("fieldName");
 
 
-                // ======================
-                // TEXT
-                // ======================
-                if ("text".equals(type)) {
+            /*
+             * ============================
+             * 용지 크기 생성
+             * mm -> pt
+             * ============================
+             */
+            float mmToPt = 72f / 25.4f;
 
 
-                    String value = (String) data.get(fieldName);
+            float pdfWidth =
+                    detail.getPaperwidth()
+                            * mmToPt;
 
-                    if (value == null) {
-                        value = "";
+
+            float pdfHeight =
+                    detail.getPaperheight()
+                            * mmToPt;
+
+
+
+
+            PdfDocument pdfDoc =
+                    new PdfDocument(
+                            new PdfWriter(baos)
+                    );
+
+
+
+            PageSize pageSize =
+                    new PageSize(
+                            pdfWidth,
+                            pdfHeight
+                    );
+
+
+
+            Document document =
+                    new Document(
+                            pdfDoc,
+                            pageSize
+                    );
+
+
+
+            PdfPage page =
+                    pdfDoc.addNewPage(
+                            pageSize
+                    );
+
+
+
+            /*
+             * ============================
+             * Konva 기준
+             * ============================
+             */
+            float stageWidth = 800f;
+            float stageHeight = 600f;
+
+
+
+            /*
+             * Canvas -> PDF Scale
+             */
+            float scaleX =
+                    pdfWidth / stageWidth;
+
+
+            float scaleY =
+                    pdfHeight / stageHeight;
+
+
+
+
+            for(Map<String,Object> field : fields){
+
+
+
+                String type =
+                        (String)field.get("type");
+
+
+
+                String fieldName =
+                        (String)field.get("fieldName");
+
+
+
+
+
+                /*
+                 * ==========================
+                 * TEXT
+                 * ==========================
+                 */
+                if("text".equals(type)){
+
+
+
+                    String value =
+                            (String)data.get(fieldName);
+
+
+
+                    if(value == null || value.isEmpty()){
+
+                        value =
+                                (String)field.get("text");
+
                     }
 
 
+
+                    if(value == null){
+                        value="";
+                    }
+
+
+
+
+
                     float x =
-                            ((Number) field.get("x")).floatValue()
+                            ((Number)field.get("x"))
+                                    .floatValue()
                                     * scaleX;
 
 
+
                     float y =
-                            ((Number) field.get("y")).floatValue()
+                            ((Number)field.get("y"))
+                                    .floatValue()
                                     * scaleY;
 
 
+
+                    float width =
+                            ((Number)field.get("width"))
+                                    .floatValue()
+                                    * scaleX;
+
+
+
+                    float height =
+                            ((Number)field.get("height"))
+                                    .floatValue()
+                                    * scaleY;
+
+
+
+
+                    float originalFontSize =
+                            ((Number)field.get("fontSize"))
+                                    .floatValue()
+                                    * scaleY;
+
+
+
+
+                    /*
+                     * Preview와 동일한
+                     * 자동 폰트 축소
+                     */
                     float fontSize =
-                            ((Number) field.get("fontSize")).floatValue()
-                                    * scaleY;
+                            getFitFontSize(
+                                    value,
+                                    width,
+                                    height,
+                                    originalFontSize
+                            );
 
 
-                    float yPdf =
-                            pageHeight - y - fontSize;
 
 
 
-                    PdfCanvas canvas = new PdfCanvas(page);
+                    /*
+                     * Konva Top 기준
+                     * PDF Bottom 기준 변환
+                     */
+                    float pdfY =
+                            pdfHeight
+                                    - y
+                                    - height;
 
 
-                    canvas.beginText()
-                            .setFontAndSize(
-                                    PdfFontFactory.createFont(),
-                                    fontSize
-                            )
-                            .moveText(x, yPdf)
-                            .showText(value)
-                            .endText();
+
+
+
+                    Paragraph paragraph =
+                            new Paragraph(value)
+                                    .setFont(koreanFont)
+                                    .setFontSize(fontSize)
+                                    .setMargin(0)
+                                    .setPadding(0)
+                                    .setMultipliedLeading(1.2f);
+
+
+
+
+
+                    Canvas canvas =
+                            new Canvas(
+                                    new PdfCanvas(page),
+                                    new Rectangle(
+                                            x,
+                                            pdfY,
+                                            width,
+                                            height
+                                    )
+                            );
+
+
+
+                    canvas.add(paragraph);
+
+
+                    canvas.close();
+
 
 
                 }
 
 
 
-                // ======================
-                // IMAGE
-                // ======================
-                else if ("image".equals(type)) {
+
+
+                /*
+                 * ==========================
+                 * IMAGE
+                 * ==========================
+                 */
+                else if("image".equals(type)){
+
 
 
                     String imageUrl =
-                            (String) data.get(fieldName);
+                            (String)data.get(fieldName);
 
 
-                    if (imageUrl == null) {
+
+                    if(imageUrl == null){
                         continue;
                     }
 
 
+
+
+
                     float x =
-                            ((Number) field.get("x")).floatValue()
+                            ((Number)field.get("x"))
+                                    .floatValue()
                                     * scaleX;
+
 
 
                     float y =
-                            ((Number) field.get("y")).floatValue()
+                            ((Number)field.get("y"))
+                                    .floatValue()
                                     * scaleY;
 
 
-                    float boxWidth =
-                            ((Number) field.get("width")).floatValue()
+
+                    float width =
+                            ((Number)field.get("width"))
+                                    .floatValue()
                                     * scaleX;
 
 
-                    float boxHeight =
-                            ((Number) field.get("height")).floatValue()
+
+                    float height =
+                            ((Number)field.get("height"))
+                                    .floatValue()
                                     * scaleY;
 
 
 
-                    // Canvas 좌표 -> PDF 좌표
-                    float yPdf =
-                            pageHeight - y - boxHeight;
+
+                    float pdfY =
+                            pdfHeight
+                                    - y
+                                    - height;
 
 
 
-                    ImageData imageData =
-                            ImageDataFactory.create(imageUrl);
 
 
 
                     Image image =
-                            new Image(imageData);
+                            new Image(
+                                    ImageDataFactory.create(imageUrl)
+                            );
+
+
 
 
 
                     /*
-                     * ⭐ 원본 비율 유지
-                     * object-fit: contain 과 동일
+                     * contain
                      */
                     image.scaleToFit(
-                            boxWidth,
-                            boxHeight
+                            width,
+                            height
                     );
 
 
@@ -207,47 +405,123 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                             image.getImageScaledWidth();
 
 
+
                     float imageHeight =
                             image.getImageScaledHeight();
 
 
 
-                    // 영역 중앙 배치
+
+
                     float offsetX =
-                            (boxWidth - imageWidth) / 2;
+                            (width - imageWidth) / 2;
+
 
 
                     float offsetY =
-                            (boxHeight - imageHeight) / 2;
+                            (height - imageHeight) / 2;
+
+
 
 
 
                     image.setFixedPosition(
                             x + offsetX,
-                            yPdf + offsetY
+                            pdfY + offsetY
                     );
 
 
 
                     document.add(image);
 
+
                 }
+
 
             }
 
 
+
             document.close();
+
 
             return baos.toByteArray();
 
 
-        } catch (Exception e) {
+
+        }catch(Exception e){
+
 
             throw new RuntimeException(
                     "PDF 생성 실패",
                     e
             );
+
         }
+
+    }
+
+
+
+
+    /*
+     * ====================================
+     * 텍스트 영역 맞춤 폰트 계산
+     * Preview와 동일
+     * ====================================
+     */
+    private float getFitFontSize(
+            String text,
+            float width,
+            float height,
+            float fontSize
+    ){
+
+
+        float size = fontSize;
+
+
+
+        while(size > 8){
+
+
+            float charsPerLine =
+                    width / (size * 0.55f);
+
+
+
+            int lineCount =
+                    (int)Math.ceil(
+                            text.length()
+                                    / charsPerLine
+                    );
+
+
+
+            float textHeight =
+                    lineCount
+                            * size
+                            * 1.2f;
+
+
+
+
+            if(textHeight <= height){
+
+                break;
+
+            }
+
+
+
+            size -= 1;
+
+        }
+
+
+
+        return size;
+
     }
 
     @Override

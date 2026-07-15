@@ -59,6 +59,36 @@ export default function Pppo1100Page({ templateid, onBack }) {
     const [productData, setProductData] = useState({});
     const [focusField, setFocusField] = useState(null);
 
+    const getFitFontSize = (
+        text,
+        width,
+        height,
+        fontSize
+    ) => {
+
+        let size = fontSize;
+
+        while(size > 5){
+
+            const temp = new window.Konva.Text({
+                text,
+                width,
+                fontSize: size,
+                wrap:"word"
+            });
+
+
+            if(temp.height() <= height){
+                break;
+            }
+
+
+            size--;
+        }
+
+        return size;
+    };
+
     const ordno =
         "TP" +
         Math.floor(Math.random() * 1_000_000_000000)
@@ -238,9 +268,24 @@ export default function Pppo1100Page({ templateid, onBack }) {
                                     width={el.width}
                                     height={el.height}
                                     text={value || ""}
-                                    fontSize={el.fontSize || 20}
+                                    fontSize={
+                                        getFitFontSize(
+                                            value || "",
+                                            el.width,
+                                            el.height,
+                                            el.fontSize || 20
+                                        )
+                                    }
                                     fill={el.fill || "black"}
+
+                                    // 줄바꿈
                                     wrap="word"
+
+                                    // 영역 밖 숨김
+                                    ellipsis={false}
+
+                                    // 수직 정렬
+                                    verticalAlign="top"
                                 />
 
                                 {isFocus && (
