@@ -37,6 +37,18 @@ function Menu({ userinfo }) {
     return (
         <nav className="main-menu">
             <ul className="menu-root">
+
+                {/* ✅ 맨 왼쪽 메인 버튼 */}
+                <li className="menu-item">
+                    <button
+                        type="button"
+                        className="menu-button"
+                        onClick={() => navigate("/main")}
+                    >
+                        메인
+                    </button>
+                </li>
+
                 {Array.isArray(menus) && menus
                     .filter(menu => menu.menuPrntCd === "0" && hasMenu(menu.menuCd))
                     .map(menu => (
