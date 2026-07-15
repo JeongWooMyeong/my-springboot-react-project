@@ -235,17 +235,20 @@ export default function Pppo1100Page({ templateid, onBack }) {
                                 <Text
                                     x={el.x}
                                     y={el.y}
+                                    width={el.width}
+                                    height={el.height}
                                     text={value || ""}
                                     fontSize={el.fontSize || 20}
                                     fill={el.fill || "black"}
+                                    wrap="word"
                                 />
 
                                 {isFocus && (
                                     <Rect
                                         x={el.x - 4}
                                         y={el.y - 4}
-                                        width={200}
-                                        height={30}
+                                        width={el.width + 8}
+                                        height={el.height + 8}
                                         stroke="#1976d2"
                                         dash={[6, 4]}
                                     />

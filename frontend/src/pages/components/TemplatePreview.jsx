@@ -60,8 +60,13 @@ export default function TemplatePreview({ request }) {
                                         position:"absolute",
                                         left:field.x,
                                         top:field.y,
+                                        width:field.width,
+                                        height:field.height,
                                         fontSize:field.fontSize,
-                                        color:field.fill
+                                        color:field.fill,
+                                        overflow:"hidden",
+                                        whiteSpace:"pre-wrap",
+                                        wordBreak:"break-word"
                                     }}
                                 >
                                     {data[field.fieldName] ?? field.text}
@@ -71,19 +76,33 @@ export default function TemplatePreview({ request }) {
 
 
                         if(field.type === "image") {
+
+                            const imgSrc = data[field.fieldName];
+
                             return (
-                                <img
+                                <div
                                     key={field.id}
-                                    src={data[field.fieldName]}
-                                    alt=""
                                     style={{
                                         position:"absolute",
                                         left:field.x,
                                         top:field.y,
                                         width:field.width,
-                                        height:field.height
+                                        height:field.height,
+                                        border:"1px dashed #aaa"
                                     }}
-                                />
+                                >
+                                    {imgSrc && (
+                                        <img
+                                            src={imgSrc}
+                                            alt=""
+                                            style={{
+                                                width:"100%",
+                                                height:"100%",
+                                                objectFit:"fill"
+                                            }}
+                                        />
+                                    )}
+                                </div>
                             );
                         }
 

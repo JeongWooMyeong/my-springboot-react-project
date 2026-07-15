@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import {Stage, Rect, Layer, Text, Image as KonvaImage, Line} from "react-konva";
+import {Stage, Rect, Layer, Text, Image as KonvaImage, Line, Group, Transformer} from "react-konva";
 import axios from "axios";
 import useImage from "use-image";
 import { mmToPx } from"../../util/Utils";
@@ -11,6 +11,9 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
     const [title, setTitle] = useState("");
 
     const stageRef = useRef(null);
+    //26.07.15
+    const transformerRef = useRef(null);
+    const nodeRefs = useRef({});
 
     const selectedElement = elements.find(el => el.id === selectedId);
     //2026.07.13 용지크기 추가
@@ -37,6 +40,29 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
     const stageHeight = 600;
     const scaleX = stageWidth / widthPx;
     const scaleY = stageHeight / heightPx;
+
+    useEffect(() => {
+
+        const transformer = transformerRef.current;
+
+        if (!transformer) return;
+
+
+        const node = nodeRefs.current[selectedId];
+
+
+        if(node){
+
+            transformer.nodes([node]);
+            transformer.getLayer().batchDraw();
+
+        }else{
+
+            transformer.nodes([]);
+
+        }
+
+    },[selectedId, elements]);
 
     useEffect(() => {
         //alert(isOpen);
@@ -70,6 +96,8 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
             fieldName: `field_${Date.now()}`,
             x: 100,
             y: 100,
+            width: 150,
+            height: 40,
             fontSize: 20,
             fill: "black"
         };
@@ -323,52 +351,111 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                     ref={stageRef}
                     width={stageWidth}
                     height={stageHeight}
-                    scaleX={scaleX}
-                    scaleY={scaleY}
                     style={{ border: "1px solid #ccc" }}
                 >
                     <Layer>
-                        {elements.map(el => {
-                            if (el.type === "text") {
-                                return (
-                                    <Text
-                                        key={el.id}
-                                        text={`${el.text} ({{${el.fieldName}}})`}
-                                        x={el.x}
-                                        y={el.y}
-                                        fontSize={el.fontSize}
-                                        fill={el.fill}
-                                        draggable
-                                        onClick={() => setSelectedId(el.id)}
-                                        onDragEnd={(e) =>
-                                            updateElement(el.id, {
-                                                x: e.target.x(),
-                                                y: e.target.y()
-                                            })
-                                        }
-                                        stroke={selectedId === el.id ? "blue" : null}
-                                        strokeWidth={selectedId === el.id ? 2 : 0}
-                                    />
-                                );
-                            }
+                        <Group
+                            scaleX={scaleX}
+                            scaleY={scaleY}
+                        >
+                            {elements.map(el => {
+                                if (el.type === "text") {
+                                    return (
+                                        <Text
+                                            key={el.id}
+                                            name="text"
+                                            offsetX={0}
+                                            offsetY={0}
+                                            ref={(node)=>{
+                                                if(node){
+                                                    nodeRefs.current[el.id] = node;
+                                                }
+                                            }}
+                                            text={`${el.text} ({{${el.fieldName}}})`}
+                                            x={el.x}
+                                            y={el.y}
+                                            width={el.width}
+                                            height={el.height}
+                                            fontSize={el.fontSize}
+                                            fill={el.fill}
+                                            draggable
+                                            onClick={() => setSelectedId(el.id)}
+                                            onDragEnd={(e) =>
+                                                updateElement(el.id, {
+                                                    x: e.target.x(),
+                                                    y: e.target.y()
+                                                })
+                                            }
+                                            stroke={selectedId === el.id ? "blue" : null}
+                                            strokeWidth={selectedId === el.id ? 2 : 0}
+                                            onTransformEnd={(e)=>{
 
-                            if (el.type === "image") {
-                                return (
-                                    <CanvasImage
-                                        key={el.id}
-                                        el={el}
-                                        dataMap={dataMap}
-                                        updateElement={updateElement}
-                                        selectedId={selectedId}
-                                        setSelectedId={setSelectedId}
-                                        scaleX={scaleX}
-                                        scaleY={scaleY}
-                                    />
-                                );
-                            }
+                                                const node = e.target;
 
-                            return null;
-                        })}
+                                                const scaleX = node.scaleX();
+                                                const scaleY = node.scaleY();
+
+
+                                                const newWidth =
+                                                    node.width() * scaleX;
+
+                                                const newHeight =
+                                                    node.height() * scaleY;
+
+
+                                                const newFontSize =
+                                                    el.fontSize * scaleY;
+
+
+                                                node.scaleX(1);
+                                                node.scaleY(1);
+
+
+                                                updateElement(el.id,{
+                                                    x: node.x(),
+                                                    y: node.y(),
+                                                    width: newWidth,
+                                                    height: newHeight,
+                                                    fontSize: newFontSize
+                                                });
+
+                                            }}
+                                        />
+                                    );
+                                }
+
+                                if (el.type === "image") {
+                                    return (
+                                        <CanvasImage
+                                            key={el.id}
+                                            el={el}
+                                            dataMap={dataMap}
+                                            updateElement={updateElement}
+                                            selectedId={selectedId}
+                                            setSelectedId={setSelectedId}
+                                            scaleX={scaleX}
+                                            scaleY={scaleY}
+                                            nodeRefs={nodeRefs}
+                                        />
+                                    );
+                                }
+
+                                return null;
+                            })}
+
+                        </Group>
+
+                        <Transformer
+                            ref={transformerRef}
+                            rotateEnabled={false}
+                            keepRatio={false}
+                            enabledAnchors={[
+                                "top-left",
+                                "top-right",
+                                "bottom-left",
+                                "bottom-right"
+                            ]}
+                        />
                     </Layer>
                 </Stage>
             </div>
@@ -380,7 +467,7 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
 // ----------------------------
 // IMAGE COMPONENT (핵심)
 // ----------------------------
-function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, scaleX, scaleY }) {
+function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, scaleX, scaleY, nodeRefs }) {
 
     const src = dataMap?.[el.fieldName];
     const [img] = useImage(src || "");
@@ -396,6 +483,11 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
             ========================= */}
             {!isEmpty && (
                 <KonvaImage
+                    ref={(node)=>{
+                        if(node){
+                            nodeRefs.current[el.id]=node;
+                        }
+                    }}
                     image={img}
                     x={el.x}
                     y={el.y}
@@ -411,6 +503,35 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
                     }
                     stroke={isSelected ? "#1976d2" : null}
                     strokeWidth={2}
+                    onTransformEnd={(e)=>{
+
+                        const node=e.target;
+
+
+                        const nodeScaleX = node.scaleX();
+                        const nodeScaleY = node.scaleY();
+
+
+                        const width =
+                            node.width() * nodeScaleX;
+
+
+                        const height =
+                            node.height() * nodeScaleY;
+
+
+                        node.scaleX(1);
+                        node.scaleY(1);
+
+
+                        updateElement(el.id,{
+                            x: node.x() / scaleX,
+                            y: node.y() / scaleY,
+                            width,
+                            height
+                        });
+
+                    }}
                 />
             )}
 
@@ -420,6 +541,11 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
             {isEmpty && (
                 <>
                     <Rect
+                        ref={(node)=>{
+                            if(node){
+                                nodeRefs.current[el.id]=node;
+                            }
+                        }}
                         x={el.x}
                         y={el.y}
                         width={el.width}
@@ -436,6 +562,29 @@ function CanvasImage({ el, dataMap, updateElement, selectedId, setSelectedId, sc
                                 y: e.target.y()
                             })
                         }
+                        onTransformEnd={(e)=>{
+
+                            const node=e.target;
+
+                            const width =
+                                node.width() * node.scaleX();
+
+                            const height =
+                                node.height() * node.scaleY();
+
+
+                            node.scaleX(1);
+                            node.scaleY(1);
+
+
+                            updateElement(el.id,{
+                                x: node.x() / scaleX,
+                                y: node.y() / scaleY,
+                                width,
+                                height
+                            });
+
+                        }}
                     />
 
                     <Text
