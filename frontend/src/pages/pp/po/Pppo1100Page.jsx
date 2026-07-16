@@ -8,7 +8,7 @@ import {
 } from "react-konva";
 
 import useImage from "use-image";
-
+import * as XLSX from "xlsx";
 
 // =============================
 // IMAGE COMPONENT
@@ -373,6 +373,104 @@ export default function Pppo1100Page({
 
     };
 
+    const handleExcelUpload = (e) => {
+
+        const file = e.target.files[0];
+
+        if(!file)
+            return;
+
+
+        const reader = new FileReader();
+
+
+        reader.onload = (evt)=>{
+
+
+            const data = evt.target.result;
+
+
+            const workbook =
+                XLSX.read(
+                    data,
+                    {
+                        type:"binary"
+                    }
+                );
+
+
+            const sheetName =
+                workbook.SheetNames[0];
+
+
+            const sheet =
+                workbook.Sheets[sheetName];
+
+
+            const rows =
+                XLSX.utils.sheet_to_json(
+                    sheet,
+                    {
+                        defval:""
+                    }
+                );
+
+
+            if(rows.length === 0){
+                alert("엑셀 데이터가 없습니다.");
+                return;
+            }
+
+
+            /*
+             * 첫 번째 행 기준
+             */
+            const excelData =
+                rows[0];
+
+
+            const newData = {};
+
+
+
+            templateData.canvasData.forEach(field=>{
+
+
+                const key =
+                    field.fieldName;
+
+
+                if(excelData[key] !== undefined){
+
+                    newData[key] =
+                        excelData[key];
+
+                }
+
+
+            });
+
+
+
+            setProductData(prev=>({
+
+                ...prev,
+
+                ...newData
+
+            }));
+
+
+            alert("엑셀 데이터 적용 완료");
+
+
+        };
+
+
+        reader.readAsArrayBuffer(file);
+
+    };
+
 
 
 
@@ -624,11 +722,47 @@ export default function Pppo1100Page({
             >
 
 
-                <button
-                    onClick={onBack}
+                <div
+                    style={{
+                        display:"flex",
+                        justifyContent:"space-between",
+                        alignItems:"center",
+                        marginBottom:20
+                    }}
                 >
-                    ← 뒤로
-                </button>
+
+                    <button
+                        onClick={onBack}
+                    >
+                        ← 뒤로
+                    </button>
+
+
+                    <label
+                        style={{
+                            background:"#1677ff",
+                            color:"#fff",
+                            padding:"6px 12px",
+                            borderRadius:4,
+                            cursor:"pointer",
+                            fontSize:14
+                        }}
+                    >
+                        엑셀 업로드
+
+                        <input
+                            type="file"
+                            accept=".xlsx,.xls"
+                            onChange={handleExcelUpload}
+                            style={{
+                                display:"none"
+                            }}
+                        />
+
+                    </label>
+
+
+                </div>
 
 
 
