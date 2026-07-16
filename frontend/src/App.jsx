@@ -1,5 +1,5 @@
 import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-import React, { Suspense } from "react";
+import React, {Suspense, useEffect} from "react";
 import LoginPage from "./pages/LoginPage.jsx";
 import MainPage from "./pages/MainPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
@@ -8,6 +8,7 @@ import SidebarLayout from "./layout/SidebarLayout.jsx"; // 새로 만든 사이�
 import { componentMap } from "./pages/routes/routes.jsx";
 import { MenuProvider, useMenu } from "./context/MenuContext.jsx";
 import { UserContext } from "./context/UserContext";
+import {checkToken} from "./util/auth.jsx";
 
 function AppRoutes() {
     const { routesFromDB } = useMenu();
@@ -54,6 +55,13 @@ function AppRoutes() {
 
 function App() {
     const userinfo = JSON.parse(localStorage.getItem("user"));
+
+    useEffect(()=>{
+
+        checkToken();
+
+
+    },[]);
 
     return (
         <Router>

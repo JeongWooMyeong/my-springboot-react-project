@@ -191,11 +191,28 @@ export default function Pppo2000Page() {
                 </div>
 
                 {/* 오른쪽: 템플릿 미리보기 */}
-                <div style={{ flex: 1, border: "1px solid #ddd", padding: 20 }}>
+                <div
+                    style={{
+                        display:"flex",
+                        gap:20,
+                        minHeight:700
+                    }}
+                >
                     {selectedDetail ? (
                         <TemplatePreview request={selectedDetail} />
                     ) : (
-                        <p>미리보기 상세 데이터가 없습니다.</p>
+                        <div
+                            style={{
+                                flex:1,
+                                minHeight:700,
+                                height:700,
+                                border:"1px solid #ddd",
+                                padding:20,
+                                boxSizing:"border-box"
+                            }}
+                        >
+                            미리보기 상세 데이터가 없습니다.
+                        </div>
                     )}
                 </div>
             </div>
