@@ -20,6 +20,12 @@ import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.element.Text;
+import com.itextpdf.layout.layout.LayoutArea;
+import com.itextpdf.layout.layout.LayoutContext;
+import com.itextpdf.layout.layout.LayoutResult;
+import com.itextpdf.layout.properties.OverflowPropertyValue;
+import com.itextpdf.layout.properties.Property;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -148,30 +154,12 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-            /*
-             * ============================
-             * TemplateEditor 기준
-             * ============================
-             */
-            float stageWidth = 800f;
-            float stageHeight = 600f;
+            // TemplateEditor는 mm -> px(96dpi) 기준으로 저장됨.
+// PDF는 pt(72dpi)이므로 px -> pt 변환만 한다.
+            float pxToPt = 72f / 96f;
 
-
-
-            /*
-             * 800x600 좌표 -> PDF 좌표
-             */
-            float scaleX =
-                    pdfWidth / stageWidth;
-
-
-
-            float scaleY =
-                    pdfHeight / stageHeight;
-
-
-
-
+            float scaleX = pxToPt;
+            float scaleY = pxToPt;
 
             for(Map<String,Object> field : fields){
 
@@ -228,10 +216,7 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                 if("text".equals(type)){
 
 
-
-                    Object obj =
-                            data.get(fieldName);
-
+                    Object obj = data.get(fieldName);
 
 
                     String value =
@@ -240,48 +225,55 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                                     : obj.toString();
 
 
-
                     if(value.isEmpty()){
 
-                        Object text =
-                                field.get("text");
+                        Object text = field.get("text");
 
                         if(text != null){
-                            value =
-                                    text.toString();
+                            value = text.toString();
                         }
                     }
-
 
 
 
                     float fontSize = 20;
 
 
-
-                    Object fs =
-                            field.get("fontSize");
-
+                    Object fs = field.get("fontSize");
 
                     if(fs != null){
 
                         fontSize =
-                                ((Number)fs)
-                                        .floatValue();
+                                ((Number)fs).floatValue();
 
                     }
 
 
-
-                    fontSize =
-                            fontSize * scaleY;
-
+                    // px -> pt
+                    fontSize *= scaleY;
 
 
 
+                    /*
+                     * Konva와 동일하게 먼저 줄바꿈
+                     */
+                    String wrappedText =
+                            wrapText(
+                                    value,
+                                    koreanFont,
+                                    fontSize,
+                                    width
+                            );
+
+
+
+                    /*
+                     * 줄바꿈 결과 기준 폰트 축소
+                     */
                     fontSize =
                             getFitFontSize(
-                                    value,
+                                    wrappedText,
+                                    koreanFont,
                                     width,
                                     height,
                                     fontSize
@@ -289,32 +281,51 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
-
                     /*
-                     * Konva TOP
-                     * PDF BOTTOM
+                     * 폰트 변경 후 다시 줄바꿈
                      */
+                    wrappedText =
+                            wrapText(
+                                    value,
+                                    koreanFont,
+                                    fontSize,
+                                    width
+                            );
+
+
+
                     float pdfY =
                             pdfHeight
-                                    -
-                                    y
-                                    -
-                                    height;
-
-
+                                    - y
+                                    - height;
 
 
 
                     Paragraph paragraph =
-                            new Paragraph(value)
-                                    .setFont(koreanFont)
-                                    .setFontSize(fontSize)
-                                    .setMargin(0)
-                                    .setPadding(0)
-                                    .setMultipliedLeading(1.2f);
+                            new Paragraph();
 
 
+                    String[] lines =
+                            wrappedText.split("\n");
+
+
+                    for(String line : lines){
+
+                        paragraph.add(
+                                new Text(line)
+                                        .setFont(koreanFont)
+                                        .setFontSize(fontSize)
+                        );
+
+                        paragraph.add("\n");
+
+                    }
+
+
+                    paragraph
+                            .setMargin(0)
+                            .setPadding(0)
+                            .setFixedLeading(fontSize * 1.2f);
 
 
 
@@ -330,12 +341,9 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                             );
 
 
-
                     canvas.add(paragraph);
 
                     canvas.close();
-
-
 
                 }
 
@@ -476,48 +484,46 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
      * Preview와 동일
      * ====================================
      */
+    /*
+     * ====================================
+     * PDF 텍스트 영역 맞춤 폰트 계산
+     * iText 실제 폭 기준
+     * ====================================
+     */
     private float getFitFontSize(
             String text,
+            PdfFont font,
             float width,
             float height,
             float fontSize
     ){
 
-
         float size = fontSize;
 
 
-
-        while(size > 8){
-
-
-            float charsPerLine =
-                    width / (size * 0.55f);
+        while(size > 5){
 
 
-
-            int lineCount =
-                    (int)Math.ceil(
-                            text.length()
-                                    / charsPerLine
-                    );
+            float totalHeight = 0;
 
 
+            String[] lines =
+                    text.split("\n");
 
-            float textHeight =
-                    lineCount
-                            * size
-                            * 1.2f;
+
+            for(String line : lines){
+
+                totalHeight += size * 1.2f;
+
+            }
 
 
 
-
-            if(textHeight <= height){
+            if(totalHeight <= height){
 
                 break;
 
             }
-
 
 
             size -= 1;
@@ -525,9 +531,46 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
         }
 
 
-
         return size;
+    }
 
+    private String wrapText(
+            String text,
+            PdfFont font,
+            float fontSize,
+            float width
+    ){
+
+        StringBuilder result =
+                new StringBuilder();
+
+        float currentWidth = 0;
+
+
+        // Konva 기준 한글 폭 보정
+        float charWidth = fontSize;
+
+
+
+        for(char ch : text.toCharArray()){
+
+
+            if(currentWidth + charWidth > width){
+
+                result.append("\n");
+
+                currentWidth = 0;
+            }
+
+
+            result.append(ch);
+
+            currentWidth += charWidth;
+
+        }
+
+
+        return result.toString();
     }
 
     @Override
