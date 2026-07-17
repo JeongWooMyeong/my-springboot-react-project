@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Modal, Checkbox, Pagination } from "antd";
 import ClassificationSelectTree from "../../components/ClassificationSelectTree";
-import TemplateEditor from "../../components/TemplateEditor";
+import TemplateEditor from "../../components/TemplateEditor/TemplateEditor.jsx";
 
 const Sytm2000Page = () => {
     const [treeData, setTreeData] = useState([]);
