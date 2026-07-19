@@ -3,6 +3,7 @@ import { useCategories } from "./useCategories";
 import CategorySelector from "./CategorySelector";
 import Pppo1000List from "./Pppo1000List";
 import Pppo1100Page from "../Pppo1100/Pppo1100Page";
+//헤이요
 
 export default function Pppo1000Page() {
     const [selectedId, setSelectedId] = useState(null);
