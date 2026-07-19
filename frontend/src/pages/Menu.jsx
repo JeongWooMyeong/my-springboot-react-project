@@ -2,10 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import "../css/layout.css";
 import { useMenu } from "../context/MenuContext.jsx";
+import { useTranslation } from "react-i18next";
 
 function Menu({ userinfo }) {
-    const { menus } = useMenu();  // ✅ menus가 undefined일 경우 빈 배열로 처리
+    const { menus } = useMenu();
     const navigate = useNavigate();
+    const { t } = useTranslation();
 
     const goPage = (path) => {
         navigate(`${path}?t=${Date.now()}`);
@@ -28,7 +30,7 @@ function Menu({ userinfo }) {
             .filter(menu => menu.menuPrntCd === parentCd && hasMenu(menu.menuCd))
             .map(menu => (
                 <li key={menu.menuCd}>
-                    <Link to={menu.dedName}>{menu.menuName}</Link>
+                    <Link to={menu.dedName}>{t(`menu.${menu.menuCd}`)}</Link>
                     <ul>{renderMenu(menu.menuCd)}</ul>
                 </li>
             ));
@@ -38,14 +40,14 @@ function Menu({ userinfo }) {
         <nav className="main-menu">
             <ul className="menu-root">
 
-                {/* ✅ 맨 왼쪽 메인 버튼 */}
+                {/* ✅ 메인 버튼 */}
                 <li className="menu-item">
                     <button
                         type="button"
                         className="menu-button"
                         onClick={() => navigate("/main")}
                     >
-                        메인
+                        {t("menu.main")}
                     </button>
                 </li>
 
@@ -53,8 +55,12 @@ function Menu({ userinfo }) {
                     .filter(menu => menu.menuPrntCd === "0" && hasMenu(menu.menuCd))
                     .map(menu => (
                         <li key={menu.menuCd} className="menu-item">
-                            <button type="button" className="menu-button" onClick={() => goPage(menu.dedName)}>
-                                {menu.menuName}
+                            <button
+                                type="button"
+                                className="menu-button"
+                                onClick={() => goPage(menu.dedName)}
+                            >
+                                {t(`menu.${menu.menuCd}`)}
                             </button>
                             <ul className="submenu">{renderMenu(menu.menuCd)}</ul>
                         </li>
@@ -62,7 +68,7 @@ function Menu({ userinfo }) {
             </ul>
             <div className="logout-area">
                 <button className="logout-button" onClick={fnLogout}>
-                    로그아웃
+                    {t("menu.logout")}
                 </button>
             </div>
         </nav>

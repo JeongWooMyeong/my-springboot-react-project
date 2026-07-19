@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App.jsx';
 import reportWebVitals from './reportWebVitals.jsx';
+import './locales/i18n';   // ✅ i18n 초기화 파일을 반드시 불러오기
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
