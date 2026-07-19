@@ -1,5 +1,6 @@
 {
   "menu": {
+    "syTitle": "System Management",
     "main": "Main",
     "logout": "Log Out",
     "KM10000001": "KM Bank",
@@ -73,5 +74,12 @@
     "ST10000008": "Printer Usage Statistics",
     "SY10000034": "test",
     "SY10000035": "Test4"
+  },
+  "login": {
+    "title": "Login",
+    "userid": "User ID",
+    "password": "Password",
+    "button": "LOGIN",
+    "fail": "Login failed"
   }
 }

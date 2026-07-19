@@ -1,9 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useMenu } from "../../context/MenuContext.jsx";
+import { useTranslation } from "react-i18next";
 
 function Sidebar() {
     const { menus } = useMenu(); // ✅ Context에서 메뉴 가져오기
+    const { t } = useTranslation(); // ✅ 다국어 훅
 
     function buildTree(data) {
         const map = {};
@@ -21,18 +23,20 @@ function Sidebar() {
 
     const renderTree = (menu) => (
         <li key={menu.menuCd}>
-            <Link to={menu.dedName || "#"}>{menu.menuName}</Link>
+            <Link to={menu.dedName || "#"}>
+                {t(`menu.${menu.menuCd}`)} {/* ✅ 번역 키 사용 */}
+            </Link>
             {menu.children?.length > 0 && <ul>{menu.children.map(renderTree)}</ul>}
         </li>
     );
 
     return (
         <aside className="sidebar">
-            <h3>SY 메뉴</h3>
+            <h3>{t("menu.syTitle")}</h3> {/* ✅ 제목도 번역 처리 */}
             <ul>
                 {treeData.length > 0
                     ? treeData.map(renderTree)
-                    : <li>SY prefix 메뉴가 없습니다</li>}
+                    : <li>{t("menu.noSyMenu")}</li>} {/* ✅ 메시지도 번역 처리 */}
             </ul>
         </aside>
     );

@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import "../css/layout.css";
+import { useTranslation } from "react-i18next";
 
 function LoginPage() {
     const [userid, setUserid] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const { t, i18n } = useTranslation();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -24,11 +26,18 @@ function LoginPage() {
                 localStorage.setItem("user", JSON.stringify(data));
                 navigate("/main");
             } else {
-                alert("로그인 실패");
+                alert(t("login.fail")); // ✅ 다국어 메시지
             }
         } catch (error) {
             console.error("서버 요청 오류:", error);
         }
+    };
+
+    const handleChangeLang = (e) => {
+        const newLang = e.target.value;
+        i18n.changeLanguage(newLang).then(() => {
+            localStorage.setItem("lang", newLang);
+        });
     };
 
     return (
@@ -46,13 +55,32 @@ function LoginPage() {
                 borderRadius: 8,
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)"
             }}>
-                <h2 style={{ textAlign: "center", marginBottom: 24 }}>로그인</h2>
+                {/* ✅ 언어 선택 콤보박스 */}
+                <div style={{ textAlign: "right", marginBottom: 12 }}>
+                    <select
+                        onChange={handleChangeLang}
+                        value={i18n.language}
+                        style={{
+                            fontSize: "0.9rem",
+                            padding: "4px 8px",
+                            borderRadius: "4px"
+                        }}
+                    >
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+
+                <h2 style={{ textAlign: "center", marginBottom: 24 }}>
+                    {t("login.title")}
+                </h2>
+
                 <form onSubmit={handleLogin}>
                     <input
                         type="text"
                         value={userid}
                         onChange={(e) => setUserid(e.target.value)}
-                        placeholder="아이디"
+                        placeholder={t("login.userid")}
                         style={{
                             width: "100%",
                             padding: "10px 12px",
@@ -65,7 +93,7 @@ function LoginPage() {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="비밀번호"
+                        placeholder={t("login.password")}
                         style={{
                             width: "100%",
                             padding: "10px 12px",
@@ -87,7 +115,7 @@ function LoginPage() {
                             cursor: "pointer"
                         }}
                     >
-                        LOGIN
+                        {t("login.button")}
                     </button>
                 </form>
             </div>
