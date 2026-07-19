@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Select, Button } from "antd";
 import JijumInlineSelect from "../../components/JijumInlineSelect.jsx";
 import Pppo2000List from "./Pppo2000List.jsx";
-import TemplatePreview from "../../components/TemplatePreview.jsx";
+import TemplatePreview from "../../components/TemplatePreview/TemplatePreview.jsx";
 
 export default function Pppo2000Page() {
     const [form] = Form.useForm();
