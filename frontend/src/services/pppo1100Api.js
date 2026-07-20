@@ -60,6 +60,6 @@ export async function saveProduct(payload, token) {
         throw new Error("저장 실패");
     }
 
-    return await res.json();
+    return await res.text();
 
 }

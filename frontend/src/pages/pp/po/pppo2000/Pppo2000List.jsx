@@ -101,6 +101,7 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
                                     <input
                                         type="checkbox"
                                         id={req.ordno}
+                                        checked={selectedOrdnos.includes(req.ordno)}
                                         onChange={(e) => onCheck(req.ordno, e.target.checked)}
                                     />
                                 </td>

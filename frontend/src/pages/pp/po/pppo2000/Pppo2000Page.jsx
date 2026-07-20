@@ -41,7 +41,8 @@ export default function Pppo2000Page() {
             return;
         }
         await updateRequests(selectedOrdnos, 20);
-        handleSearch();
+        setSelectedOrdnos([]);   // 체크 해제
+        await handleSearch();
     };
 
     const handleReject = async () => {
@@ -50,7 +51,8 @@ export default function Pppo2000Page() {
             return;
         }
         await updateRequests(selectedOrdnos, 50);
-        handleSearch();
+        setSelectedOrdnos([]);   // 체크 해제
+        await handleSearch();
     };
 
     const handlePdf = async () => {

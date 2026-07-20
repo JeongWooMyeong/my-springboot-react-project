@@ -58,14 +58,10 @@ export default function CanvasPreview({
                                     width={el.width}
                                     height={el.height}
                                     text={value || el.text || ""}
-                                    fontSize={
-                                        getFitFontSize(
-                                            value || el.text || "",
-                                            el.width,
-                                            el.height,
-                                            el.fontSize || 20
-                                        )
-                                    }
+                                    fontSize={getFitFontSize(
+                                        value || el.text || "",
+                                        el
+                                    )}
                                     fill={el.fill || "black"}
                                     wrap="word"
                                     verticalAlign="top"
