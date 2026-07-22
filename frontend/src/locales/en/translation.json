@@ -73,7 +73,8 @@
     "SY10000032": "Phrase Management",
     "ST10000008": "Printer Usage Statistics",
     "SY10000034": "test",
-    "SY10000035": "Test4"
+    "SY10000035": "Test4",
+    "SY10000036": "Font Management"
   },
   "login": {
     "title": "Login",
