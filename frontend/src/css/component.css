@@ -68,3 +68,12 @@
 .ant-table {
     min-width: 600px;
 }
+
+
+.property-panel {
+    width: 250px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 16px;
+    border-left: 1px solid #ddd;
+}

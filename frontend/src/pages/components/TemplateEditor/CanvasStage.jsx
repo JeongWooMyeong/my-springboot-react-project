@@ -83,6 +83,13 @@ export default function CanvasStage({
 
             height={600}
 
+            onMouseDown={(e) => {
+                // 빈 캔버스 클릭 시 선택 해제
+                if (e.target === e.target.getStage()) {
+                    setSelectedId(null);
+                }
+            }}
+
             style={{
                 border:"1px solid #ccc"
             }}

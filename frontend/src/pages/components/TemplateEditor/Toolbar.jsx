@@ -24,7 +24,14 @@ export default function Toolbar({
                                 }) {
 
     return (
-        <div style={{ width: 250 }}>
+        <div
+            style={{
+                width:250,
+                height:"100%",
+                overflowY:"auto",
+                flexShrink:0
+            }}
+        >
 
             <h3>템플릿</h3>
 

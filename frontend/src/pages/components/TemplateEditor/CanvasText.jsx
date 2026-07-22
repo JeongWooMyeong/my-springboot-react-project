@@ -22,15 +22,23 @@ export default function CanvasText({
             fontSize={el.fontSize}
             fill={el.fill}
             draggable
+
             stroke={selectedId === el.id ? "blue" : null}
             strokeWidth={selectedId === el.id ? 2 : 0}
-            onClick={() => setSelectedId(el.id)}
+
+            onClick={(e) => {
+                // Stage까지 이벤트 전달 막기
+                e.cancelBubble = true;
+                setSelectedId(el.id);
+            }}
+
             onDragEnd={(e) =>
                 updateElement(el.id, {
                     x: e.target.x(),
                     y: e.target.y()
                 })
             }
+
             onTransformEnd={(e) => {
                 const node = e.target;
 

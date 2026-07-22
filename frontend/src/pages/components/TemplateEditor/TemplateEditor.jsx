@@ -123,7 +123,9 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
             style={{
                 display:"flex",
                 gap:20,
-                padding:20
+                padding:20,
+                height:"100vh",
+                boxSizing:"border-box"
             }}
         >
 
@@ -154,25 +156,23 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
             />
 
 
-            <CanvasStage
-
-                stageRef={stageRef}
-
-                elements={elements}
-
-                selectedId={selectedId}
-
-                setSelectedId={setSelectedId}
-
-                updateElement={updateElement}
-
-                dataMap={dataMap}
-
-                scaleX={scaleX}
-
-                scaleY={scaleY}
-
-            />
+            <div
+                style={{
+                    flex:1,
+                    overflow:"auto"
+                }}
+            >
+                <CanvasStage
+                    stageRef={stageRef}
+                    elements={elements}
+                    selectedId={selectedId}
+                    setSelectedId={setSelectedId}
+                    updateElement={updateElement}
+                    dataMap={dataMap}
+                    scaleX={scaleX}
+                    scaleY={scaleY}
+                />
+            </div>
 
 
         </div>

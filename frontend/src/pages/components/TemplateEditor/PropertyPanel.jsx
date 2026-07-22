@@ -1,3 +1,5 @@
+import "../../../css/component.css";
+
 export default function PropertyPanel({
                                           selectedElement,
                                           updateText,
@@ -9,7 +11,7 @@ export default function PropertyPanel({
     }
 
     return (
-        <div>
+        <div className="property-panel">
             <h4>속성</h4>
 
             {selectedElement.type === "text" && (
