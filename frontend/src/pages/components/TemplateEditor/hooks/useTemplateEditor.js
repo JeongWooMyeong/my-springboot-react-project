@@ -66,7 +66,7 @@ export default function useTemplateEditor(template, isOpen) {
 
             width:150,
             height:40,
-
+            fontFamily:"NanumGothic",
             fontSize:20,
 
             fill:"black"

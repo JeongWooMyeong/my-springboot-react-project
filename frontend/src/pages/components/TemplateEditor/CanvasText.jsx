@@ -19,6 +19,7 @@ export default function CanvasText({
             y={el.y}
             width={el.width}
             height={el.height}
+            fontFamily={el.fontFamily || "NanumGothic"}
             fontSize={el.fontSize}
             fill={el.fill}
             draggable
