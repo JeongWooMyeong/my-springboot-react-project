@@ -105,5 +105,46 @@
 
     </delete>
 
+    <select id="selectFontByFamily"
+            parameterType="string"
+            resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto">
+
+        SELECT
+
+            FONT_ID
+                AS fontid,
+
+            FONT_FAMILY
+                AS fontfamily,
+
+            FONT_FULL_NAME
+                AS fontfullname,
+
+            FONT_FILE_NAME
+                AS fontfilename,
+
+            FONT_FILE_PATH
+                AS fontfilepath,
+
+            FONT_WEIGHT
+                AS fontweight,
+
+            FONT_STYLE
+                AS fontstyle,
+
+            USE_YN
+                AS useyn,
+
+            REG_DT
+                AS regdt
+
+        FROM TB_FONT
+
+        WHERE FONT_FAMILY = #{fontfamily}
+
+          AND USE_YN = 'Y'
+
+    </select>
+
 
 </mapper>

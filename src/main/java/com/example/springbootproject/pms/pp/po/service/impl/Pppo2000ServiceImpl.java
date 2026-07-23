@@ -4,6 +4,8 @@ import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import com.example.springbootproject.pms.pp.po.service.dao.Pppo2000Mapper;
+import com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto;
+import com.example.springbootproject.pms.sy.tm.service.dao.Sytm3000Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.image.ImageData;
@@ -41,6 +43,9 @@ import java.util.zip.ZipOutputStream;
 public class Pppo2000ServiceImpl implements Pppo2000Service {
 
     private final Pppo2000Mapper pppo2000Mapper;
+    private final Sytm3000Mapper sytm3000Mapper;
+    private static final String FONT_BASE_PATH =
+            "C:/Project/SpringBootProject";
 
     @Override
     public List<Pppo2000Dto> getRequestList() {
@@ -61,6 +66,7 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
     public byte[] generatePdf(String ordno) {
 
 
+
         Pppo2000DetailDto detail =
                 pppo2000Mapper.selectRequestDetail(ordno);
 
@@ -68,17 +74,7 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
         try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 
 
-            PdfFont koreanFont =
-                    PdfFontFactory.createFont(
-                            "fonts/NanumGothic.ttf",
-                            PdfEncodings.IDENTITY_H,
-                            PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
-                    );
-
-
-
             ObjectMapper mapper = new ObjectMapper();
-
 
 
             Map<String,Object> data =
@@ -88,13 +84,11 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                     );
 
 
-
             List<Map<String,Object>> fields =
                     mapper.readValue(
                             detail.getCanvasData(),
                             List.class
                     );
-
 
 
 
@@ -112,7 +106,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
             float pdfWidth =
                     detail.getPaperwidth()
                             * mmToPt;
-
 
 
             float pdfHeight =
@@ -153,15 +146,17 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
+            /*
+             * TemplateEditor
+             * px -> PDF pt 변환
+             */
+            float pxToPt =
+                    72f / 96f;
 
-            // TemplateEditor는 mm -> px(96dpi) 기준으로 저장됨.
-// PDF는 pt(72dpi)이므로 px -> pt 변환만 한다.
-            float pxToPt = 72f / 96f;
 
-            float scaleX = pxToPt;
-            float scaleY = pxToPt;
 
             for(Map<String,Object> field : fields){
+
 
 
                 String type =
@@ -181,29 +176,28 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                 float x =
                         ((Number)field.get("x"))
                                 .floatValue()
-                                * scaleX;
+                                * pxToPt;
 
 
 
                 float y =
                         ((Number)field.get("y"))
                                 .floatValue()
-                                * scaleY;
+                                * pxToPt;
 
 
 
                 float width =
                         ((Number)field.get("width"))
                                 .floatValue()
-                                * scaleX;
+                                * pxToPt;
 
 
 
                 float height =
                         ((Number)field.get("height"))
                                 .floatValue()
-                                * scaleY;
-
+                                * pxToPt;
 
 
 
@@ -216,7 +210,10 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                 if("text".equals(type)){
 
 
-                    Object obj = data.get(fieldName);
+
+                    Object obj =
+                            data.get(fieldName);
+
 
 
                     String value =
@@ -225,21 +222,133 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                                     : obj.toString();
 
 
+
                     if(value.isEmpty()){
 
-                        Object text = field.get("text");
+                        Object text =
+                                field.get("text");
 
                         if(text != null){
-                            value = text.toString();
+
+                            value =
+                                    text.toString();
+
                         }
+
                     }
 
 
 
+
+
+                    /*
+                     * =========================================
+                     * 2026-07-23
+                     *
+                     * 저장된 fontFamily 기준
+                     * TB_FONT 조회 후 TTF 적용
+                     * =========================================
+                     */
+
+
+                    PdfFont pdfFont;
+
+
+
+                    String fontFamily =
+                            String.valueOf(
+                                    field.get("fontFamily")
+                            );
+
+
+
+                    if(
+                            fontFamily != null &&
+                                    !"null".equals(fontFamily)
+                    ){
+
+
+                        Sytm3000Dto font =
+                                sytm3000Mapper
+                                        .selectFontByFamily(
+                                                fontFamily
+                                        );
+
+
+
+                        if(font != null){
+
+
+
+                            String fontPath =
+                                    font.getFontfilepath();
+
+
+
+                            /*
+                             * 예:
+                             * /upload/fonts/NanumPen.ttf
+                             *
+                             * 실제 서버 경로에 맞게 변경
+                             */
+                            if(fontPath.startsWith("/")){
+
+                                fontPath = FONT_BASE_PATH + fontPath;
+
+                            }
+
+
+
+                            pdfFont =
+                                    PdfFontFactory.createFont(
+                                            fontPath,
+                                            PdfEncodings.IDENTITY_H,
+                                            PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                                    );
+
+
+                        }
+                        else {
+
+
+                            pdfFont =
+                                    PdfFontFactory.createFont(
+                                            "fonts/NanumGothic.ttf",
+                                            PdfEncodings.IDENTITY_H,
+                                            PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                                    );
+
+                        }
+
+
+                    }
+                    else {
+
+
+                        pdfFont =
+                                PdfFontFactory.createFont(
+                                        "fonts/NanumGothic.ttf",
+                                        PdfEncodings.IDENTITY_H,
+                                        PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                                );
+
+                    }
+
+
+
+
+
+                    /*
+                     * 저장된 fontSize 적용
+                     */
                     float fontSize = 20;
 
 
-                    Object fs = field.get("fontSize");
+
+                    Object fs =
+                            field.get("fontSize");
+
+
 
                     if(fs != null){
 
@@ -249,31 +358,34 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                     }
 
 
-                    // px -> pt
-                    fontSize *= scaleY;
+
+                    fontSize *= pxToPt;
+
+
 
 
 
                     /*
-                     * Konva와 동일하게 먼저 줄바꿈
+                     * 줄바꿈
                      */
                     String wrappedText =
                             wrapText(
                                     value,
-                                    koreanFont,
+                                    pdfFont,
                                     fontSize,
                                     width
                             );
 
 
 
+
                     /*
-                     * 줄바꿈 결과 기준 폰트 축소
+                     * 영역 초과시 축소
                      */
                     fontSize =
                             getFitFontSize(
                                     wrappedText,
-                                    koreanFont,
+                                    pdfFont,
                                     width,
                                     height,
                                     fontSize
@@ -281,16 +393,16 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-                    /*
-                     * 폰트 변경 후 다시 줄바꿈
-                     */
+
+
                     wrappedText =
                             wrapText(
                                     value,
-                                    koreanFont,
+                                    pdfFont,
                                     fontSize,
                                     width
                             );
+
 
 
 
@@ -301,31 +413,39 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
+
                     Paragraph paragraph =
                             new Paragraph();
 
 
-                    String[] lines =
-                            wrappedText.split("\n");
 
+                    for(String line :
+                            wrappedText.split("\n")){
 
-                    for(String line : lines){
 
                         paragraph.add(
                                 new Text(line)
-                                        .setFont(koreanFont)
+                                        .setFont(pdfFont)
                                         .setFontSize(fontSize)
                         );
+
 
                         paragraph.add("\n");
 
                     }
 
 
+
+
+
                     paragraph
                             .setMargin(0)
                             .setPadding(0)
-                            .setFixedLeading(fontSize * 1.2f);
+                            .setFixedLeading(
+                                    fontSize * 1.2f
+                            );
+
+
 
 
 
@@ -341,9 +461,11 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                             );
 
 
+
                     canvas.add(paragraph);
 
                     canvas.close();
+
 
                 }
 
@@ -376,10 +498,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
-                    /*
-                     * /userimage 처리
-                     */
                     if(imageUrl.startsWith("/")){
 
                         imageUrl =
@@ -413,11 +531,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
-                    /*
-                     * TemplatePreview와 동일
-                     * contain
-                     */
                     image.scaleToFit(
                             width,
                             height
@@ -437,7 +550,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
                     image.setFixedPosition(
                             x + (width-imgWidth)/2,
                             pdfY + (height-imgHeight)/2
@@ -445,8 +557,8 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
                     document.add(image);
+
 
                 }
 
@@ -460,7 +572,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
             return baos.toByteArray();
-
 
 
         }

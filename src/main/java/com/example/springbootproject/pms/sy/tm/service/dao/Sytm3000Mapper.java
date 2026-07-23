@@ -26,5 +26,8 @@ public interface Sytm3000Mapper {
             Integer fontid
     );
 
+    Sytm3000Dto selectFontByFamily(
+            String fontfamily
+    );
 
 }
