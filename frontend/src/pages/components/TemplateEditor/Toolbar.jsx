@@ -20,7 +20,9 @@ export default function Toolbar({
                                     updateText,
                                     updateFieldName,
 
-                                    elements
+                                    elements,
+                                    fonts,
+                                    updateElement
                                 }) {
 
     return (
@@ -112,6 +114,8 @@ export default function Toolbar({
                 selectedElement={selectedElement}
                 updateText={updateText}
                 updateFieldName={updateFieldName}
+                updateElement={updateElement}
+                fonts={fonts}
             />
 
 

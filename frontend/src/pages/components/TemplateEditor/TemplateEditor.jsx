@@ -4,6 +4,8 @@ import {saveTemplate, updateTemplate} from "../../../services/tempateApi.js";
 import useTemplateEditor from "./hooks/useTemplateEditor.js";
 import Toolbar from "./Toolbar.jsx";
 import CanvasStage from "./CanvasStage.jsx";
+import { getFontList } from "../../../services/sytm3000Api";
+import { loadAllFonts } from "../../../util/fontLoader";
 
 export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, isOpen }) {
 
@@ -61,6 +63,8 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
         isOpen
     );
 
+    const [fonts, setFonts] = useState([]);   // 추가
+
     const handleSave = async () => {
 
         try {
@@ -114,6 +118,22 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
 
     },[template]);
 
+    useEffect(() => {
+
+        const init = async () => {
+
+            const list = await getFontList();
+
+            await loadAllFonts(list);
+
+            setFonts(list);
+
+        };
+
+        init();
+
+    }, []);
+
     // ----------------------------
     // UI
     // ----------------------------
@@ -152,6 +172,9 @@ export default function TemplateEditor({ template, dataMap = {}, clcd, onSave, i
                 updateFieldName={updateFieldName}
 
                 elements={elements}
+
+                fonts={fonts}
+                updateElement={updateElement}
 
             />
 

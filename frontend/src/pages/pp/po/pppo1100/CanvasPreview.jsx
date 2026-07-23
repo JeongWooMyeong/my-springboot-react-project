@@ -58,6 +58,9 @@ export default function CanvasPreview({
                                     width={el.width}
                                     height={el.height}
                                     text={value || el.text || ""}
+                                    fontFamily={
+                                        el.fontFamily || "Arial"
+                                    }
                                     fontSize={getFitFontSize(
                                         value || el.text || "",
                                         el
