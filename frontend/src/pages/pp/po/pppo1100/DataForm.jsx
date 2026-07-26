@@ -6,6 +6,7 @@ export default function DataForm({
                                      handleChange,
                                      handleImageUpload,
                                      handleExcelUpload,
+                                     handleExcelTemplateDownload,
                                      saveData,
                                      setFocusField,
                                      onBack
@@ -24,14 +25,21 @@ export default function DataForm({
             <div
                 style={{
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    marginBottom: 20
+                    gap: 8,
+                    marginBottom: 20,
+                    flexWrap: "wrap"
                 }}
             >
 
                 <button onClick={onBack}>
                     ← 뒤로
+                </button>
+
+                <button
+                    onClick={handleExcelTemplateDownload}
+                >
+                    양식 다운로드
                 </button>
 
                 <label

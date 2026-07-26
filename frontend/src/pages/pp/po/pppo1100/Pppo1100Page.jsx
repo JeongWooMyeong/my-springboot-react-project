@@ -18,6 +18,7 @@ import {
 } from "../../../../util/fontLoader";
 
 import { readExcel } from "../../../../util/excel";
+import * as XLSX from "xlsx";
 
 
 export default function Pppo1100Page({ templateid, onBack }) {
@@ -238,6 +239,37 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
     };
 
+    const handleExcelTemplateDownload = () => {
+
+        const headers = [
+            ...new Set(
+                templateData.canvasData
+                    .map(item => item.fieldName)
+                    .filter(Boolean)
+            )
+        ];
+
+        const worksheet =
+            XLSX.utils.aoa_to_sheet([
+                headers
+            ]);
+
+        const workbook =
+            XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            "Template"
+        );
+
+        XLSX.writeFile(
+            workbook,
+            "product_template.xlsx"
+        );
+
+    };
+
 
 
     return (
@@ -255,6 +287,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                 handleChange={handleChange}
                 handleImageUpload={handleImageUpload}
                 handleExcelUpload={handleExcelUpload}
+                handleExcelTemplateDownload={handleExcelTemplateDownload}
                 saveData={handleSave}
                 setFocusField={setFocusField}
                 onBack={onBack}
