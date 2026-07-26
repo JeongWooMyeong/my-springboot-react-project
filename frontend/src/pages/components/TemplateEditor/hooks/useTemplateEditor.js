@@ -1,7 +1,4 @@
-import {
-    useEffect,
-    useState
-} from "react";
+import { useEffect, useState } from "react";
 
 
 export default function useTemplateEditor(
@@ -9,17 +6,11 @@ export default function useTemplateEditor(
     isOpen
 ) {
 
+    const [elements, setElements] = useState([]);
 
-    const [elements, setElements] =
-        useState([]);
+    const [selectedId, setSelectedId] = useState(null);
 
-
-    const [selectedId, setSelectedId] =
-        useState(null);
-
-
-    const [title, setTitle] =
-        useState("");
+    const [title, setTitle] = useState("");
 
 
 
@@ -30,14 +21,10 @@ export default function useTemplateEditor(
 
 
 
+    // 모달 열림 초기화
+    useEffect(() => {
 
-    /**
-     * 모달 열림 초기화
-     */
-    useEffect(()=>{
-
-
-        if(!isOpen){
+        if (!isOpen) {
             return;
         }
 
@@ -45,7 +32,7 @@ export default function useTemplateEditor(
         setSelectedId(null);
 
 
-        if(!template){
+        if (!template) {
 
             setTitle("");
 
@@ -53,69 +40,46 @@ export default function useTemplateEditor(
 
         }
 
-
-    },[
-        isOpen
-    ]);
+    }, [isOpen]);
 
 
 
+    // 기존 템플릿 로딩
+    useEffect(() => {
 
-
-    /**
-     * 기존 템플릿 로딩
-     */
-    useEffect(()=>{
-
-
-        if(!template){
+        if (!template) {
             return;
         }
 
 
-
-        try{
-
+        try {
 
             const parsed =
-
                 typeof template.canvasData === "string"
-
                     ? JSON.parse(template.canvasData)
-
                     : template.canvasData;
 
 
 
             const loaded =
+                (parsed || []).map(el => {
 
-                (parsed || []).map(el=>{
-
-
-                    if(el.type === "text"){
-
+                    if (el.type === "text") {
 
                         return {
-
                             ...el,
 
                             fontFamily:
-                                el.fontFamily ||
-                                "NanumGothic",
-
+                                el.fontFamily || "NanumGothic",
 
                             fontSize:
-                                el.fontSize ||
-                                20
-
-
+                                el.fontSize || 20
                         };
 
                     }
 
 
                     return el;
-
 
                 });
 
@@ -127,369 +91,218 @@ export default function useTemplateEditor(
             );
 
 
-
-            setElements(
-                loaded
-            );
-
+            setElements(loaded);
 
             setTitle(
                 template.title || ""
             );
 
 
-
-        }
-        catch(e){
-
+        } catch (e) {
 
             console.error(
                 "canvasData parse error",
                 e
             );
 
-
             setElements([]);
-
 
         }
 
 
-
-    },[
-        template
-    ]);
+    }, [template]);
 
 
 
+    // TEXT 추가
+    const addText = () => {
 
-
-
-
-    /**
-     * TEXT 추가
-     */
-    const addText = ()=>{
-
-
-        const id =
-            Date.now();
-
+        const id = Date.now();
 
 
         const newEl = {
 
-
             id,
 
+            type: "text",
 
-            type:"text",
-
-
-            text:"텍스트",
-
+            text: "텍스트",
 
             fieldName:
                 `field_${id}`,
 
+            x: 100,
 
-            x:100,
+            y: 100,
 
-            y:100,
+            width: 150,
 
+            height: 40,
 
-            width:150,
+            fontFamily: "NanumGothic",
 
-            height:40,
+            fontSize: 20,
 
-
-            fontFamily:
-                "NanumGothic",
-
-
-            fontSize:20,
-
-
-            fill:"black"
-
+            fill: "black"
 
         };
 
 
-
-        setElements(prev=>[
-
+        setElements(prev => [
             ...prev,
-
             newEl
-
         ]);
 
 
-
         setSelectedId(id);
-
 
     };
 
 
 
+    // IMAGE 추가
+    const addImage = () => {
 
-
-
-    /**
-     * IMAGE 추가
-     */
-    const addImage = ()=>{
-
-
-        const id =
-            Date.now();
-
+        const id = Date.now();
 
 
         const newEl = {
 
-
             id,
 
-
-            type:"image",
-
+            type: "image",
 
             fieldName:
                 `image_${id}`,
 
+            x: 100,
 
-            x:100,
+            y: 100,
 
-            y:100,
+            width: 150,
 
-
-            width:150,
-
-            height:120
-
+            height: 120
 
         };
 
 
-
-        setElements(prev=>[
-
+        setElements(prev => [
             ...prev,
-
             newEl
-
         ]);
-
 
 
         setSelectedId(id);
 
-
     };
 
 
 
-
-
-
-
+    // 요소 속성 변경
     const updateElement = (
         id,
         attrs
-    )=>{
+    ) => {
 
-
-        setElements(prev=>
-
-
-            prev.map(el=>
-
-
+        setElements(prev =>
+            prev.map(el =>
                 el.id === id
-
                     ? {
-
                         ...el,
-
                         ...attrs
-
                     }
-
-                    :
-
-                    el
-
-
+                    : el
             )
-
-
         );
-
 
     };
 
 
 
-
-
-
-
+    // 선택 TEXT 변경
     const updateText = (
         value
-    )=>{
+    ) => {
 
-
-        setElements(prev=>
-
-
-            prev.map(el=>
-
-
+        setElements(prev =>
+            prev.map(el =>
                 el.id === selectedId
-
                     ? {
-
                         ...el,
-
-                        text:value
-
+                        text: value
                     }
-
-                    :
-
-                    el
-
-
+                    : el
             )
-
-
         );
-
 
     };
 
 
 
-
-
-
-
+    // 선택 FIELD 변경
     const updateFieldName = (
         value
-    )=>{
+    ) => {
 
-
-        setElements(prev=>
-
-
-            prev.map(el=>
-
-
+        setElements(prev =>
+            prev.map(el =>
                 el.id === selectedId
-
                     ? {
-
                         ...el,
-
-                        fieldName:value
-
+                        fieldName: value
                     }
-
-                    :
-
-                    el
-
-
+                    : el
             )
-
-
         );
-
 
     };
 
 
 
+    // 요소 삭제
+    const deleteElement = () => {
 
-
-
-
-    const deleteElement = ()=>{
-
-
-        if(!selectedId)
+        if (!selectedId) {
             return;
+        }
 
 
-
-        setElements(prev=>
-
+        setElements(prev =>
             prev.filter(
-                el =>
-                    el.id !== selectedId
+                el => el.id !== selectedId
             )
-
         );
-
 
 
         setSelectedId(null);
 
-
     };
-
-
-
 
 
 
     return {
 
-
         elements,
-
-
         setElements,
 
-
         selectedId,
-
         setSelectedId,
-
 
         selectedElement,
 
-
-
         title,
-
         setTitle,
 
-
-
         addText,
-
         addImage,
-
-
 
         updateElement,
 
-
-
         updateText,
-
         updateFieldName,
-
-
 
         deleteElement
 
-
     };
-
 
 }
