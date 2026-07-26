@@ -1,17 +1,19 @@
-import {
-    useState,
-    useRef,
-    useEffect
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-    mmToPx
-} from "../../../util/Utils.jsx";
+import { mmToPx } from "../../../util/Utils.jsx";
 
 import {
     saveTemplate,
     updateTemplate
 } from "../../../services/tempateApi.js";
+
+import {
+    getFontList
+} from "../../../services/sytm3000Api";
+
+import {
+    loadAllFonts
+} from "../../../util/fontLoader";
 
 import useTemplateEditor
     from "./hooks/useTemplateEditor.js";
@@ -22,302 +24,182 @@ import Toolbar
 import CanvasStage
     from "./CanvasStage.jsx";
 
-import {
-    getFontList
-} from "../../../services/sytm3000Api";
-
-import {
-    loadAllFonts
-} from "../../../util/fontLoader";
-
-
 
 export default function TemplateEditor({
-
                                            template,
-
                                            dataMap = {},
-
                                            clcd,
-
                                            onSave,
-
                                            isOpen
-
                                        }) {
 
 
-    const stageRef =
-        useRef(null);
+    const stageRef = useRef(null);
 
 
-
-    const [
-        papersize,
-        setPapersize
-    ] = useState("A4");
-
+    // 용지 설정
+    const [papersize, setPapersize] = useState("A4");
 
 
     const paperSizes = {
-
-        A4:{
-            widthMm:210,
-            heightMm:297
+        A4: {
+            widthMm: 210,
+            heightMm: 297
         },
-
-        A3:{
-            widthMm:297,
-            heightMm:420
+        A3: {
+            widthMm: 297,
+            heightMm: 420
         },
-
-        Letter:{
-            widthMm:216,
-            heightMm:279
+        Letter: {
+            widthMm: 216,
+            heightMm: 279
         },
-
-        Legal:{
-            widthMm:216,
-            heightMm:356
+        Legal: {
+            widthMm: 216,
+            heightMm: 356
         }
-
     };
 
 
-
-    const selected =
+    const selectedPaper =
         paperSizes[papersize];
 
 
-
     const widthPx =
-        mmToPx(selected.widthMm);
-
+        mmToPx(selectedPaper.widthMm);
 
     const heightPx =
-        mmToPx(selected.heightMm);
-
+        mmToPx(selectedPaper.heightMm);
 
 
     const paperwidth =
-        selected.widthMm;
-
+        selectedPaper.widthMm;
 
     const paperheight =
-        selected.heightMm;
+        selectedPaper.heightMm;
 
 
 
+    // Canvas 크기
     const stageWidth = 800;
-
     const stageHeight = 600;
-
 
 
     const scaleX =
         stageWidth / widthPx;
-
 
     const scaleY =
         stageHeight / heightPx;
 
 
 
-
-
+    // 템플릿 상태
     const {
-
         elements,
-
         selectedId,
-
         setSelectedId,
-
         selectedElement,
 
         title,
-
         setTitle,
 
         addText,
-
         addImage,
 
         updateElement,
-
         updateText,
-
         updateFieldName,
 
         deleteElement
 
-
     } = useTemplateEditor(
-
         template,
-
         isOpen
-
     );
 
 
 
-
-    const [
-        fonts,
-        setFonts
-    ] = useState([]);
+    // 폰트
+    const [fonts, setFonts] = useState([]);
+    const [fontReady, setFontReady] = useState(false);
 
 
 
-    const [
-        fontReady,
-        setFontReady
-    ] = useState(false);
+    // 저장
+    const handleSave = async () => {
 
+        try {
 
-
-
-
-    /*
-        저장
-    */
-    const handleSave = async()=>{
-
-
-        try{
-
-
-            const params={
-
+            const params = {
                 stageRef,
-
                 title,
-
                 elements,
-
                 papersize,
-
                 paperwidth,
-
                 paperheight,
-
                 clcd
-
             };
 
 
-
-            if(template?.id){
-
+            if (template?.id) {
 
                 await updateTemplate(
-
                     template.id,
-
                     params
-
                 );
 
+                alert("수정 완료");
 
-                alert(
-                    "수정 완료"
-                );
-
-
-            }
-            else{
-
+            } else {
 
                 await saveTemplate(
-
                     params
-
                 );
 
-
-                alert(
-                    "저장 완료"
-                );
-
+                alert("저장 완료");
 
             }
-
 
 
             onSave?.();
 
 
-        }
-        catch(e){
+        } catch (e) {
 
+            console.error(e);
 
-            console.error(
-                e
-            );
-
-
-            alert(
-                "저장 실패"
-            );
-
+            alert("저장 실패");
 
         }
-
 
     };
 
 
 
+    // 기존 템플릿 용지 설정
+    useEffect(() => {
 
-
-    /*
-        기존 용지
-    */
-    useEffect(()=>{
-
-
-        if(template?.papersize){
-
+        if (template?.papersize) {
 
             setPapersize(
                 template.papersize
             );
 
-
         }
 
-
-    },[template]);
-
+    }, [template]);
 
 
 
+    // 폰트 초기화
+    useEffect(() => {
 
+        const initFont = async () => {
 
-
-    /*
-        폰트 초기화
-    */
-    useEffect(()=>{
-
-
-        const init = async()=>{
-
-
-            try{
-
+            try {
 
                 const list =
                     await getFontList();
-
-
-
-                console.log(
-                    "font list",
-                    list
-                );
-
 
 
                 await loadAllFonts(
@@ -325,184 +207,110 @@ export default function TemplateEditor({
                 );
 
 
-
-                /*
-                    브라우저 폰트 확인
-                */
                 await document.fonts.ready;
 
 
+                setFonts(list);
 
-                console.log(
-                    "font ready"
-                );
-
+                setFontReady(true);
 
 
-                setFonts(
-                    list
-                );
-
-
-
-                setFontReady(
-                    true
-                );
-
-
-            }
-            catch(e){
-
+            } catch (e) {
 
                 console.error(
                     "font error",
                     e
                 );
 
-
             }
-
 
         };
 
 
+        initFont();
 
-        init();
-
-
-    },[]);
-
-
-
+    }, []);
 
 
 
     return (
 
         <div
-
             style={{
-
-                display:"flex",
-
-                gap:20,
-
-                padding:20,
-
-                height:"100vh",
-
-                boxSizing:"border-box"
-
+                display: "flex",
+                gap: 20,
+                padding: 20,
+                height: "100vh",
+                boxSizing: "border-box"
             }}
-
         >
-
 
 
             <Toolbar
 
-
                 title={title}
-
                 setTitle={setTitle}
 
-
                 papersize={papersize}
-
                 setPapersize={setPapersize}
 
-
                 addText={addText}
-
                 addImage={addImage}
-
 
                 deleteElement={deleteElement}
 
-
                 handleSave={handleSave}
-
 
                 template={template}
 
-
                 selectedElement={selectedElement}
 
-
                 updateText={updateText}
-
-
                 updateFieldName={updateFieldName}
-
 
                 elements={elements}
 
-
                 fonts={fonts}
 
-
                 updateElement={updateElement}
-
 
             />
 
 
 
-
-
-
             <div
-
                 style={{
-
-                    flex:1,
-
-                    overflow:"auto"
-
+                    flex: 1,
+                    overflow: "auto"
                 }}
-
             >
 
-
                 {
-                    fontReady && (
+                    fontReady &&
 
-                        <CanvasStage
+                    <CanvasStage
 
+                        stageRef={stageRef}
 
-                            stageRef={stageRef}
+                        elements={elements}
 
+                        selectedId={selectedId}
 
-                            elements={elements}
+                        setSelectedId={setSelectedId}
 
+                        updateElement={updateElement}
 
-                            selectedId={selectedId}
+                        dataMap={dataMap}
 
+                        scaleX={scaleX}
 
-                            setSelectedId={setSelectedId}
+                        scaleY={scaleY}
 
+                        fontReady={fontReady}
 
-                            updateElement={updateElement}
+                    />
 
-
-                            dataMap={dataMap}
-
-
-                            scaleX={scaleX}
-
-
-                            scaleY={scaleY}
-
-
-                            fontReady={fontReady}
-
-
-                        />
-
-                    )
                 }
-
-
 
             </div>
 

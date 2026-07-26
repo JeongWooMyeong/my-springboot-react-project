@@ -1,57 +1,34 @@
-import {
-    Text
-} from "react-konva";
-
-import {
-    useEffect,
-    useRef
-} from "react";
+import { useEffect, useRef } from "react";
+import { Text } from "react-konva";
 
 
 export default function CanvasText({
-
                                        el,
-
                                        selectedId,
-
                                        setSelectedId,
-
                                        updateElement,
-
                                        nodeRefs,
-
                                        fontReady
-
                                    }) {
 
-
-    const textRef =
-        useRef(null);
+    const textRef = useRef(null);
 
 
+    // 폰트 적용 후 Konva Text 갱신
+    useEffect(() => {
 
-
-    /*
-        폰트 적용 후 Konva 갱신
-    */
-    useEffect(()=>{
-
-        if(!fontReady)
-            return;
-
+        if (!fontReady) return;
 
         const node = textRef.current;
 
-        if(!node)
-            return;
+        if (!node) return;
 
 
         const fontName =
             el.fontFamily || "NanumGothic";
 
 
-        const refresh = async()=>{
-
+        const refresh = async () => {
 
             await document.fonts.load(
                 `${el.fontSize || 20}px "${fontName}"`
@@ -64,36 +41,27 @@ export default function CanvasText({
                 el.fontSize || 20
             );
 
-
             node.text(
                 `${el.text} ({{${el.fieldName}}})`
             );
 
 
-            // 핵심
-            node.width(
-                el.width
-            );
-
-            node.height(
-                el.height
-            );
+            // Transformer 적용 후 크기 유지
+            node.width(el.width);
+            node.height(el.height);
 
 
             node.clearCache();
 
-
             node.getLayer()
                 ?.batchDraw();
-
 
         };
 
 
         refresh();
 
-
-    },[
+    }, [
         fontReady,
         el.fontFamily,
         el.fontSize,
@@ -103,261 +71,129 @@ export default function CanvasText({
 
 
 
+    const isSelected =
+        selectedId === el.id;
 
 
 
     return (
 
-
         <Text
 
+            ref={(node) => {
 
+                textRef.current = node;
 
-            ref={(node)=>{
-
-
-                textRef.current =
-                    node;
-
-
-
-                if(node){
-
-
-                    nodeRefs.current[
-                        el.id
-                        ] = node;
-
-
+                if (node) {
+                    nodeRefs.current[el.id] = node;
                 }
-
 
             }}
 
 
-
-            text={
-                `${el.text} ({{${el.fieldName}}})`
-            }
+            text={`${el.text} ({{${el.fieldName}}})`}
 
 
+            x={el.x}
+            y={el.y}
 
-            x={
-                el.x
-            }
-
-
-
-            y={
-                el.y
-            }
-
-
-
-            width={
-                el.width
-            }
-
-
-
-            height={
-                el.height
-            }
-
+            width={el.width}
+            height={el.height}
 
 
             fontFamily={
-
-                el.fontFamily
-                ||
-                "NanumGothic"
-
+                el.fontFamily || "NanumGothic"
             }
-
-
 
             fontSize={
-
-                el.fontSize
-                ||
-                20
-
+                el.fontSize || 20
             }
-
 
 
             fill={
-
-                el.fill
-                ||
-                "black"
-
+                el.fill || "black"
             }
-
 
 
             draggable
 
 
 
-
-
-            /*
-                선택
-            */
-            onClick={(e)=>{
-
+            // 선택
+            onClick={(e) => {
 
                 e.cancelBubble = true;
 
-
-                setSelectedId(
-                    el.id
-                );
-
+                setSelectedId(el.id);
 
             }}
-
-
-
 
 
             stroke={
-
-                selectedId === el.id
-
-                    ?
-
-                    "blue"
-
-                    :
-
-                    undefined
-
+                isSelected
+                    ? "blue"
+                    : undefined
             }
-
-
 
             strokeWidth={
-
-                selectedId === el.id
-
-                    ?
-
-                    2
-
-                    :
-
-                    0
-
+                isSelected
+                    ? 2
+                    : 0
             }
 
 
 
-
-
-            /*
-                이동
-            */
-            onDragEnd={(e)=>{
-
+            // 이동
+            onDragEnd={(e) => {
 
                 updateElement(
-
                     el.id,
-
                     {
-
-                        x:e.target.x(),
-
-                        y:e.target.y()
-
+                        x: e.target.x(),
+                        y: e.target.y()
                     }
-
                 );
-
 
             }}
 
 
 
+            // 크기 변경
+            onTransformEnd={(e) => {
+
+                const node = e.target;
 
 
-
-
-            /*
-                크기 변경
-            */
-            onTransformEnd={(e)=>{
-
-
-                const node =
-                    e.target;
-
-
-
-                const scaleX =
-                    node.scaleX();
-
-
-
-                const scaleY =
-                    node.scaleY();
-
-
+                const scaleX = node.scaleX();
+                const scaleY = node.scaleY();
 
 
                 node.scaleX(1);
-
                 node.scaleY(1);
 
 
-
-
                 updateElement(
-
                     el.id,
-
                     {
-
-
-                        x:
-                            node.x(),
-
-
-                        y:
-                            node.y(),
-
+                        x: node.x(),
+                        y: node.y(),
 
                         width:
-                            node.width()
-                            *
-                            scaleX,
-
+                            node.width() * scaleX,
 
                         height:
-                            node.height()
-                            *
-                            scaleY,
-
+                            node.height() * scaleY,
 
                         fontSize:
                             (el.fontSize || 20)
                             *
                             scaleY
-
-
                     }
-
                 );
-
 
             }}
 
-
-
         />
-
 
     );
 
