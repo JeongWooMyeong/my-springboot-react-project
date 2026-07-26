@@ -1,6 +1,10 @@
 import React from "react";
 import { Tree } from "antd";
 
+/*
+템플릿 관리에서 쓰이는 분류
+ */
+
 const ClassificationSelectTree = ({ data, selectedKeys = [], onSelect }) => {
     const buildTree = (data) => {
         const map = {};

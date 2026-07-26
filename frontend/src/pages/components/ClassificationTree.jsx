@@ -1,6 +1,11 @@
 import React from "react";
 import { Tree } from "antd";
 
+/*
+*
+* 템플릿 분류 페이지에서 쓰이는 분류 트리
+* */
+
 const ClassificationTree = ({ data, activeKeys = [], onCheck }) => {
     const buildTree = (data) => {
         const map = {};
