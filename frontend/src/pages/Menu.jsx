@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import React from "react";
-import "../css/layout.css";
+import "../css/menu/menu.css";
 import { useMenu } from "../context/MenuContext.jsx";
 import { useTranslation } from "react-i18next";
 

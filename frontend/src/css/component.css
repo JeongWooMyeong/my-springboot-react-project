@@ -1,43 +1,3 @@
-.layout {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    align-items: center; /* 가로 가운데 */
-}
-
-.layout-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 60px;
-    background-color: #fff;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 20px;
-}
-
-.layout-body {
-    flex: 1;
-    display: flex;
-    justify-content: center; /* 본문을 가로 가운데 */
-    padding-top: 60px;
-    width: 100%;
-}
-
-.layout-footer {
-    position: relative; /* 기본 flow에 따라 페이지 끝에 표시 */
-    width: 100%;
-    height: 40px;
-    background-color: #333;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
 /* 왼쪽 사이드바 영역 */
 .sidebar {
     flex: 0 0 250px;        /* 고정 너비 */
@@ -48,14 +8,6 @@
     overflow-y: auto;
 }
 
-/* 오른쪽 본문 영역 */
-.content {
-    flex: 1;
-    padding: 20px;
-    background: #fff;
-    height: calc(100vh - 100px); /* Header+Footer 제외 */
-    overflow-y: auto;
-}
 
 .tree-container {
     width: 400px;
