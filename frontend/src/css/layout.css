@@ -1286,3 +1286,14 @@ display:inline-block;width:70%;height:30px;background: url('../images/bg/loginpg
 .company-select .label {
 	font-weight: bold;
 }
+
+.selected-row td {
+	background-color: #e6f4ff !important;
+	color: #1677ff;
+	font-weight: 500;
+}
+
+
+.selected-row:hover td {
+	background-color: #bae0ff !important;
+}
