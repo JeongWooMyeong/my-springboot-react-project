@@ -4,7 +4,7 @@ import { useMenu } from "../../../../context/MenuContext.jsx";
 import RoleList from "./RoleList.jsx";
 import RoleMenuTree from "./RoleMenuTree.jsx";
 import PermissionTable from "./PermissionTable.jsx";
-import RoleModal from "../../../components/RoleModal.jsx";
+import RoleModal from "./RoleModal.jsx";
 import "../../../../css/layout.css";
 
 import {
