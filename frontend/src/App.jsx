@@ -9,6 +9,7 @@ import { componentMap } from "./pages/routes/routes.jsx";
 import { MenuProvider, useMenu } from "./context/MenuContext.jsx";
 import { UserContext } from "./context/UserContext";
 import {checkToken} from "./util/auth.jsx";
+import Sybs1000MainDetail from "./pages/sy/bs/sybs1000/Sybs1000MainDetail.jsx";
 
 function AppRoutes() {
     const { routesFromDB } = useMenu();
@@ -26,6 +27,17 @@ function AppRoutes() {
                     </Layout>
                 </ProtectedRoute>
             } />
+
+            <Route
+                path="/sybs1000/detail"
+                element={
+                    <ProtectedRoute>
+                        <Layout>
+                            <Sybs1000MainDetail />
+                        </Layout>
+                    </ProtectedRoute>
+                }
+            />
 
             {/* DB 기반 라우트 */}
             {routesFromDB.map(({ menuCd, dedName, xpn }) => {
