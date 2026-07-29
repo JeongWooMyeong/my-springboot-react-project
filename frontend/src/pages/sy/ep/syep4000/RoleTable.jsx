@@ -7,7 +7,7 @@ import {
 
 import {
     roleColumns
-} from "./columns";
+} from "./Columns";
 
 
 export default function RoleTable({
