@@ -49,6 +49,7 @@ dependencies {
 
     // iText7 PDF 라이브러리 (최신 안정 버전)
     implementation 'com.itextpdf:itext7-core:9.7.0'
+    implementation 'org.springframework.kafka:spring-kafka'
 
 
     //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'

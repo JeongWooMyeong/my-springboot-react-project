@@ -1,0 +1,32 @@
+services:
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+
+    environment:
+      KAFKA_NODE_ID: 1
+
+      # Kafka 역할 설정
+      KAFKA_PROCESS_ROLES: broker,controller
+
+      # Kafka 통신 포트
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+
+      # 외부(Spring Boot)에서 접근할 주소
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+
+      # Controller 설정
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+
+      # 단일 Kafka 설정
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+
+      # 데이터 저장 위치
+      KAFKA_LOG_DIRS: /tmp/kraft-combined-logs

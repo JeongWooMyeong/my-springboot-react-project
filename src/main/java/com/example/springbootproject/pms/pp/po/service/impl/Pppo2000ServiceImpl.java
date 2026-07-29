@@ -2,6 +2,10 @@ package com.example.springbootproject.pms.pp.po.service.impl;
 
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
+import com.example.springbootproject.pms.pp.po.event.ApprovalEvent;
+import com.example.springbootproject.pms.pp.po.event.ApprovalHistoryEvent;
+import com.example.springbootproject.pms.pp.po.producer.ApprovalHistoryProducer;
+import com.example.springbootproject.pms.pp.po.producer.ApprovalProducer;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import com.example.springbootproject.pms.pp.po.service.dao.Pppo2000Mapper;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto;
@@ -44,6 +48,8 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
     private final Pppo2000Mapper pppo2000Mapper;
     private final Sytm3000Mapper sytm3000Mapper;
+    private final ApprovalProducer approvalProducer;
+    private final ApprovalHistoryProducer approvalHistoryProducer;
     private static final String FONT_BASE_PATH =
             "C:/Project/SpringBootProject";
 
@@ -708,5 +714,30 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
     public void updateOrdstate(List<String> ordnos, Integer ordstate) {
         if (ordnos == null || ordnos.isEmpty()) return;
         pppo2000Mapper.updateOrdstate(ordnos, ordstate);
+
+        // Kafka 이벤트 발행
+        ApprovalEvent event =
+                new ApprovalEvent(
+                        ordnos,
+                        ordstate
+                );
+
+
+        approvalProducer.send(event);
+
+        // Kafka 이벤트 발행
+        for(String ordno : ordnos){
+
+            ApprovalHistoryEvent events =
+                    new ApprovalHistoryEvent(
+                            ordno,
+                            10,       // 기존 상태
+                            ordstate,
+                            "admin"
+                    );
+
+
+            approvalHistoryProducer.send(events);
+        }
     }
 }
