@@ -12,7 +12,7 @@ import {
     deleteJijum
 } from "../../../../services/syep1000Api";
 
-import { visibleColumns } from "./columns";
+import { visibleColumns } from "./Columns";
 
 import JijumTree from "./JijumTree";
 import JijumDetail from "./JijumDetail";
