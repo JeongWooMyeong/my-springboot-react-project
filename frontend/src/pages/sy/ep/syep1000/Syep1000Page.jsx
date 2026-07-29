@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Select } from "antd";
 import "../../../../css/layout.css";
 
-import { buildTree } from "./treeUtils";
+import { buildTree } from "./TreeUtils";
 import {
     getCompanies,
     getJijums,
