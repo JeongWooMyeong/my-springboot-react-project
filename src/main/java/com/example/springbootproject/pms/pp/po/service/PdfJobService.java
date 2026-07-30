@@ -10,7 +10,8 @@ public interface PdfJobService {
 
     void saveResult(
             String jobid,
-            byte[] result
+            byte[] result,
+            String extension
     );
 
 

@@ -37,7 +37,8 @@ public class PdfJobServiceImpl implements PdfJobService {
     @Override
     public void saveResult(
             String jobid,
-            byte[] result
+            byte[] result,
+            String extension
     ){
 
         try {
@@ -64,7 +65,7 @@ public class PdfJobServiceImpl implements PdfJobService {
                             + UUID.randomUUID()
                             .toString()
                             .substring(0,6)
-                            + ".pdf";
+                            + extension;
 
 
             String filepath =

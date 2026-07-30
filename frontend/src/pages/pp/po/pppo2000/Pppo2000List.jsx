@@ -52,6 +52,26 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
         }
     };
 
+    const isAllChecked =
+        currentItems.length > 0 &&
+        currentItems.every(
+            req => selectedOrdnos.includes(req.ordno)
+        );
+
+
+    const handleAllCheck = (checked) => {
+
+        currentItems.forEach(req => {
+
+            onCheck(
+                req.ordno,
+                checked
+            );
+
+        });
+
+    };
+
     return (
         <div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
@@ -81,7 +101,19 @@ export default function Pppo2000List({ data = [], onSelect, onCheck, onApprove, 
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
                         <thead>
                         <tr>
-                            <th style={{ border: "1px solid #ccc", padding: 8 }}>선택</th>
+                            <th style={{ border: "1px solid #ccc", padding: 8 }}>
+
+                                <input
+                                    type="checkbox"
+                                    checked={isAllChecked}
+                                    onChange={(e) =>
+                                        handleAllCheck(
+                                            e.target.checked
+                                        )
+                                    }
+                                />
+
+                            </th>
                             <th style={{ border: "1px solid #ccc", padding: 8 }}>주문번호</th>
                             <th style={{ border: "1px solid #ccc", padding: 8 }}>등록자</th>
                             <th style={{ border: "1px solid #ccc", padding: 8 }}>등록일자</th>

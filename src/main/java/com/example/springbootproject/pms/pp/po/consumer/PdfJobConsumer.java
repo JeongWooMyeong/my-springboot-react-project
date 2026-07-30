@@ -59,11 +59,17 @@ public class PdfJobConsumer {
 
             }
 
+            String extension =
+                    job.getType() == PdfGenerateJob.GenerateType.PDF
+                            ? ".pdf"
+                            : ".zip";
+
 
             // 결과 저장
             pdfJobService.saveResult(
                     job.getJobid(),
-                    result
+                    result,
+                    extension
             );
 
 
