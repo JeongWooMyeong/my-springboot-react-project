@@ -10,6 +10,8 @@ import { MenuProvider, useMenu } from "./context/MenuContext.jsx";
 import { UserContext } from "./context/UserContext";
 import {checkToken} from "./util/auth.jsx";
 import Sybs1000MainDetail from "./pages/sy/bs/sybs1000/Sybs1000MainDetail.jsx";
+import Toast from "./pages/components/common/Toast.jsx";
+import {NotificationProvider} from "./context/NotificationContext.jsx";
 
 function AppRoutes() {
     const { routesFromDB } = useMenu();
@@ -76,13 +78,31 @@ function App() {
     },[]);
 
     return (
+
         <Router>
-            <MenuProvider>
-                <UserContext.Provider value={userinfo}>
-                    <AppRoutes />
-                </UserContext.Provider>
-            </MenuProvider>
+
+
+            <NotificationProvider>
+
+
+                <MenuProvider>
+
+                    <UserContext.Provider
+                        value={userinfo}
+                    >
+
+                        <Toast />
+                        <AppRoutes />
+
+                    </UserContext.Provider>
+
+                </MenuProvider>
+
+            </NotificationProvider>
+
+
         </Router>
+
     );
 }
 

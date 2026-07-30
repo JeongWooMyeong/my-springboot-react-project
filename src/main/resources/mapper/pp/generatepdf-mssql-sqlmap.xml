@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.pp.po.service.dao.PdfJobMapper">
+    <insert id="insertJob">
+
+        INSERT INTO PDF_JOB
+        (
+            JOB_ID,
+            STATUS,
+            CREATE_DATE
+        )
+        VALUES
+            (
+                #{jobid},
+                #{status},
+                getdate()
+            )
+
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE PDF_JOB
+        SET STATUS = #{status}
+        WHERE JOB_ID = #{jobid}
+    </update>
+
+    <update id="updateResult">
+
+        UPDATE PDF_JOB
+
+        SET
+            FILE_PATH = #{filepath},
+            FILE_NAME = #{filename},
+            STATUS = 'COMPLETE',
+            COMPLETE_DATE = getdate()
+
+        WHERE JOB_ID = #{jobid}
+
+    </update>
+
+    <select id="selectJob"
+            resultType="com.example.springbootproject.pms.pp.po.dto.PdfJobDto">
+
+        SELECT
+            JOB_ID          AS jobid,
+            STATUS          AS status,
+            FILE_PATH       AS filepath,
+            CREATE_DATE     AS createdate,
+            COMPLETE_DATE   AS completedate
+        FROM PDF_JOB
+        WHERE JOB_ID = #{jobid}
+
+    </select>
+
+</mapper>

@@ -55,3 +55,27 @@
     height: calc(100vh - 100px); /* Header+Footer 제외 */
     overflow-y: auto;
 }
+
+.toast {
+
+    position: fixed;
+
+    top: 20px;
+
+    right: 20px;
+
+    z-index: 9999;
+
+    background-color: #333;
+
+    color: white;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    font-size: 14px;
+
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+
+}

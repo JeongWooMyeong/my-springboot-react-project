@@ -7,9 +7,14 @@ import {
     searchRequests,
     getRequestDetail,
     updateRequests,
-    downloadPdfSingle,
-    downloadPdfBulk
+    requestPdf,
+    requestPdfBulk,
+    subscribePdf
 } from "../../../../services/pppo2000Api.js";
+
+import {
+    useNotification
+} from "../../../../context/NotificationContext.jsx";
 
 export default function Pppo2000Page() {
     const [form] = Form.useForm();
@@ -17,6 +22,10 @@ export default function Pppo2000Page() {
     const [selectedOrdnos, setSelectedOrdnos] = useState([]);
     const [status, setStatus] = useState("");
     const [requestList, setRequestList] = useState([]);
+
+    const {
+        showMessage
+    } = useNotification();
 
     const handleSearch = async () => {
         const jijumcd = form.getFieldValue("jijumcd");
@@ -56,28 +65,67 @@ export default function Pppo2000Page() {
     };
 
     const handlePdf = async () => {
+
         if (selectedOrdnos.length === 0) {
             alert("선택된 신청내역이 없습니다.");
             return;
         }
-        let blob;
-        if (selectedOrdnos.length === 1) {
-            blob = await downloadPdfSingle(selectedOrdnos[0]);
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = `${selectedOrdnos[0]}.pdf`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-        } else {
-            blob = await downloadPdfBulk(selectedOrdnos);
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "pppo2000_pdfs.zip";
-            a.click();
-            window.URL.revokeObjectURL(url);
+
+
+        try {
+
+            let response;
+
+
+            // 단건
+            if (selectedOrdnos.length === 1) {
+
+                response =
+                    await requestPdf(
+                        selectedOrdnos[0]
+                    );
+
+            }
+            // 다건
+            else {
+
+                response =
+                    await requestPdfBulk(
+                        selectedOrdnos
+                    );
+
+            }
+
+
+
+            const jobid =
+                response.data.jobid;
+
+
+
+            // 생성 요청 알림
+
+            showMessage(
+                "PDF 생성 요청되었습니다."
+            );
+
+
+
+            // SSE 연결
+
+            subscribePdf(
+                jobid,
+                showMessage
+            );
+
+
+
+        } catch(e) {
+
+            alert("PDF 생성 요청 실패");
+
         }
+
     };
 
     return (
