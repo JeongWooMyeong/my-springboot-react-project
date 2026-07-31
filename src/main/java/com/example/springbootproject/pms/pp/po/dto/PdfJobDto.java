@@ -15,10 +15,16 @@ public class PdfJobDto {
 
     private String filepath;
 
-    private String filename;
+    private String errormessage;
 
-    private LocalDateTime createdAt;
+    private Integer retrycount;
 
-    private LocalDateTime completedAt;
+    private LocalDateTime createdate;
+
+    private LocalDateTime startdate;
+
+    private LocalDateTime completedate;
+
+    private LocalDateTime updatedate;
 
 }

@@ -4,6 +4,8 @@ import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface PdfJobMapper {
 
@@ -13,9 +15,22 @@ public interface PdfJobMapper {
     );
 
 
-    void updateStatus(
+    void updateStart(
             @Param("jobid") String jobid,
             @Param("status") String status
+    );
+
+
+    void updateComplete(
+            @Param("jobid") String jobid,
+            @Param("status") String status
+    );
+
+
+    void updateFail(
+            @Param("jobid") String jobid,
+            @Param("status") String status,
+            @Param("errorMessage") String errorMessage
     );
 
 
@@ -27,6 +42,12 @@ public interface PdfJobMapper {
 
     PdfJobDto selectJob(
             @Param("jobid")
+            String jobid
+    );
+
+    List<PdfJobDto> findTimeoutJobs();
+
+    void updateHeartbeat(
             String jobid
     );
 

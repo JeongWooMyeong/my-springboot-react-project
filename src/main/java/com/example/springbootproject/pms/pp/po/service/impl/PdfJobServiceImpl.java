@@ -1,6 +1,7 @@
 package com.example.springbootproject.pms.pp.po.service.impl;
 
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
+import com.example.springbootproject.pms.pp.po.enums.PdfJobStatus;
 import com.example.springbootproject.pms.pp.po.service.PdfJobService;
 import com.example.springbootproject.pms.pp.po.service.dao.PdfJobMapper;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.UUID;
+
 
 @Service
 @RequiredArgsConstructor
@@ -43,16 +46,13 @@ public class PdfJobServiceImpl implements PdfJobService {
 
         try {
 
-
-            File dir =
-                    new File(PDF_PATH);
-
+            File dir = new File(PDF_PATH);
 
             if(!dir.exists()){
                 dir.mkdirs();
             }
 
-            //파일명 날짜로 변경
+
             String filename =
                     "PDF_"
                             + LocalDateTime.now()
@@ -72,15 +72,12 @@ public class PdfJobServiceImpl implements PdfJobService {
                     PDF_PATH + filename;
 
 
-
             try(FileOutputStream fos =
                         new FileOutputStream(filepath)){
-
 
                 fos.write(result);
 
             }
-
 
 
             pdfJobMapper.updateResult(
@@ -91,7 +88,6 @@ public class PdfJobServiceImpl implements PdfJobService {
 
 
         } catch(Exception e){
-
 
             throw new RuntimeException(
                     "PDF 파일 저장 실패",
@@ -104,17 +100,45 @@ public class PdfJobServiceImpl implements PdfJobService {
 
 
     @Override
-    public void updateStatus(
-            String jobid,
-            String status
+    public void start(
+            String jobid
     ){
 
-        pdfJobMapper.updateStatus(
+        pdfJobMapper.updateStart(
                 jobid,
-                status
+                PdfJobStatus.PROCESSING.name()
         );
 
     }
+
+
+    @Override
+    public void complete(
+            String jobid
+    ){
+
+        pdfJobMapper.updateComplete(
+                jobid,
+                PdfJobStatus.COMPLETE.name()
+        );
+
+    }
+
+
+    @Override
+    public void fail(
+            String jobid,
+            String errorMessage
+    ){
+
+        pdfJobMapper.updateFail(
+                jobid,
+                PdfJobStatus.FAIL.name(),
+                errorMessage
+        );
+
+    }
+
 
     @Override
     public PdfJobDto findByJobid(
@@ -122,6 +146,22 @@ public class PdfJobServiceImpl implements PdfJobService {
     ){
 
         return pdfJobMapper.selectJob(
+                jobid
+        );
+
+    }
+
+    @Override
+    public List<PdfJobDto> findTimeoutJobs(){
+
+        return pdfJobMapper.findTimeoutJobs();
+
+    }
+
+    @Override
+    public void updateHeartbeat(String jobid){
+
+        pdfJobMapper.updateHeartbeat(
                 jobid
         );
 

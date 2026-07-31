@@ -70,8 +70,18 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
     @Override
     public byte[] generatePdf(String ordno) {
+        //테스트 heartbeat
 
 
+        /*try {
+
+            Thread.sleep(600000); // 테스트용 10분 지연
+
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+        }*/
 
         Pppo2000DetailDto detail =
                 pppo2000Mapper.selectRequestDetail(ordno);
