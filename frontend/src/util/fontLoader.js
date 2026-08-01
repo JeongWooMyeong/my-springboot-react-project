@@ -3,11 +3,9 @@ export async function loadCustomFonts(fontList) {
 
     const promises = [];
 
-
     fontList.forEach(font => {
 
         const fontName = font.fontfamily;
-
 
         const style = document.createElement("style");
 
@@ -19,7 +17,6 @@ export async function loadCustomFonts(fontList) {
                 font-style: normal;
             }
         `;
-
 
         document.head.appendChild(style);
 
@@ -33,7 +30,8 @@ export async function loadCustomFonts(fontList) {
     });
 
 
-    await Promise.all(promises);
+    // 변경
+    await Promise.allSettled(promises);
 
 
     await document.fonts.ready;

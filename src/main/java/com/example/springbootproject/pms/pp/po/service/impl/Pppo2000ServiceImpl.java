@@ -37,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -70,27 +71,19 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
     @Override
     public byte[] generatePdf(String ordno) {
-        //테스트 heartbeat
 
-
-        /*try {
-
-            Thread.sleep(600000); // 테스트용 10분 지연
-
-        } catch (InterruptedException e) {
-
-            Thread.currentThread().interrupt();
-
-        }*/
 
         Pppo2000DetailDto detail =
                 pppo2000Mapper.selectRequestDetail(ordno);
 
 
-        try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+        try(ByteArrayOutputStream baos =
+                    new ByteArrayOutputStream()) {
 
 
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper =
+                    new ObjectMapper();
+
 
 
             Map<String,Object> data =
@@ -109,11 +102,83 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
             /*
-             * ============================
-             * 용지 크기
-             * DB mm -> PDF pt
-             * ============================
+             * ==========================
+             * 렌더 순서 정렬
+             *
+             * BACKGROUND
+             * FIXED IMAGE
+             * FIELD IMAGE
+             * TEXT
+             *
+             * ==========================
              */
+
+
+            List<Map<String,Object>> renderFields =
+                    new ArrayList<>();
+
+
+            fields.stream()
+                    .filter(f ->
+                            "BACKGROUND".equals(
+                                    String.valueOf(
+                                            f.get("imageType")
+                                    )
+                            )
+                    )
+                    .forEach(renderFields::add);
+
+
+
+            fields.stream()
+                    .filter(f ->
+                            !"BACKGROUND".equals(
+                                    String.valueOf(
+                                            f.get("imageType")
+                                    )
+                            )
+                    )
+                    .sorted((a,b)->{
+
+                        String ta =
+                                String.valueOf(
+                                        a.get("type")
+                                );
+
+                        String tb =
+                                String.valueOf(
+                                        b.get("type")
+                                );
+
+
+                        // TEXT 마지막
+                        if("text".equals(ta)
+                                && !"text".equals(tb)){
+                            return 1;
+                        }
+
+                        if(!"text".equals(ta)
+                                && "text".equals(tb)){
+                            return -1;
+                        }
+
+                        return 0;
+
+                    })
+                    .forEach(renderFields::add);
+
+
+
+
+
+            /*
+             * ==========================
+             * PDF SIZE
+             * mm -> pt
+             * ==========================
+             */
+
+
             float mmToPt =
                     72f / 25.4f;
 
@@ -130,10 +195,11 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
             PdfDocument pdfDoc =
                     new PdfDocument(
-                            new PdfWriter(baos)
+                            new PdfWriter(
+                                    baos
+                            )
                     );
 
 
@@ -161,17 +227,31 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
             /*
-             * TemplateEditor
-             * px -> PDF pt 변환
+             * ==========================
+             * Canvas 800 x 600
+             * ==========================
              */
-            float pxToPt =
-                    72f / 96f;
+
+
+            float canvasWidth = 800f;
+            float canvasHeight = 600f;
 
 
 
-            for(Map<String,Object> field : fields){
+            float scaleX =
+                    pdfWidth / canvasWidth;
+
+
+            float scaleY =
+                    pdfHeight / canvasHeight;
+
+
+
+
+
+            for(Map<String,Object> field :
+                    renderFields) {
 
 
 
@@ -192,38 +272,188 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                 float x =
                         ((Number)field.get("x"))
                                 .floatValue()
-                                * pxToPt;
-
+                                * scaleX;
 
 
                 float y =
                         ((Number)field.get("y"))
                                 .floatValue()
-                                * pxToPt;
-
+                                * scaleY;
 
 
                 float width =
                         ((Number)field.get("width"))
                                 .floatValue()
-                                * pxToPt;
-
+                                * scaleX;
 
 
                 float height =
                         ((Number)field.get("height"))
                                 .floatValue()
-                                * pxToPt;
+                                * scaleY;
+
 
 
 
 
                 /*
-                 * ========================
-                 * TEXT
-                 * ========================
+                 * ==========================
+                 * IMAGE
+                 * ==========================
                  */
-                if("text".equals(type)){
+
+
+                if("image".equals(type)) {
+
+
+                    String imageUrl = null;
+
+
+
+                    String imageType =
+                            String.valueOf(
+                                    field.get("imageType")
+                            );
+
+
+
+                    if(
+                            "BACKGROUND".equals(imageType)
+                                    ||
+                                    "FIXED".equals(imageType)
+                    ) {
+
+                        imageUrl =
+                                String.valueOf(
+                                        field.get("imageUrl")
+                                );
+
+                    }
+                    else if(
+                            "FIELD".equals(imageType)
+                    ) {
+
+
+                        Object img =
+                                data.get(fieldName);
+
+
+                        if(img != null){
+
+                            imageUrl =
+                                    img.toString();
+
+                        }
+
+                    }
+
+
+
+                    if(
+                            imageUrl == null
+                                    ||
+                                    "null".equals(imageUrl)
+                    ){
+                        continue;
+                    }
+
+
+
+                    if(imageUrl.startsWith("/")){
+
+                        imageUrl =
+                                "http://localhost:8081"
+                                        + imageUrl;
+
+                    }
+
+
+
+                    Image image =
+                            new Image(
+                                    ImageDataFactory.create(
+                                            new URL(imageUrl)
+                                    )
+                            );
+
+
+
+                    float pdfY =
+                            pdfHeight
+                                    -
+                                    y
+                                    -
+                                    height;
+
+
+
+                    if(
+                            "BACKGROUND".equals(imageType)
+                    ){
+
+                        // 배경은 영역 강제 채움
+
+                        image.scaleAbsolute(
+                                width,
+                                height
+                        );
+
+
+                        image.setFixedPosition(
+                                x,
+                                pdfY
+                        );
+
+
+                    }
+                    else {
+
+
+                        image.scaleToFit(
+                                width,
+                                height
+                        );
+
+
+                        float imgWidth =
+                                image.getImageScaledWidth();
+
+
+                        float imgHeight =
+                                image.getImageScaledHeight();
+
+
+
+                        image.setFixedPosition(
+                                x +
+                                        (width-imgWidth)/2,
+
+                                pdfY +
+                                        (height-imgHeight)/2
+                        );
+
+                    }
+
+
+
+                    document.add(image);
+
+
+
+                }
+
+
+
+
+
+                /*
+                 * ==========================
+                 * TEXT
+                 * ==========================
+                 */
+
+
+                else if("text".equals(type)){
 
 
 
@@ -234,15 +464,19 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
                     String value =
                             obj == null
-                                    ? ""
-                                    : obj.toString();
+                                    ?
+                                    ""
+                                    :
+                                    obj.toString();
 
 
 
                     if(value.isEmpty()){
 
+
                         Object text =
                                 field.get("text");
+
 
                         if(text != null){
 
@@ -257,20 +491,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-                    /*
-                     * =========================================
-                     * 2026-07-23
-                     *
-                     * 저장된 fontFamily 기준
-                     * TB_FONT 조회 후 TTF 적용
-                     * =========================================
-                     */
-
-
-                    PdfFont pdfFont;
-
-
-
                     String fontFamily =
                             String.valueOf(
                                     field.get("fontFamily")
@@ -278,63 +498,42 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-                    if(
-                            fontFamily != null &&
-                                    !"null".equals(fontFamily)
-                    ){
-
-
-                        Sytm3000Dto font =
-                                sytm3000Mapper
-                                        .selectFontByFamily(
-                                                fontFamily
-                                        );
+                    PdfFont pdfFont;
 
 
 
-                        if(font != null){
-
-
-
-                            String fontPath =
-                                    font.getFontfilepath();
-
-
-
-                            /*
-                             * 예:
-                             * /upload/fonts/NanumPen.ttf
-                             *
-                             * 실제 서버 경로에 맞게 변경
-                             */
-                            if(fontPath.startsWith("/")){
-
-                                fontPath = FONT_BASE_PATH + fontPath;
-
-                            }
-
-
-
-                            pdfFont =
-                                    PdfFontFactory.createFont(
-                                            fontPath,
-                                            PdfEncodings.IDENTITY_H,
-                                            PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                    Sytm3000Dto font =
+                            sytm3000Mapper
+                                    .selectFontByFamily(
+                                            fontFamily
                                     );
 
 
+
+                    if(font != null){
+
+
+                        String path =
+                                font.getFontfilepath();
+
+
+
+                        if(path.startsWith("/")){
+
+                            path =
+                                    FONT_BASE_PATH
+                                            + path;
+
                         }
-                        else {
 
 
-                            pdfFont =
-                                    PdfFontFactory.createFont(
-                                            "fonts/NanumGothic.ttf",
-                                            PdfEncodings.IDENTITY_H,
-                                            PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
-                                    );
 
-                        }
+                        pdfFont =
+                                PdfFontFactory.createFont(
+                                        path,
+                                        PdfEncodings.IDENTITY_H,
+                                        PdfFontFactory.EmbeddingStrategy.PREFER_EMBEDDED
+                                );
 
 
                     }
@@ -353,10 +552,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
-                    /*
-                     * 저장된 fontSize 적용
-                     */
                     float fontSize = 20;
 
 
@@ -365,26 +560,22 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                             field.get("fontSize");
 
 
-
                     if(fs != null){
 
                         fontSize =
-                                ((Number)fs).floatValue();
+                                ((Number)fs)
+                                        .floatValue();
 
                     }
 
 
 
-                    fontSize *= pxToPt;
+                    fontSize *= scaleX;
 
 
 
 
-
-                    /*
-                     * 줄바꿈
-                     */
-                    String wrappedText =
+                    String wrapped =
                             wrapText(
                                     value,
                                     pdfFont,
@@ -394,13 +585,9 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
-                    /*
-                     * 영역 초과시 축소
-                     */
                     fontSize =
                             getFitFontSize(
-                                    wrappedText,
+                                    wrapped,
                                     pdfFont,
                                     width,
                                     height,
@@ -409,9 +596,7 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
-
-                    wrappedText =
+                    wrapped =
                             wrapText(
                                     value,
                                     pdfFont,
@@ -421,11 +606,12 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
 
-
                     float pdfY =
                             pdfHeight
-                                    - y
-                                    - height;
+                                    -
+                                    y
+                                    -
+                                    height;
 
 
 
@@ -436,7 +622,7 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
                     for(String line :
-                            wrappedText.split("\n")){
+                            wrapped.split("\n")) {
 
 
                         paragraph.add(
@@ -449,8 +635,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                         paragraph.add("\n");
 
                     }
-
-
 
 
 
@@ -483,98 +667,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
                     canvas.close();
 
 
-                }
-
-
-
-
-
-                /*
-                 * ========================
-                 * IMAGE
-                 * ========================
-                 */
-                else if("image".equals(type)){
-
-
-
-                    Object img =
-                            data.get(fieldName);
-
-
-
-                    if(img == null)
-                        continue;
-
-
-
-                    String imageUrl =
-                            img.toString();
-
-
-
-
-                    if(imageUrl.startsWith("/")){
-
-                        imageUrl =
-                                "http://localhost:8081"
-                                        + imageUrl;
-
-                    }
-
-
-
-
-
-                    float pdfY =
-                            pdfHeight
-                                    -
-                                    y
-                                    -
-                                    height;
-
-
-
-
-
-                    Image image =
-                            new Image(
-                                    ImageDataFactory.create(
-                                            new URL(imageUrl)
-                                    )
-                            );
-
-
-
-
-                    image.scaleToFit(
-                            width,
-                            height
-                    );
-
-
-
-
-                    float imgWidth =
-                            image.getImageScaledWidth();
-
-
-
-                    float imgHeight =
-                            image.getImageScaledHeight();
-
-
-
-
-                    image.setFixedPosition(
-                            x + (width-imgWidth)/2,
-                            pdfY + (height-imgHeight)/2
-                    );
-
-
-
-                    document.add(image);
-
 
                 }
 
@@ -584,7 +676,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
 
 
             document.close();
-
 
 
             return baos.toByteArray();
@@ -602,7 +693,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
         }
 
     }
-
 
 
     /*

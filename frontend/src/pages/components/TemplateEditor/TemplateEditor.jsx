@@ -104,7 +104,11 @@ export default function TemplateEditor({
         setTitle,
 
         addText,
-        addImage,
+        addBackground,
+
+        addFixedImage,
+
+        addFieldImage,
 
         updateElement,
         updateText,
@@ -255,7 +259,11 @@ export default function TemplateEditor({
                 setPapersize={setPapersize}
 
                 addText={addText}
-                addImage={addImage}
+                addBackground={addBackground}
+
+                addFixedImage={addFixedImage}
+
+                addFieldImage={addFieldImage}
 
                 deleteElement={deleteElement}
 

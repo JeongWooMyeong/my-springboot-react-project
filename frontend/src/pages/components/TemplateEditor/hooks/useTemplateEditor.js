@@ -3,14 +3,22 @@ import { useEffect, useState } from "react";
 
 export default function useTemplateEditor(
     template,
-    isOpen
+    isOpen,
+    paperWidth = 800,
+    paperHeight = 600
 ) {
 
-    const [elements, setElements] = useState([]);
 
-    const [selectedId, setSelectedId] = useState(null);
+    const [elements,setElements] =
+        useState([]);
 
-    const [title, setTitle] = useState("");
+
+    const [selectedId,setSelectedId] =
+        useState(null);
+
+
+    const [title,setTitle] =
+        useState("");
 
 
 
@@ -21,10 +29,12 @@ export default function useTemplateEditor(
 
 
 
-    // 모달 열림 초기화
-    useEffect(() => {
 
-        if (!isOpen) {
+
+    useEffect(()=>{
+
+
+        if(!isOpen){
             return;
         }
 
@@ -32,7 +42,7 @@ export default function useTemplateEditor(
         setSelectedId(null);
 
 
-        if (!template) {
+        if(!template){
 
             setTitle("");
 
@@ -40,40 +50,67 @@ export default function useTemplateEditor(
 
         }
 
-    }, [isOpen]);
+
+    },[isOpen]);
 
 
 
-    // 기존 템플릿 로딩
-    useEffect(() => {
 
-        if (!template) {
+
+
+
+    useEffect(()=>{
+
+
+        if(!template){
             return;
         }
 
 
-        try {
+        try{
+
 
             const parsed =
                 typeof template.canvasData === "string"
-                    ? JSON.parse(template.canvasData)
-                    : template.canvasData;
+                    ?
+                    JSON.parse(template.canvasData)
+                    :
+                    template.canvasData;
 
 
 
             const loaded =
-                (parsed || []).map(el => {
+                (parsed || []).map(el=>{
 
-                    if (el.type === "text") {
+
+                    if(el.type==="IMAGE"){
 
                         return {
+
+                            ...el,
+
+                            type:"image"
+
+                        };
+
+                    }
+
+
+
+                    if(el.type==="text"){
+
+                        return {
+
                             ...el,
 
                             fontFamily:
-                                el.fontFamily || "NanumGothic",
+                                el.fontFamily ||
+                                "NanumGothic",
 
                             fontSize:
-                                el.fontSize || 20
+                                el.fontSize ||
+                                20
+
                         };
 
                     }
@@ -81,76 +118,227 @@ export default function useTemplateEditor(
 
                     return el;
 
+
                 });
 
 
 
-            console.log(
-                "template loaded",
-                loaded
-            );
-
-
             setElements(loaded);
+
 
             setTitle(
                 template.title || ""
             );
 
 
-        } catch (e) {
+        }catch(e){
+
 
             console.error(
-                "canvasData parse error",
+                "canvas parse error",
                 e
             );
 
+
             setElements([]);
+
 
         }
 
 
-    }, [template]);
+
+    },[template]);
 
 
 
-    // TEXT 추가
-    const addText = () => {
-
-        const id = Date.now();
 
 
-        const newEl = {
+
+
+
+
+    // TEXT
+    const addText=()=>{
+
+
+        const id =
+            crypto.randomUUID();
+
+
+
+        const element={
+
 
             id,
 
-            type: "text",
 
-            text: "텍스트",
+            type:"text",
 
-            fieldName:
-                `field_${id}`,
 
-            x: 100,
+            text:"텍스트",
 
-            y: 100,
 
-            width: 150,
+            x:100,
 
-            height: 40,
+            y:100,
 
-            fontFamily: "NanumGothic",
 
-            fontSize: 20,
+            width:150,
 
-            fill: "black"
+            height:40,
+
+
+            fontFamily:"NanumGothic",
+
+
+            fontSize:20,
+
+
+            fill:"black"
+
 
         };
 
 
-        setElements(prev => [
+
+        setElements(prev=>[
+
             ...prev,
-            newEl
+
+            element
+
+        ]);
+
+
+
+        setSelectedId(id);
+
+
+    };
+
+
+
+
+
+
+
+
+
+    // 배경 이미지
+    const addBackground=(imageUrl)=>{
+
+
+        const id =
+            crypto.randomUUID();
+
+
+
+        const element={
+
+
+            id,
+
+
+            type:"image",
+
+
+            imageType:"BACKGROUND",
+
+
+            imageUrl,
+
+
+
+            x:0,
+
+            y:0,
+
+
+            width:800,
+
+            height:600,
+
+
+
+            fit:"cover",
+
+
+            locked:true
+
+
+        };
+
+
+
+        setElements(prev=>{
+
+
+            const filtered =
+                prev.filter(
+                    el =>
+                        el.imageType !== "BACKGROUND"
+                );
+
+
+            return [
+                element,
+                ...filtered
+            ];
+
+        });
+
+
+
+        setSelectedId(id);
+
+
+    };
+
+
+
+
+
+
+
+
+
+    // 고정 이미지
+    const addFixedImage=({
+                             imageUrl
+                         })=>{
+
+
+        const id =
+            crypto.randomUUID();
+
+
+        const element={
+
+            id,
+
+            type:"image",
+
+            imageType:"FIXED",
+
+            imageUrl,
+
+
+            x:100,
+            y:100,
+
+
+            width:150,
+            height:150,
+
+
+            locked:false
+
+        };
+
+
+        setElements(prev=>[
+            ...prev,
+            element
         ]);
 
 
@@ -160,149 +348,233 @@ export default function useTemplateEditor(
 
 
 
-    // IMAGE 추가
-    const addImage = () => {
-
-        const id = Date.now();
 
 
-        const newEl = {
+
+
+
+
+    // 필드 이미지 영역
+    const addFieldImage=()=>{
+
+
+        const id =
+            crypto.randomUUID();
+
+
+
+        const element={
+
 
             id,
 
-            type: "image",
 
-            fieldName:
-                `image_${id}`,
+            type:"image",
 
-            x: 100,
 
-            y: 100,
+            imageType:"FIELD",
 
-            width: 150,
 
-            height: 120
+
+            fieldName:"",
+
+
+
+            x:100,
+
+            y:100,
+
+
+            width:200,
+
+            height:200
+
 
         };
 
 
-        setElements(prev => [
+
+        setElements(prev=>[
+
             ...prev,
-            newEl
+
+            element
+
         ]);
 
 
+
         setSelectedId(id);
+
 
     };
 
 
 
-    // 요소 속성 변경
-    const updateElement = (
-        id,
-        attrs
-    ) => {
 
-        setElements(prev =>
-            prev.map(el =>
-                el.id === id
-                    ? {
+
+
+
+
+
+    const updateElement=(id,attrs)=>{
+
+
+        setElements(prev=>
+
+            prev.map(el=>
+
+                el.id===id
+
+                    ?
+
+                    {
                         ...el,
                         ...attrs
                     }
-                    : el
+
+                    :
+
+                    el
+
             )
+
         );
+
 
     };
 
 
 
-    // 선택 TEXT 변경
-    const updateText = (
-        value
-    ) => {
 
-        setElements(prev =>
-            prev.map(el =>
-                el.id === selectedId
-                    ? {
-                        ...el,
-                        text: value
-                    }
-                    : el
-            )
+
+
+
+
+
+    const updateText=(value)=>{
+
+
+        updateElement(
+
+            selectedId,
+
+            {
+                text:value
+            }
+
         );
+
 
     };
 
 
 
-    // 선택 FIELD 변경
-    const updateFieldName = (
-        value
-    ) => {
 
-        setElements(prev =>
-            prev.map(el =>
-                el.id === selectedId
-                    ? {
-                        ...el,
-                        fieldName: value
-                    }
-                    : el
-            )
+
+
+
+    const updateFieldName=(value)=>{
+
+
+        updateElement(
+
+            selectedId,
+
+            {
+                fieldName:value
+            }
+
         );
+
 
     };
 
 
 
-    // 요소 삭제
-    const deleteElement = () => {
 
-        if (!selectedId) {
+
+
+
+
+
+    const deleteElement=()=>{
+
+
+        if(!selectedId){
             return;
         }
 
 
-        setElements(prev =>
+
+        setElements(prev=>
+
             prev.filter(
-                el => el.id !== selectedId
+                el =>
+                    el.id !== selectedId
             )
+
         );
+
 
 
         setSelectedId(null);
 
+
     };
+
+
+
+
 
 
 
     return {
 
+
         elements,
+
         setElements,
 
+
         selectedId,
+
         setSelectedId,
+
 
         selectedElement,
 
+
         title,
+
         setTitle,
 
+
         addText,
-        addImage,
+
+
+        addBackground,
+
+
+        addFixedImage,
+
+
+        addFieldImage,
+
 
         updateElement,
 
+
         updateText,
+
+
         updateFieldName,
+
 
         deleteElement
 
+
     };
+
 
 }

@@ -1,4 +1,5 @@
 // src/components/template/TemplatePreview.jsx
+
 import {
     Stage,
     Layer,
@@ -10,7 +11,6 @@ import {
     useState
 } from "react";
 
-import { mmToPx } from "../../../util/Utils";
 import PreviewText from "./PreviewText";
 import PreviewImage from "./PreviewImage";
 
@@ -23,88 +23,184 @@ import {
 } from "../../../util/fontLoader";
 
 
-export default function TemplatePreview({ request }) {
 
-    const data =
-        JSON.parse(request.data || "{}");
-
-    const fields =
-        JSON.parse(request.canvasData || "[]");
+export default function TemplatePreview({
+                                            request
+                                        }) {
 
 
-    const [fontReady, setFontReady] = useState(false);
+    let data = {};
+
+    let fields = [];
 
 
 
-    useEffect(() => {
+    try {
 
-        const initFonts = async () => {
+        data =
+            typeof request.data === "string"
+                ? JSON.parse(request.data)
+                : request.data || {};
+
+
+    } catch(e) {
+
+        console.error(
+            "data parse error",
+            e
+        );
+
+        data = {};
+
+    }
+
+
+
+
+    try {
+
+        fields =
+            typeof request.canvasData === "string"
+                ? JSON.parse(request.canvasData)
+                : request.canvasData || [];
+
+
+    } catch(e) {
+
+        console.error(
+            "canvasData parse error",
+            e
+        );
+
+        fields = [];
+
+    }
+
+
+
+
+    const [
+        fontReady,
+        setFontReady
+    ] = useState(false);
+
+
+
+
+
+    useEffect(()=>{
+
+
+        const initFonts = async()=>{
+
 
             try {
+
 
                 const fontNames =
                     [
                         ...new Set(
+
                             fields
+
                                 .filter(
-                                    field =>
-                                        field.type === "text"
+                                    el =>
+                                        el.type === "text"
                                 )
+
                                 .map(
-                                    field =>
-                                        field.fontFamily
+                                    el =>
+                                        el.fontFamily
                                 )
+
                                 .filter(Boolean)
+
                         )
                     ];
 
 
-                if(fontNames.length === 0){
+
+
+
+                if(
+                    fontNames.length === 0
+                ){
 
                     setFontReady(true);
+
                     return;
 
                 }
+
+
+
 
 
                 const fontList =
                     await getFontList();
 
 
+
+
+
                 const usedFonts =
                     fontList.filter(font =>
+
                         fontNames.includes(
                             font.fontfamily
                         )
+
                     );
 
 
-                await loadCustomFonts(
-                    usedFonts
-                );
+
+
+
+                if(
+                    usedFonts.length > 0
+                ){
+
+                    await loadCustomFonts(
+                        usedFonts
+                    );
+
+                }
+
+
 
 
                 setFontReady(true);
 
 
+
             } catch(e) {
+
 
                 console.error(
                     "폰트 로딩 실패",
                     e
                 );
 
+
                 setFontReady(true);
+
 
             }
 
+
         };
+
 
 
         initFonts();
 
 
-    }, [request]);
+
+    },[request]);
+
+
+
+
 
 
 
@@ -120,143 +216,248 @@ export default function TemplatePreview({ request }) {
 
 
 
+
+
+
     const stageWidth = 800;
+
     const stageHeight = 600;
 
 
-    const paperWidthPx =
-        mmToPx(
-            Number(request.paperwidth || 210)
-        );
 
 
-    const paperHeightPx =
-        mmToPx(
-            Number(request.paperheight || 297)
-        );
 
 
-    const scaleX =
-        stageWidth / paperWidthPx;
+    const resolveImageUrl = (url)=>{
 
 
-    const scaleY =
-        stageHeight / paperHeightPx;
+        if(!url){
+
+            return "";
+
+        }
+
+
+
+        if(
+            url.startsWith("/")
+        ){
+
+            return (
+                window.location.origin
+                +
+                url
+            );
+
+        }
+
+
+        return url;
+
+
+    };
+
+
+
+
+
 
 
 
     return (
+
         <div
+
             style={{
+
                 width:820,
+
                 height:650,
+
                 border:"1px solid #ccc",
+
                 background:"#eee",
+
                 padding:10
+
             }}
+
         >
+
+
 
             <h4>
                 템플릿명 : {request.title}
             </h4>
 
 
+
+
+
+
             <Stage
+
                 width={stageWidth}
+
                 height={stageHeight}
+
                 style={{
+
                     border:"2px dashed gray",
+
                     background:"#fff"
+
                 }}
+
             >
+
 
                 <Layer>
 
-                    <Group
-                        scaleX={scaleX}
-                        scaleY={scaleY}
-                    >
 
-                        {fields.map(field => {
-                            console.log("text 조건 통과");
-
-                            if(field.type === "text") {
-
-                                const value =
-                                    data[field.fieldName]
-                                    ??
-                                    field.text
-                                    ??
-                                    "";
+                    <Group>
 
 
-                                return (
-                                    <PreviewText
-                                        key={field.id}
-                                        field={field}
-                                        value={value}
-                                    />
-                                );
-
-                            }
+                        {
+                            fields.map(field=>{
 
 
-                            if(field.type === "image") {
 
-                                let imgSrc =
-                                    data[field.fieldName];
-
-
-                                if(imgSrc){
-
-                                    try {
-
-                                        const parsed =
-                                            JSON.parse(imgSrc);
-
-                                        if(parsed.url){
-                                            imgSrc = parsed.url;
-                                        }
-
-                                    } catch(e){}
-
-                                }
-
-
+                                // TEXT
                                 if(
-                                    imgSrc &&
-                                    imgSrc.startsWith("/")
+                                    field.type === "text"
                                 ){
 
-                                    imgSrc =
-                                        window.location.origin
-                                        +
-                                        imgSrc;
+
+                                    const value =
+                                        data[
+                                            field.fieldName
+                                            ]
+                                        ??
+                                        field.text
+                                        ??
+                                        "";
+
+
+
+                                    return (
+
+                                        <PreviewText
+
+                                            key={field.id}
+
+                                            field={field}
+
+                                            value={value}
+
+                                        />
+
+                                    );
 
                                 }
 
 
-                                return (
-                                    <PreviewImage
-                                        key={field.id}
-                                        field={field}
-                                        src={imgSrc}
-                                    />
-                                );
-
-                            }
 
 
-                            return null;
 
-                        })}
+
+
+                                // IMAGE
+                                if(
+                                    field.type === "image"
+                                ){
+
+
+
+                                    let imgSrc = "";
+
+
+
+
+                                    // 배경 / 고정 이미지
+                                    if(
+                                        field.imageType === "BACKGROUND"
+                                        ||
+                                        field.imageType === "FIXED"
+                                    ){
+
+                                        imgSrc =
+                                            field.imageUrl;
+
+                                    }
+
+
+
+
+
+
+                                    // 필드 이미지
+                                    if(
+                                        field.imageType === "FIELD"
+                                    ){
+
+                                        imgSrc =
+                                            data[
+                                                field.fieldName
+                                                ];
+
+                                    }
+
+
+
+
+
+
+                                    imgSrc =
+                                        resolveImageUrl(
+                                            imgSrc
+                                        );
+
+
+
+
+
+                                    return (
+
+                                        <PreviewImage
+
+                                            key={field.id}
+
+                                            field={field}
+
+                                            src={imgSrc}
+
+                                        />
+
+                                    );
+
+
+                                }
+
+
+
+
+                                return null;
+
+
+                            })
+                        }
+
+
 
                     </Group>
 
+
                 </Layer>
+
 
             </Stage>
 
+
+
         </div>
+
     );
+
+
 }

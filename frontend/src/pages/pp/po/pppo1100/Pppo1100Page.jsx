@@ -20,9 +20,7 @@ import {
 import { readExcel } from "../../../../util/excel";
 import * as XLSX from "xlsx";
 
-
 export default function Pppo1100Page({ templateid, onBack }) {
-
 
     const ordno =
         "TP" +
@@ -30,104 +28,102 @@ export default function Pppo1100Page({ templateid, onBack }) {
             .toString()
             .padStart(12, "0");
 
-
     const token =
         JSON.parse(localStorage.getItem("user"))?.token;
 
-
     const [templateData, setTemplateData] = useState(null);
-
     const [productData, setProductData] = useState({});
-
     const [focusField, setFocusField] = useState(null);
-
-
+    const [fontReady, setFontReady] = useState(false);
 
     useEffect(() => {
 
         if (!templateid) return;
 
-
         const load = async () => {
 
             try {
 
+                setFontReady(false);
+
                 const data =
                     await getTemplate(templateid);
 
+                const canvasElements =
+                    typeof data.canvasData === "string"
+                        ? JSON.parse(data.canvasData)
+                        : data.canvasData || [];
 
-                /*
-                    템플릿에서 사용한 폰트 찾기
-                */
+                data.canvasData = canvasElements;
 
-                const usedFontNames =
-                    [
-                        ...new Set(
-                            data.canvasData
-                                .filter(
-                                    el => el.type === "text"
-                                )
-                                .map(
-                                    el => el.fontFamily
-                                )
-                                .filter(Boolean)
-                        )
-                    ];
+                const usedFontNames = [
+                    ...new Set(
+                        canvasElements
+                            .filter(el => el.type === "text")
+                            .map(el => el.fontFamily)
+                            .filter(Boolean)
+                    )
+                ];
+
+                if (usedFontNames.length > 0) {
+
+                    const fontList =
+                        await getFontList();
+
+                    const usedFonts =
+                        fontList.filter(font =>
+                            usedFontNames.includes(
+                                font.fontfamily
+                            )
+                        );
+
+                    if(usedFonts.length > 0){
+
+                        try {
+
+                            await loadCustomFonts(
+                                usedFonts
+                            );
+
+                        } catch(e){
+
+                            console.warn(
+                                "일부 폰트 로딩 실패",
+                                e
+                            );
+
+                        }
+
+                    }
 
 
-                /*
-                    DB 폰트 목록 조회
-                */
+                    await document.fonts.ready;
 
-                const fontList =
-                    await getFontList();
-
-
-                /*
-                    사용하는 폰트만 선택
-                */
-
-                const usedFonts =
-                    fontList.filter(font =>
-                        usedFontNames.includes(
-                            font.fontfamily
-                        )
-                    );
-
-
-                /*
-                    브라우저 폰트 등록
-                */
-
-                await loadCustomFonts(
-                    usedFonts
-                );
-
+                }
 
                 setTemplateData(data);
-
+                setFontReady(true);
 
             } catch (e) {
 
-                console.error(e);
+                console.error(
+                    "template load error",
+                    e
+                );
+
+                setFontReady(true);
 
             }
 
         };
 
-
         load();
-
 
     }, [templateid]);
 
-
-
-    if (!templateData) {
+    if (!templateData || !fontReady) {
         return <div>로딩중...</div>;
     }
-
-
 
     const handleChange = (key, value) => {
 
@@ -137,8 +133,6 @@ export default function Pppo1100Page({ templateid, onBack }) {
         }));
 
     };
-
-
 
     const handleImageUpload = async (
         fieldName,
@@ -153,12 +147,10 @@ export default function Pppo1100Page({ templateid, onBack }) {
                     token
                 );
 
-
             setProductData(prev => ({
                 ...prev,
                 [fieldName]: result.url
             }));
-
 
         } catch (e) {
 
@@ -168,16 +160,12 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
     };
 
-
-
     const handleExcelUpload = async (e) => {
 
         const file =
             e.target.files[0];
 
-
         if (!file) return;
-
 
         try {
 
@@ -187,17 +175,12 @@ export default function Pppo1100Page({ templateid, onBack }) {
                     templateData.canvasData
                 );
 
-
             setProductData(prev => ({
                 ...prev,
                 ...data
             }));
 
-
-            alert(
-                "엑셀 데이터 적용 완료"
-            );
-
+            alert("엑셀 데이터 적용 완료");
 
         } catch (e) {
 
@@ -206,8 +189,6 @@ export default function Pppo1100Page({ templateid, onBack }) {
         }
 
     };
-
-
 
     const handleSave = async () => {
 
@@ -222,14 +203,9 @@ export default function Pppo1100Page({ templateid, onBack }) {
                 token
             );
 
-
-            alert(
-                "저장 완료"
-            );
-
+            alert("저장 완료");
 
             onBack();
-
 
         } catch (e) {
 
@@ -270,14 +246,12 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
     };
 
-
-
     return (
 
         <div
             style={{
-                display:"flex",
-                height:"100%"
+                display: "flex",
+                height: "100%"
             }}
         >
 
@@ -293,14 +267,14 @@ export default function Pppo1100Page({ templateid, onBack }) {
                 onBack={onBack}
             />
 
-
             <div
                 style={{
-                    padding:20
+                    padding: 20
                 }}
             >
 
                 <CanvasPreview
+                    key={fontReady ? "ready" : "loading"}
                     templateData={templateData}
                     productData={productData}
                     focusField={focusField}
@@ -308,7 +282,6 @@ export default function Pppo1100Page({ templateid, onBack }) {
                 />
 
             </div>
-
 
         </div>
 
