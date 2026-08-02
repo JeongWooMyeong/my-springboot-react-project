@@ -132,7 +132,7 @@ export default function Pppo2000Page() {
         <div>
             <Pppo2000Filter form={form} status={status} setStatus={setStatus} onSearch={handleSearch} />
             <div style={{ display: "flex", gap: 20 }}>
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1.5 }}>
                     <Pppo2000List
                         data={requestList}
                         onSelect={handleSelect}

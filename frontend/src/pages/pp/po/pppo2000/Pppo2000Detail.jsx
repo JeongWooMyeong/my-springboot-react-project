@@ -1,9 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import TemplatePreview from "../../../components/TemplatePreview/TemplatePreview.jsx";
+
 
 export default function Pppo2000Detail({ detail }) {
 
-    const [selectedIndex, setSelectedIndex] = useState(0);
+
+    const [selectedIndex, setSelectedIndex] =
+        useState(0);
+
+
+    const previewRef =
+        useRef(null);
+
 
 
     /*
@@ -17,6 +25,7 @@ export default function Pppo2000Detail({ detail }) {
 
 
 
+
     if (!detail) {
 
         return (
@@ -24,9 +33,10 @@ export default function Pppo2000Detail({ detail }) {
             <div
                 style={{
                     flex:1,
-                    minHeight:700,
+                    minHeight:0,
                     border:"1px solid #ddd",
-                    padding:20
+                    padding:10,
+                    boxSizing:"border-box"
                 }}
             >
 
@@ -37,6 +47,7 @@ export default function Pppo2000Detail({ detail }) {
         );
 
     }
+
 
 
 
@@ -61,9 +72,11 @@ export default function Pppo2000Detail({ detail }) {
 
 
 
+
     const selectedData =
 
         dataList[selectedIndex] || {};
+
 
 
 
@@ -77,6 +90,7 @@ export default function Pppo2000Detail({ detail }) {
 
 
 
+
     return (
 
         <div
@@ -85,13 +99,20 @@ export default function Pppo2000Detail({ detail }) {
 
                 display:"flex",
 
-                gap:20,
+                gap:8,
 
-                height:700
+                flex:1,
+
+                minHeight:0,
+
+                minWidth:0,
+
+                overflow:"hidden"
 
             }}
 
         >
+
 
 
             {/* =====================
@@ -102,13 +123,19 @@ export default function Pppo2000Detail({ detail }) {
 
                 style={{
 
-                    width:220,
+                    width:140,
+
+                    flexShrink:0,
 
                     border:"1px solid #ddd",
 
                     display:"flex",
 
-                    flexDirection:"column"
+                    flexDirection:"column",
+
+                    minHeight:0,
+
+                    overflow:"hidden"
 
                 }}
 
@@ -119,7 +146,7 @@ export default function Pppo2000Detail({ detail }) {
 
                     style={{
 
-                        padding:12,
+                        padding:10,
 
                         fontWeight:"bold",
 
@@ -134,18 +161,26 @@ export default function Pppo2000Detail({ detail }) {
 
                     출력 데이터
 
+
                     <span
+
                         style={{
+
                             marginLeft:5,
+
                             color:"#1677ff"
+
                         }}
+
                     >
 
                         {dataList.length}건
 
                     </span>
 
+
                 </div>
+
 
 
 
@@ -166,9 +201,13 @@ export default function Pppo2000Detail({ detail }) {
                         dataList.length === 0 &&
 
                         <div
+
                             style={{
-                                padding:15
+
+                                padding:10
+
                             }}
+
                         >
 
                             데이터 없음
@@ -176,6 +215,7 @@ export default function Pppo2000Detail({ detail }) {
                         </div>
 
                     }
+
 
 
 
@@ -197,12 +237,16 @@ export default function Pppo2000Detail({ detail }) {
 
                                 style={{
 
-                                    padding:"12px 15px",
+
+                                    padding:"10px",
+
 
                                     cursor:"pointer",
 
+
                                     borderBottom:
                                         "1px solid #eee",
+
 
 
                                     background:
@@ -212,6 +256,7 @@ export default function Pppo2000Detail({ detail }) {
                                             ? "#e6f4ff"
 
                                             : "#fff"
+
 
                                 }}
 
@@ -236,41 +281,53 @@ export default function Pppo2000Detail({ detail }) {
 
 
 
+
+
             {/* =====================
                 미리보기
             ====================== */}
 
+
             <div
-
+                ref={previewRef}
                 style={{
-
                     flex:1,
-
-                    overflow:"auto",
-
+                    minWidth:0,
+                    minHeight:0,
                     border:"1px solid #ddd",
-
-                    padding:10
-
+                    display:"flex",
+                    justifyContent:"center",
+                    alignItems:"center",
+                    overflow:"hidden",
+                    boxSizing:"border-box",
+                    padding:5
                 }}
-
             >
 
-                <TemplatePreview
+                <div
+                    style={{
+                        width:"100%",
+                        height:"100%",
+                        display:"flex",
+                        justifyContent:"center",
+                        alignItems:"center",
+                        boxSizing:"border-box"
+                    }}
+                >
 
-                    key={
+                    <TemplatePreview
 
-                        `${detail.ordno}_${selectedIndex}`
+                        key={
+                            `${detail.ordno}_${selectedIndex}`
+                        }
 
-                    }
+                        request={previewRequest}
 
-                    request={previewRequest}
+                    />
 
-                />
-
+                </div>
 
             </div>
-
 
 
         </div>

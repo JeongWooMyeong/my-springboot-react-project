@@ -272,7 +272,7 @@ export default function TemplatePreview({
 
                 width:820,
 
-                height:650,
+                height:660,
 
                 border:"1px solid #ccc",
 
@@ -284,16 +284,17 @@ export default function TemplatePreview({
 
         >
 
-
-
-            <h4>
+            <div
+                style={{
+                    height:20,
+                    lineHeight:"20px",
+                    fontSize:14,
+                    fontWeight:"bold",
+                    marginBottom:5
+                }}
+            >
                 템플릿명 : {request.title}
-            </h4>
-
-
-
-
-
+            </div>
 
             <Stage
 
