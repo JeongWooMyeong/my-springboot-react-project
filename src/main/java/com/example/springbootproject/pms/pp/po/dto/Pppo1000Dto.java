@@ -1,5 +1,6 @@
 package com.example.springbootproject.pms.pp.po.dto;
 
+import java.util.List;
 import java.util.Map;
 
 public class Pppo1000Dto {
@@ -18,8 +19,17 @@ public class Pppo1000Dto {
 
     private Long templateid;
 
-    private Map<String, Object> data;      // JSON string (productData)
+    //private Map<String, Object> data;      // JSON string (productData)
+    private List<Map<String,Object>> data;
 
+
+    public List<Map<String, Object>> getData() {
+        return data;
+    }
+
+    public void setData(List<Map<String, Object>> data) {
+        this.data = data;
+    }
 
     public Long getTemplateid() {
         return templateid;
@@ -27,14 +37,6 @@ public class Pppo1000Dto {
 
     public void setTemplateid(Long templateid) {
         this.templateid = templateid;
-    }
-
-    public Map<String, Object> getData() {
-        return data;
-    }
-
-    public void setData(Map<String, Object> data) {
-        this.data = data;
     }
 
     public String getOrdno() {

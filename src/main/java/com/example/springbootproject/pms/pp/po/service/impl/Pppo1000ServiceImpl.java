@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -33,18 +35,24 @@ public class Pppo1000ServiceImpl implements Pppo1000Service {
         // 2. 1100 저장 (JSON)
         // ------------------------
         try {
-            Pppo1100Dto d = new Pppo1100Dto();
+            int seq = 1;
 
-            d.setOrdno(dto.getOrdno());
-            d.setTemplateid(dto.getTemplateid());
+            for(Map<String,Object> item : dto.getData()){
 
-            // Map → JSON String
-            d.setData(
-                    objectMapper.writeValueAsString(dto.getData())
-            );
+                Pppo1100Dto d =
+                        new Pppo1100Dto();
 
-            p1100Mapper.insert(d);
+                d.setOrdno(dto.getOrdno());
+                d.setSeq(seq++);
+                d.setTemplateid(dto.getTemplateid());
 
+                d.setData(
+                        objectMapper.writeValueAsString(item)
+                );
+
+                p1100Mapper.insert(d);
+
+            }
         } catch (Exception e) {
             throw new RuntimeException("1100 저장 실패", e);
         }
@@ -57,17 +65,41 @@ public class Pppo1000ServiceImpl implements Pppo1000Service {
         Pppo1000Dto dto = p1000Mapper.select(ordNo);
 
         // 2. detail
-        Pppo1100Dto d = p1100Mapper.findByOrdNo(ordNo);
+        List<Pppo1100Dto> list = p1100Mapper.findByOrdNoList(ordNo);
 
-        if (d != null) {
+        if (list != null && !list.isEmpty()) {
+
             try {
-                dto.setTemplateid(d.getTemplateid());
-                dto.setData(
-                        objectMapper.readValue(d.getData(), Map.class)
+
+                List<Map<String,Object>> dataList =
+                        new ArrayList<>();
+
+                for(Pppo1100Dto d : list){
+
+                    Map<String,Object> data =
+                            objectMapper.readValue(
+                                    d.getData(),
+                                    Map.class
+                            );
+
+                    dataList.add(data);
+
+                }
+
+
+                dto.setTemplateid(
+                        list.get(0).getTemplateid()
                 );
-            } catch (Exception e) {
+
+                dto.setData(dataList);
+
+
+            } catch(Exception e){
+
                 throw new RuntimeException(e);
+
             }
+
         }
 
         return dto;

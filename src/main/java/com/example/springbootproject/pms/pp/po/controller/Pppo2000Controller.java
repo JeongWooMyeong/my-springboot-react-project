@@ -3,6 +3,7 @@ package com.example.springbootproject.pms.pp.po.controller;
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
+import com.example.springbootproject.pms.pp.po.dto.Pppo2000PreviewDto;
 import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
 import com.example.springbootproject.pms.pp.po.producer.PdfJobProducer;
 import com.example.springbootproject.pms.pp.po.service.PdfJobService;
@@ -37,8 +38,8 @@ public class Pppo2000Controller {
 
     // 특정 신청 건 상세 (템플릿 데이터 포함)
     @GetMapping("/{ordno}")
-    public Pppo2000DetailDto getRequestDetail(@PathVariable String ordno) {
-        return pppo2000Service.getRequestDetail(ordno);
+    public Pppo2000PreviewDto getRequestDetail(@PathVariable String ordno) {
+        return pppo2000Service.getRequestDetailList(ordno);
     }
 
     // 조회 API (지점, 상태 필터)

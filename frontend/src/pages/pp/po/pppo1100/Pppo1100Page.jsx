@@ -32,7 +32,11 @@ export default function Pppo1100Page({ templateid, onBack }) {
         JSON.parse(localStorage.getItem("user"))?.token;
 
     const [templateData, setTemplateData] = useState(null);
-    const [productData, setProductData] = useState({});
+    const [productList, setProductList] = useState([{}]);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const productData =
+        productList[currentIndex] || {};
     const [focusField, setFocusField] = useState(null);
     const [fontReady, setFontReady] = useState(false);
 
@@ -127,10 +131,18 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
     const handleChange = (key, value) => {
 
-        setProductData(prev => ({
-            ...prev,
-            [key]: value
-        }));
+        setProductList(prev => {
+
+            const list = [...prev];
+
+            list[currentIndex] = {
+                ...list[currentIndex],
+                [key]: value
+            };
+
+            return list;
+
+        });
 
     };
 
@@ -147,10 +159,18 @@ export default function Pppo1100Page({ templateid, onBack }) {
                     token
                 );
 
-            setProductData(prev => ({
-                ...prev,
-                [fieldName]: result.url
-            }));
+            setProductList(prev => {
+
+                const list = [...prev];
+
+                list[currentIndex] = {
+                    ...list[currentIndex],
+                    [fieldName]: result.url
+                };
+
+                return list;
+
+            });
 
         } catch (e) {
 
@@ -169,18 +189,20 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
         try {
 
-            const data =
+            const list =
                 await readExcel(
                     file,
                     templateData.canvasData
                 );
 
-            setProductData(prev => ({
-                ...prev,
-                ...data
-            }));
+
+            setProductList(list);
+
+            setCurrentIndex(0);
+
 
             alert("엑셀 데이터 적용 완료");
+
 
         } catch (e) {
 
@@ -198,7 +220,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                 {
                     ordno,
                     templateid,
-                    data: productData
+                    data: productList
                 },
                 token
             );
@@ -246,6 +268,45 @@ export default function Pppo1100Page({ templateid, onBack }) {
 
     };
 
+    const handleAddProduct = () => {
+
+        setProductList(prev => {
+
+            const list = [...prev, {}];
+
+            setCurrentIndex(list.length - 1);
+
+            return list;
+
+        });
+
+    };
+
+    const handleDeleteProduct = () => {
+
+        if(productList.length === 1){
+
+            setProductList([{}]);
+            setCurrentIndex(0);
+            return;
+
+        }
+
+        const list =
+            productList.filter(
+                (_, i) => i !== currentIndex
+            );
+
+        setProductList(list);
+
+        if(currentIndex >= list.length){
+
+            setCurrentIndex(list.length - 1);
+
+        }
+
+    };
+
     return (
 
         <div
@@ -258,6 +319,14 @@ export default function Pppo1100Page({ templateid, onBack }) {
             <DataForm
                 templateData={templateData}
                 productData={productData}
+
+                productList={productList}
+                currentIndex={currentIndex}
+                setCurrentIndex={setCurrentIndex}
+
+                handleAddProduct={handleAddProduct}
+                handleDeleteProduct={handleDeleteProduct}
+
                 handleChange={handleChange}
                 handleImageUpload={handleImageUpload}
                 handleExcelUpload={handleExcelUpload}

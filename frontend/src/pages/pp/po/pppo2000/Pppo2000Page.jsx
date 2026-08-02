@@ -144,7 +144,10 @@ export default function Pppo2000Page() {
                     />
                 </div>
                 <div style={{ flex: 1, minHeight: 700 }}>
-                    <Pppo2000Detail detail={selectedDetail} />
+                    <Pppo2000Detail
+                        key={selectedDetail?.ordno}
+                        detail={selectedDetail}
+                    />
                 </div>
             </div>
         </div>

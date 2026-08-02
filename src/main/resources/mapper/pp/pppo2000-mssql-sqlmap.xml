@@ -41,6 +41,25 @@
         WHERE a.ordno = #{ordno}
     </select>
 
+    <!-- 신청내역 상세 (템플릿 join) -->
+    <select id="selectRequestDetailList" parameterType="string"
+            resultType="com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto">
+        SELECT a.ordno,
+               a.templateid,
+               a.rg_date,
+               a.data,
+               b.title,
+               b.canvas_data AS canvasData,
+               b.thumbnailpath,
+               b.created_at AS createdAt,
+               b.updated_at AS updatedAt,
+               paperwidth,
+               paperheight
+        FROM pppo1100t a
+                 JOIN template b ON a.templateid = b.id
+        WHERE a.ordno = #{ordno}
+    </select>
+
     <select id="searchRequests" resultType="com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto">
         SELECT
         ordno,

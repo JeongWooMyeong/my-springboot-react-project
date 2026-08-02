@@ -11,6 +11,7 @@ import java.util.List;
 public interface Pppo2000Mapper {
     List<Pppo2000Dto> selectRequestList();
     Pppo2000DetailDto selectRequestDetail(String ordno);
+    List<Pppo2000DetailDto> selectRequestDetailList(String ordno);
     // 조회용 메서드
     List<Pppo2000Dto> searchRequests(@Param("jijumcd") String jijumcd,
                                      @Param("status") String status);

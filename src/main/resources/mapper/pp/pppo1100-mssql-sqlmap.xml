@@ -9,16 +9,27 @@
         INSERT INTO pppo1100t (
             ordno,
             templateid,
-            data
+            data,
+            seq
         )
         VALUES (
                    #{ordno},
                    #{templateid},
-                   #{data}
+                   #{data},
+                   #{seq}
                )
     </insert>
 
     <select id="findByOrdNo" resultType="pppo1100Dto">
+        SELECT
+            ordno,
+            templateid,
+            data
+        FROM pppo1100t
+        WHERE ordno = #{ordno}
+    </select>
+
+    <select id="findByOrdNoList" resultType="pppo1100Dto">
         SELECT
             ordno,
             templateid,

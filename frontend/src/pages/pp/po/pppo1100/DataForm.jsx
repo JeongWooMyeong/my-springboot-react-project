@@ -1,8 +1,18 @@
 import React from "react";
 
 export default function DataForm({
+
                                      templateData,
+
                                      productData,
+
+                                     productList,
+                                     currentIndex,
+                                     setCurrentIndex,
+
+                                     handleAddProduct,
+                                     handleDeleteProduct,
+
                                      handleChange,
                                      handleImageUpload,
                                      handleExcelUpload,
@@ -10,6 +20,7 @@ export default function DataForm({
                                      saveData,
                                      setFocusField,
                                      onBack
+
                                  }) {
 
     return (
@@ -18,16 +29,18 @@ export default function DataForm({
             style={{
                 width: 320,
                 padding: 10,
-                borderRight: "1px solid #ddd"
+                borderRight: "1px solid #ddd",
+                overflowY: "auto"
             }}
         >
 
+            {/* 상단 버튼 */}
             <div
                 style={{
                     display: "flex",
                     alignItems: "center",
                     gap: 8,
-                    marginBottom: 20,
+                    marginBottom: 15,
                     flexWrap: "wrap"
                 }}
             >
@@ -36,20 +49,36 @@ export default function DataForm({
                     ← 뒤로
                 </button>
 
+
+                <button
+                    onClick={handleAddProduct}
+                >
+                    + 데이터 추가
+                </button>
+
+
+                <button
+                    onClick={handleDeleteProduct}
+                >
+                    삭제
+                </button>
+
+
                 <button
                     onClick={handleExcelTemplateDownload}
                 >
                     양식 다운로드
                 </button>
 
+
                 <label
                     style={{
-                        background: "#1677ff",
-                        color: "#fff",
-                        padding: "6px 12px",
-                        borderRadius: 4,
-                        cursor: "pointer",
-                        fontSize: 14
+                        background:"#1677ff",
+                        color:"#fff",
+                        padding:"6px 12px",
+                        borderRadius:4,
+                        cursor:"pointer",
+                        fontSize:14
                     }}
                 >
 
@@ -60,71 +89,165 @@ export default function DataForm({
                         accept=".xlsx,.xls"
                         onChange={handleExcelUpload}
                         style={{
-                            display: "none"
+                            display:"none"
                         }}
                     />
 
                 </label>
 
+
             </div>
+
+
+            {/* 데이터 목록 */}
+            <div
+                style={{
+                    border:"1px solid #ddd",
+                    marginBottom:20
+                }}
+            >
+
+                <div
+                    style={{
+                        padding:8,
+                        background:"#f5f5f5",
+                        fontWeight:"bold"
+                    }}
+                >
+                    데이터 목록
+                </div>
+
+                <div
+                    style={{
+                        maxHeight:100,
+                        overflowY:"auto"
+                    }}
+                >
+
+
+                {
+                    productList.map((item,index)=>(
+
+                        <div
+
+                            key={index}
+
+                            onClick={()=>setCurrentIndex(index)}
+
+                            style={{
+
+                                padding:10,
+
+                                cursor:"pointer",
+
+                                borderBottom:
+                                    "1px solid #eee",
+
+                                background:
+                                    index === currentIndex
+                                        ? "#e6f4ff"
+                                        : "#fff"
+
+                            }}
+
+                        >
+
+                            {index + 1}번 데이터
+
+                        </div>
+
+                    ))
+                }
+                </div>
+
+            </div>
+
+
+            <div
+                style={{
+                    marginBottom:10,
+                    fontWeight:"bold"
+                }}
+            >
+                현재 데이터 : {currentIndex + 1}
+                /
+                {productList.length}
+            </div>
+
+
 
             <h3>
                 데이터 입력
             </h3>
 
-            {
 
-                templateData.canvasData.map(field => {
+            {
+                templateData.canvasData.map(field=>{
+
 
                     const isImage =
                         field.type === "image";
 
+
                     return (
 
                         <div
+
                             key={field.id}
+
                             style={{
-                                marginBottom: 12
+                                marginBottom:12
                             }}
+
                         >
 
                             <label>
                                 {field.fieldName}
                             </label>
 
-                            {
 
+
+                            {
                                 !isImage &&
 
                                 <input
 
                                     value={
-                                        productData[field.fieldName] || ""
+                                        productData[field.fieldName]
+                                        || ""
                                     }
 
-                                    onChange={e =>
+
+                                    onChange={e=>
+
                                         handleChange(
                                             field.fieldName,
                                             e.target.value
                                         )
+
                                     }
 
-                                    onFocus={() =>
+
+                                    onFocus={()=>
+
                                         setFocusField(
                                             field.fieldName
                                         )
+
                                     }
 
+
                                     style={{
-                                        width: "100%"
+                                        width:"100%"
                                     }}
 
                                 />
 
                             }
 
-                            {
 
+
+                            {
                                 isImage &&
 
                                 <input
@@ -133,12 +256,14 @@ export default function DataForm({
 
                                     accept="image/*"
 
-                                    onChange={e => {
+
+                                    onChange={e=>{
 
                                         const file =
                                             e.target.files[0];
 
-                                        if (file) {
+
+                                        if(file){
 
                                             handleImageUpload(
                                                 field.fieldName,
@@ -153,6 +278,7 @@ export default function DataForm({
 
                             }
 
+
                         </div>
 
                     );
@@ -161,21 +287,28 @@ export default function DataForm({
 
             }
 
+
+
             <button
 
                 onClick={saveData}
 
                 style={{
-                    width: "100%",
-                    marginTop: 20,
-                    padding: 10
+
+                    width:"100%",
+
+                    marginTop:20,
+
+                    padding:10
+
                 }}
 
             >
 
-                저장
+                전체 저장
 
             </button>
+
 
         </div>
 

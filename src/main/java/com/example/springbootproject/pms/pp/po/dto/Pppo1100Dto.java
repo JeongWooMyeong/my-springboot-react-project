@@ -6,6 +6,16 @@ public class Pppo1100Dto {
 
     private String data;       // JSON string (productData)
 
+    private Integer seq;
+
+    public Integer getSeq() {
+        return seq;
+    }
+
+    public void setSeq(Integer seq) {
+        this.seq = seq;
+    }
+
     public String getOrdno() {
         return ordno;
     }
