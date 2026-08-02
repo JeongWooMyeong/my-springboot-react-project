@@ -15,6 +15,7 @@ import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Text;
 import com.itextpdf.kernel.geom.Rectangle;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 
@@ -29,10 +30,8 @@ public class PdfTextRenderer {
     private final Sytm3000Mapper sytm3000Mapper;
 
 
-
-    private static final String FONT_BASE_PATH =
-            "C:/Project/SpringBootProject";
-
+    @Value("${project.root.path}")
+    private String FONT_BASE_PATH;
 
 
     public PdfTextRenderer(
