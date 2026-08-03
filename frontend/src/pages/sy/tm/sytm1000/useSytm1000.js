@@ -7,9 +7,14 @@ import {
     saveActivateChildren,
     addClassification,
     updateClassification,
-    deleteClassification
+    deleteClassification,
+    subscribeTemplate
 } from "../../../../services/sytm1000Api";
 import useLoading from "../../../components/Loading/useLoading.js";
+
+import {
+    useNotification
+} from "../../../../context/NotificationContext";
 
 
 export default function useSytm1000(jijumcd) {
@@ -42,6 +47,10 @@ export default function useSytm1000(jijumcd) {
         startLoading,
         stopLoading
     } = useLoading();
+
+    const {
+        showMessage
+    } = useNotification();
 
     /**
      * 전체 트리 조회
@@ -284,44 +293,62 @@ export default function useSytm1000(jijumcd) {
 
         try {
 
-            startLoading();
+
+            const response =
+                await saveActivateChildren(
+                    saveList
+                );
 
 
-            await saveActivateChildren(
-                saveList
+            const jobId =
+                response.data.jobId;
+
+            alert(jobId);
+
+            // 요청 알림
+            showMessage(
+                "템플릿 활성화 요청되었습니다."
             );
 
 
-            alert("하위 지점 저장 완료");
+            // SSE 구독
+            subscribeTemplate(
+                jobId,
+                showMessage,
+                async (status)=>{
+
+                    if(status === "SUCCESS"){
 
 
-            const active =
-                await getActiveList(jijumcd);
+                        const active =
+                            await getActiveList(
+                                jijumcd
+                            );
 
 
-            setActiveKeys(
-                active.map(item =>
-                    String(item.clcd)
-                )
+                        setActiveKeys(
+                            active.map(item =>
+                                String(item.clcd)
+                            )
+                        );
+
+                    }
+
+                }
             );
 
 
         } catch(e) {
 
+
             console.error(e);
 
-            alert("저장 실패");
+            alert("요청 실패");
 
-
-        } finally {
-
-            stopLoading();
 
         }
 
     };
-
-
 
     /**
      * 모달 확인

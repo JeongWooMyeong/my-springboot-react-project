@@ -102,3 +102,50 @@ export const deleteClassification = async (clcds) => {
     );
 
 };
+
+export const subscribeTemplate =
+    (
+        jobId,
+        showMessage
+    ) => {
+
+
+        const eventSource =
+            new EventSource(
+                `/api/sytm1000/activate/subscribe/${jobId}`
+            );
+
+
+
+        eventSource.onmessage =
+            (event)=>{
+
+
+                const data =
+                    JSON.parse(
+                        event.data
+                    );
+
+                console.log(data.message);
+
+
+                showMessage(
+                    data.message
+                );
+
+
+                if(
+                    data.status === "SUCCESS" ||
+                    data.status === "FAIL"
+                ){
+
+                    eventSource.close();
+
+                }
+
+            };
+
+
+        return eventSource;
+
+    };

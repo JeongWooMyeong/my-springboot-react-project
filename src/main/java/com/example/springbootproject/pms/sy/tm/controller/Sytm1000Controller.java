@@ -4,10 +4,12 @@ import com.example.springbootproject.pms.login.dto.Syep4000VO;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm1000Dto;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm1010Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm1000Service;
+import com.example.springbootproject.pms.sy.tm.service.TemplateNotifyService;
 import com.example.springbootproject.pms.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.Map;
@@ -17,9 +19,11 @@ import java.util.Map;
 public class Sytm1000Controller {
 
     private final Sytm1000Service sytm1000Service;
+    private final TemplateNotifyService templateNotifyService;
 
-    public Sytm1000Controller(Sytm1000Service sytm1000Service) {
+    public Sytm1000Controller(Sytm1000Service sytm1000Service, TemplateNotifyService templateNotifyService) {
         this.sytm1000Service = sytm1000Service;
+        this.templateNotifyService = templateNotifyService;
     }
 
     @GetMapping
@@ -62,8 +66,20 @@ public class Sytm1000Controller {
 
     // 활성화 등록
     @PostMapping("/activate/children")
-    public void activateChidren(@RequestBody List<Sytm1010Dto> dtos, HttpServletRequest request) {
-        sytm1000Service.activateChildren(dtos);
+    public ResponseEntity<?> activate(
+            @RequestBody List<Sytm1010Dto> dtos
+    ){
+
+        String jobId =
+                sytm1000Service.activateChildren(dtos);
+
+
+        return ResponseEntity.ok(
+                Map.of(
+                        "jobId",
+                        jobId
+                )
+        );
     }
 
     @PostMapping("/add")
@@ -82,5 +98,17 @@ public class Sytm1000Controller {
     public ResponseEntity<Void> deleteClassification(@RequestBody Map<String, List<String>> body) {
         sytm1000Service.deleteClassification(body.get("clcds"));
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(
+            value="/activate/subscribe/{jobId}",
+            produces="text/event-stream"
+    )
+    public SseEmitter subscribe(
+            @PathVariable String jobId
+    ){
+
+        return templateNotifyService.subscribe(jobId);
+
     }
 }

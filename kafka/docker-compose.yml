@@ -30,3 +30,15 @@ services:
 
       # 데이터 저장 위치
       KAFKA_LOG_DIRS: /tmp/kraft-combined-logs
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+
+    ports:
+      # Spring Boot AMQP 연결 포트
+      - "5672:5672"
+
+      # RabbitMQ 관리 페이지 포트
+      - "15672:15672"
