@@ -2,7 +2,7 @@ package com.example.springbootproject.pms.sy.bs.service.impl;
 
 import com.example.springbootproject.pms.sy.bs.dto.Sybs1000Dto;
 import com.example.springbootproject.pms.sy.bs.service.Sybs1000Service;
-import com.example.springbootproject.pms.sy.bs.service.dao.Sybs1000Mapper;
+import com.example.springbootproject.pms.sy.bs.service.dao.mssql.Sybs1000Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

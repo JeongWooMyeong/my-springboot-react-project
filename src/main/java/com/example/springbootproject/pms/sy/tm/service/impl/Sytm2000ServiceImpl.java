@@ -3,19 +3,17 @@ package com.example.springbootproject.pms.sy.tm.service.impl;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm1000Dto;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm2000Service;
-import com.example.springbootproject.pms.sy.tm.service.dao.Sytm2000Mapper;
-import com.example.springbootproject.pms.sy.tm.service.dao.Sytm2010Mapper;
+import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm2000Mapper;
+import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm2010Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service

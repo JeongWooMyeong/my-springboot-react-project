@@ -3,10 +3,19 @@ spring:
     name: SpringBootProject
 
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
-    username: pms01
-    password: pms01
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    # 기본 MSSQL
+    primary:
+      jdbcUrl: jdbc:sqlserver://localhost:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
+      username: pms01
+      password: pms01
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+    # Oracle Second DB
+    oracle:
+      jdbcUrl: jdbc:oracle:thin:@localhost:1521:XEPDB1
+      username: system
+      password: 1234
+      driver-class-name: oracle.jdbc.OracleDriver
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -48,8 +57,6 @@ server:
   port: 8081
 
 mybatis:
-  mapper-locations: classpath:mapper/*/*.xml
-  type-aliases-package: com.example.springbootproject.pms
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 

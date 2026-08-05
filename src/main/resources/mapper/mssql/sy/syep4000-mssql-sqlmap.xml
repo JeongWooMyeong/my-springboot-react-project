@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.sy.ep.service.dao.mssql.Syep4000Mapper">
+    <select id="selectAll" parameterType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto" resultType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto">
+        SELECT
+        userid,
+        username,
+        sctno,
+        jijumcd,
+        tel,
+        selphone,
+        ofcrtel,
+        useean,
+        rgdate,
+        rgr,
+        upddate,
+        updpn,
+        brandcd,
+        useremail,
+        smsyn,
+        ntnid,
+        coid,
+        usergubun,
+        webmobileuse
+        FROM syep4000t
+        <where>
+            <if test="userid != null and userid != ''">
+                and userid like concat('%', #{userid}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                and username like concat('%', #{username}, '%')
+            </if>
+            <if test="useean != null and useean != ''">
+                and useean = #{useean}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllRoles" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        select
+            roleno,
+            rolename
+        from sysm2000t
+        where useyn = 'Y'
+    </select>
+
+    <select id="selectUserRoles" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2020Dto">
+        SELECT roleno
+        FROM SYSM2020T
+        WHERE userid = #{userId}
+    </select>
+
+    <insert id="insertUser" parameterType="com.example.springbootproject.pms.sy.ep.dto.Syep4000Dto">
+        INSERT INTO syep4000t (
+        userid,
+        username,
+        sctno,
+        jijumcd,
+        tel,
+        useremail,
+        rgdate,
+        useean
+        )
+        VALUES (
+        #{userid},
+        #{username},
+        #{sctno},
+        #{jijumcd},
+        #{tel},
+        #{useremail},
+        GETDATE(),
+        #{useean}        <!-- MSSQL 현재 시간 -->
+        )
+    </insert>
+
+    <select id="countUserId" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM syep4000t WHERE userid = #{userid}
+    </select>
+
+    <update id="updateUser">
+        UPDATE syep4000t
+        SET username = #{user.username},
+            sctno = #{user.sctno},
+            jijumcd = #{user.jijumcd},
+            useean = #{user.useean},
+            useremail = #{user.useremail},
+            tel = #{user.tel}
+        WHERE userid = #{userid}
+    </update>
+
+    <delete id="deleteUsers">
+        DELETE FROM syep4000t
+        WHERE userid IN
+        <foreach item="id" collection="userIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 특정 유저 Role 삭제 -->
+    <delete id="deleteUserRoles" parameterType="string">
+        DELETE FROM sysm2020t
+        WHERE userid = #{userid}
+    </delete>
+
+    <!-- 특정 유저 Role 저장 -->
+    <insert id="insertUserRoles" parameterType="map">
+        INSERT INTO sysm2020t (userid, roleno, useyn, upddate, updpn)
+        VALUES
+        <foreach item="roleno" collection="rolenos" separator=",">
+            (#{userid}, #{roleno}, 'Y', getdate(), 'systemadmin')
+        </foreach>
+    </insert>
+
+</mapper>

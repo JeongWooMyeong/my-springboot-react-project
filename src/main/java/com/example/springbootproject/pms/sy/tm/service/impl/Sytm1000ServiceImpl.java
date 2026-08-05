@@ -5,11 +5,9 @@ import com.example.springbootproject.pms.sy.tm.dto.Sytm1010Dto;
 import com.example.springbootproject.pms.sy.tm.dto.TemplateActivateMessage;
 import com.example.springbootproject.pms.sy.tm.producer.TemplateProducer;
 import com.example.springbootproject.pms.sy.tm.service.Sytm1000Service;
-import com.example.springbootproject.pms.sy.tm.service.dao.Sytm1000Mapper;
-import lombok.RequiredArgsConstructor;
+import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm1000Mapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 

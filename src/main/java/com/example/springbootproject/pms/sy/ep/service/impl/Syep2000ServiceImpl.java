@@ -2,7 +2,7 @@ package com.example.springbootproject.pms.sy.ep.service.impl;
 
 import com.example.springbootproject.pms.sy.ep.dto.Syep2000Dto;
 import com.example.springbootproject.pms.sy.ep.service.Syep2000Service;
-import com.example.springbootproject.pms.sy.ep.service.dao.Syep2000Mapper;
+import com.example.springbootproject.pms.sy.ep.service.dao.mssql.Syep2000Mapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

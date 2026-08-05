@@ -2,7 +2,7 @@ package com.example.springbootproject.pms.sy.sm.service.impl;
 
 import com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto;
 import com.example.springbootproject.pms.sy.sm.service.Sysm1000Service;
-import com.example.springbootproject.pms.sy.sm.service.dao.Sysm1000Mapper;
+import com.example.springbootproject.pms.sy.sm.service.dao.mssql.Sysm1000Mapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

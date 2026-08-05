@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.example.springbootproject.pms.sy.sm.service.dao.mssql.Sysm1000Mapper">
+
+    <select id="getAllMenus" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        SELECT
+            xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
+            MenuPrntCd, MenuName, MenuCd, FileName, FileLct, DelPssYn, DedName
+        FROM SYSM1000T
+        <if test="useYn != null and useYn != ''">
+        WHERE USEYn = #{useYn}
+        </if>
+        ORDER BY MenuCd
+    </select>
+
+    <select id="getMenuByCd" parameterType="string" resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        SELECT
+            Xpn, UseYn, Updpn, UpdDate, Rgr, RgDate, Qee, Prams, NtnId,
+            MenuPrntCd, MenuName, MenuCd, FileName, FileLct, DelPssYn, DedName
+        FROM SYSM1000T
+        WHERE MenuCd = #{menuCd}
+    </select>
+
+    <insert id="createMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        INSERT INTO sysm1000t (menucd, menuname, menuprntcd, filelct, filename, useyn, dedname, xpn)
+        VALUES (#{menuCd}, #{menuName}, #{menuPrntCd}, #{fileLct}, #{fileName}, #{useYn}, #{dedName}, #{xpn})
+    </insert>
+
+    <update id="updateMenu" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm1000Dto">
+        update sysm1000t
+        set menuname = #{menuName},
+            menuprntcd = #{menuPrntCd},
+            filelct = #{fileLct},
+            filename = #{fileName},
+            dedName = #{dedName},
+            xpn = #{xpn},
+            useyn = #{useYn}
+        where menucd = #{menuCd}
+    </update>
+
+    <delete id="deleteMenu" parameterType="string">
+        update sysm1000t set useyn = 'N' where menucd = #{menuCd}
+    </delete>
+
+</mapper>

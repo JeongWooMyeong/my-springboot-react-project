@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm2000Mapper">
+
+    <!-- INSERT -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO template (
+        title,
+        canvas_data,
+        created_at,
+        updated_at,
+        thumbnailpath,
+        papersize,
+        paperwidth,
+        paperheight
+        )
+        VALUES (
+        #{title},
+        #{canvasData},
+        #{createdAt},
+        #{updatedAt},
+        #{thumbnailpath},
+        #{papersize},
+        #{paperwidth},
+        #{paperheight}
+        )
+    </insert>
+    <!-- 템플릿 해당 분류 활성화 -->
+    <insert id="insertActive">
+        INSERT INTO template_active (tmpno, UpdDate, Updpn, ClCd)
+        VALUES (
+                   #{tmpno},
+                   getdate(),
+                   'systemadmin',
+                   #{clcd}
+               )
+    </insert>
+
+    <!-- LIST -->
+    <select id="selectList" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+        SELECT
+        id,
+        title,
+        canvas_data AS canvasData,
+        created_at AS createdAt,
+        updated_at AS updatedAt,
+        thumbnailpath,
+        papersize,
+        paperwidth,
+        paperheight
+        FROM template a
+        inner join template_active b on a.id = b.tmpno and b.clcd = #{clcd}
+        ORDER BY id DESC
+    </select>
+
+    <!-- ONE -->
+    <select id="selectById" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+        SELECT
+        id,
+        title,
+        canvas_data AS canvasData,
+        created_at AS createdAt,
+        updated_at AS updatedAt,
+        thumbnailpath,
+        papersize,
+        paperwidth,
+        paperheight
+        FROM template
+        WHERE id = #{id}
+    </select>
+
+    <!-- UPDATE -->
+    <update id="update"
+            parameterType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+
+        UPDATE template
+
+        SET
+        title = #{title},
+        canvas_data = #{canvasData},
+        updated_at = #{updatedAt},
+        papersize = #{papersize},
+        paperwidth = #{paperwidth},
+        paperheight = #{paperheight}
+
+        <if test="thumbnailpath != null">
+            , thumbnailpath = #{thumbnailpath}
+        </if>
+
+        WHERE id = #{id}
+
+    </update>
+
+    <!-- DELETE -->
+    <delete id="delete">
+        DELETE FROM template WHERE id = #{id}
+    </delete>
+
+    <select id="findByParent" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm1000Dto">
+        SELECT
+        a.ClCd,
+        a.ClName,
+        a.PrdnClCd,
+        a.Xpn,
+        a.UseEan,
+        a.ClDv,
+        a.QeeSqo,
+        a.UpdDate,
+        a.Updpn,
+        a.DirPath
+        FROM pppo7010t a
+        <if test='jijumcd != "0"'>
+            INNER JOIN pppo7000t b
+            ON a.ClCd = b.ClCd
+            AND b.jijumcd = #{jijumcd}
+        </if>
+        WHERE a.PrdnClCd = #{clcd}
+        AND a.UseEan = 'Y'
+        ORDER BY a.ClCd
+    </select>
+
+
+</mapper>

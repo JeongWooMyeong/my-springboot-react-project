@@ -3,7 +3,7 @@ package com.example.springbootproject.pms.sy.sm.service.impl;
 import com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto;
 import com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto;
 import com.example.springbootproject.pms.sy.sm.service.Sysm2000Service;
-import com.example.springbootproject.pms.sy.sm.service.dao.Sysm2000Mapper;
+import com.example.springbootproject.pms.sy.sm.service.dao.mssql.Sysm2000Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 

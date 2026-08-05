@@ -3,7 +3,7 @@ package com.example.springbootproject.pms.pp.po.service.impl;
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
 import com.example.springbootproject.pms.pp.po.enums.PdfJobStatus;
 import com.example.springbootproject.pms.pp.po.service.PdfJobService;
-import com.example.springbootproject.pms.pp.po.service.dao.PdfJobMapper;
+import com.example.springbootproject.pms.pp.po.service.dao.mssql.PdfJobMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -9,7 +9,7 @@ import com.example.springbootproject.pms.pp.po.pdf.PdfGenerator;
 import com.example.springbootproject.pms.pp.po.producer.ApprovalHistoryProducer;
 import com.example.springbootproject.pms.pp.po.producer.ApprovalProducer;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
-import com.example.springbootproject.pms.pp.po.service.dao.Pppo2000Mapper;
+import com.example.springbootproject.pms.pp.po.service.dao.mssql.Pppo2000Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

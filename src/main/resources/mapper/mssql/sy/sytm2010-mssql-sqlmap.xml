@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm2010Mapper">
+
+    <!-- 분류별 템플릿 전체 조회 -->
+    <select id="selectTemplatesByCategory" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+        SELECT t.id, t.title, t.thumbnailpath, t.canvas_data as canvasData,
+               t.created_at, t.updated_at,
+               a.ClCd, a.UpdDate, a.Updpn,
+               CASE WHEN a.TmpNo IS NOT NULL THEN 1 ELSE 0 END AS active
+        FROM Template t
+                 INNER JOIN template_active a
+                           ON t.id = a.TmpNo AND a.ClCd = #{clCd}
+    </select>
+
+    <!-- 분류별 활성화된 템플릿 조회 -->
+    <select id="selectActiveTemplatesByCategory" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm2000Dto">
+        SELECT t.id, t.title, t.thumbnailpath, t.canvas_data as canvasData,
+               t.created_at, t.updated_at,
+               a.ClCd, a.UpdDate, a.Updpn,
+               1 AS active
+        FROM Template t
+                 INNER JOIN template_active a
+                            ON t.id = a.TmpNo
+        WHERE a.ClCd = #{clCd}
+    </select>
+
+    <!-- 템플릿 활성화 -->
+    <insert id="insertTemplateActive">
+        INSERT INTO template_active (TmpNo, ClCd, UpdDate, Updpn)
+        VALUES (#{templateId}, #{clCd}, GETDATE(), SYSTEM_USER)
+    </insert>
+
+    <!-- 템플릿 비활성화 -->
+    <delete id="deleteTemplateActive">
+        DELETE FROM template_active
+        WHERE TmpNo = #{templateId} AND ClCd = #{clCd}
+    </delete>
+
+</mapper>

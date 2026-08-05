@@ -2,7 +2,7 @@ package com.example.springbootproject.pms.sy.tm.service.impl;
 
 import com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm3000Service;
-import com.example.springbootproject.pms.sy.tm.service.dao.Sytm3000Mapper;
+import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm3000Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

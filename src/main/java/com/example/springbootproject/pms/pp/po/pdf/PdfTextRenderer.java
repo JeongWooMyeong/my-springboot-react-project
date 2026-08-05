@@ -4,7 +4,7 @@ package com.example.springbootproject.pms.pp.po.pdf;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto;
 
 
-import com.example.springbootproject.pms.sy.tm.service.dao.Sytm3000Mapper;
+import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm3000Mapper;
 import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;

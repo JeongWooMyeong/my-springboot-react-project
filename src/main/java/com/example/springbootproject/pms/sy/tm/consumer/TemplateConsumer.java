@@ -3,7 +3,7 @@ package com.example.springbootproject.pms.sy.tm.consumer;
 import com.example.springbootproject.pms.config.RabbitConfig;
 import com.example.springbootproject.pms.sy.tm.dto.TemplateActivateMessage;
 import com.example.springbootproject.pms.sy.tm.dto.TemplateActivateStatusMessage;
-import com.example.springbootproject.pms.sy.tm.service.dao.Sytm1000Mapper;
+import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm1000Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

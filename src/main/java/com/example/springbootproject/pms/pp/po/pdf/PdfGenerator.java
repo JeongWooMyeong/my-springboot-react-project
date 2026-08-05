@@ -2,7 +2,7 @@ package com.example.springbootproject.pms.pp.po.pdf;
 
 
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
-import com.example.springbootproject.pms.pp.po.service.dao.Pppo2000Mapper;
+import com.example.springbootproject.pms.pp.po.service.dao.mssql.Pppo2000Mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.itextpdf.kernel.pdf.PdfDocument;

@@ -2,7 +2,7 @@ package com.example.springbootproject.pms.pp.po.service.impl;
 
 import com.example.springbootproject.pms.pp.po.dto.Pppo1100Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo1100Service;
-import com.example.springbootproject.pms.pp.po.service.dao.Pppo1100Mapper;
+import com.example.springbootproject.pms.pp.po.service.dao.mssql.Pppo1100Mapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

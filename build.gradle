@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.itextpdf:itext7-core:9.7.0'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-amqp' //rabbitmq 필요
+    implementation 'com.oracle.database.jdbc:ojdbc8:23.2.0.0'
 
 
     //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'

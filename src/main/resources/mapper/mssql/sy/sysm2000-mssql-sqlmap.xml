@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.springbootproject.pms.sy.sm.service.dao.mssql.Sysm2000Mapper">
+
+    <resultMap id="Sysm2000Map" type="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        <result property="roleno" column="RoleNo"/>
+        <result property="rolegroupcd" column="RoleGroupCd"/>
+        <result property="rolegroupname" column="RoleGroupName"/>
+        <result property="rolename" column="RoleName"/>
+        <result property="useyn" column="UseYn"/>
+        <result property="rolexpn" column="RoleXpn"/>
+        <result property="qee" column="Qee"/>
+        <result property="delpssyn" column="DelPssYn"/>
+        <result property="rgdate" column="RgDate"/>
+        <result property="rgr" column="Rgr"/>
+        <result property="upddate" column="UpdDate"/>
+        <result property="updpn" column="Updpn"/>
+        <result property="xpn" column="Xpn"/>
+        <result property="ntnid" column="NtnId"/>
+    </resultMap>
+
+    <!-- 권한 매핑 -->
+    <resultMap id="Sysm2010Map" type="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        <result property="roleno" column="RoleNo"/>
+        <result property="menucd" column="MenuCd"/>
+        <result property="qryrole" column="QryRole"/>
+        <result property="saverole" column="SaveRole"/>
+        <result property="updrole" column="UpdRole"/>
+        <result property="delrole" column="DelRole"/>
+        <result property="excelrole" column="ExcelRole"/>
+        <result property="etcrole" column="EtcRole"/>
+        <result property="upddate" column="UpdDate"/>
+        <result property="updpn" column="Updpn"/>
+    </resultMap>
+
+    <select id="selectAll" resultMap="Sysm2000Map">
+        SELECT * FROM sysm2000t
+    </select>
+
+    <select id="selectByNo" parameterType="string" resultMap="Sysm2000Map">
+        SELECT * FROM sysm2000t WHERE RoleNo = #{roleno}
+    </select>
+
+    <insert id="insert" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        INSERT INTO sysm2000t (
+        RoleNo, RoleGroupCd, RoleGroupName, RoleName, UseYn,
+        RoleXpn, Qee, DelPssYn, RgDate, Rgr, UpdDate, Updpn, Xpn, NtnId
+        ) VALUES (
+        #{roleno}, #{rolegroupcd}, #{rolegroupname}, #{rolename}, #{useyn},
+        #{rolexpn}, #{qee}, #{delpssyn}, #{rgdate}, #{rgr}, #{upddate}, #{updpn}, #{xpn}, #{ntnid}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        UPDATE sysm2000t
+        SET RoleGroupCd=#{rolegroupcd}, RoleGroupName=#{rolegroupname}, RoleName=#{rolename},
+        UseYn=#{useyn}, RoleXpn=#{rolexpn}, Qee=#{qee}, DelPssYn=#{delpssyn},
+        RgDate=#{rgdate}, Rgr=#{rgr}, UpdDate=#{upddate}, Updpn=#{updpn}, Xpn=#{xpn}, NtnId=#{ntnid}
+        WHERE RoleNo=#{roleno}
+    </update>
+
+    <delete id="delete" parameterType="string">
+        DELETE FROM sysm2000t WHERE RoleNo=#{roleno}
+    </delete>
+
+    <!-- 권한 조회 -->
+    <select id="selectPermissions" resultMap="Sysm2010Map">
+        SELECT *
+        FROM sysm2010t
+        WHERE RoleNo = #{roleno}
+        AND menucd IN
+        <foreach item="menuCd" collection="menuCds" open="(" separator="," close=")">
+            #{menuCd}
+        </foreach>
+    </select>
+
+    <!-- 기존 권한 삭제 -->
+    <delete id="deletePermission" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        DELETE FROM sysm2010t
+        WHERE ROLENO = #{roleno}
+          AND MENUCD = #{menucd}
+    </delete>
+
+    <!-- 새 권한 등록 -->
+    <insert id="savePermission" parameterType="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        INSERT INTO sysm2010t (
+            ROLENO, MENUCD, QRYROLE, SAVEROLE, UPDROLE, DELROLE, EXCELROLE, ETCROLE
+        ) VALUES (
+                     #{roleno}, #{menucd}, #{qryrole}, #{saverole}, #{updrole}, #{delrole}, #{excelrole}, #{etcrole}
+                 )
+    </insert>
+
+    <select id="getUserRoles" parameterType="string"
+            resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2000Dto">
+        SELECT a.roleno, (select rolename from sysm2000t where roleno = a.roleno) as rolename
+        FROM sysm2020t a
+        WHERE userid = #{userid}
+    </select>
+
+    <select id="getPermissionsByRole" parameterType="string"
+            resultType="com.example.springbootproject.pms.sy.sm.dto.Sysm2010Dto">
+        SELECT menucd, qryrole, saverole, updrole, delrole, excelrole, etcrole
+        FROM sysm2010t
+        WHERE roleno = #{roleno}
+    </select>
+
+</mapper>
