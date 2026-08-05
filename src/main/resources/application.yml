@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: SpringBootProject
+
+  datasource:
+    url: jdbc:sqlserver://localhost:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
+    username: pms01
+    password: pms01
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: approval-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        acknowledge-mode: auto
+        concurrency: 3
+        max-concurrency: 10
+        prefetch: 1
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
+server:
+  port: 8081
+
+mybatis:
+  mapper-locations: classpath:mapper/*/*.xml
+  type-aliases-package: com.example.springbootproject.pms
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    org.mybatis: DEBUG
+    org.mybatis.spring: DEBUG
+    com.example.springbootproject.pms.sy.sm.service.dao: DEBUG
+    com.example.springbootproject.pms.sy.sm.service.impl: DEBUG
+    org.springframework.jdbc.core: DEBUG
+    org.springframework.jdbc.core.StatementCreatorUtils: TRACE
+
+font:
+  upload:
+    path: C:/Project/SpringBootProject/upload/fonts/
+
+project:
+  root:
+    path: C:/Project/SpringBootProject
