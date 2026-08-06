@@ -92,10 +92,9 @@ export default function CanvasPreview({
                                             }
 
                                             fontSize={
-                                                getFitFontSize(
-                                                    textValue,
-                                                    el
-                                                )
+                                                el.fontSize
+                                                    ? el.fontSize
+                                                    : getFitFontSize(textValue, el)
                                             }
 
                                             fill={

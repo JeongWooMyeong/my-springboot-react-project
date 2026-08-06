@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ext/products")
+@RequestMapping("/api/ext/products")
 public class ProductExtController {
 
     private final ProductService productService;
@@ -24,6 +24,11 @@ public class ProductExtController {
     @GetMapping("/{id}")
     public Product getProduct(@PathVariable Long id) {
         return productService.getProduct(id);
+    }
+
+    @GetMapping("/name/{name}")
+    public Product getProductByName(@PathVariable String name) {
+        return productService.getProductByName(name);
     }
 
     @PostMapping

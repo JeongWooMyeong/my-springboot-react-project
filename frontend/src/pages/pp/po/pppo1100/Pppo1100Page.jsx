@@ -321,6 +321,7 @@ export default function Pppo1100Page({ templateid, onBack }) {
                 productData={productData}
 
                 productList={productList}
+                setProductList={setProductList}   // 추가
                 currentIndex={currentIndex}
                 setCurrentIndex={setCurrentIndex}
 

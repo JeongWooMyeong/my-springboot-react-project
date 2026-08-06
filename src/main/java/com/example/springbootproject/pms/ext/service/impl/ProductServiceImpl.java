@@ -27,6 +27,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public Product getProductByName(String name) {
+        return productMapper.findByName(name);
+    }
+
+    @Override
     public void addProduct(Product product) {
         productMapper.insert(product);
     }

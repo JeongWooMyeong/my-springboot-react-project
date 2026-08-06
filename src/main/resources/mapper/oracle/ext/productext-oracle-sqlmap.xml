@@ -23,6 +23,12 @@
         WHERE PRODUCT_ID = #{productId}
     </select>
 
+    <select id="findByName" parameterType="String" resultMap="ProductResultMap">
+        SELECT PRODUCT_ID, PRODUCT_NAME, PRICE, STOCK
+        FROM PRODUCT
+        WHERE PRODUCT_NAME = #{productname}
+    </select>
+
     <insert id="insert" parameterType="com.example.springbootproject.pms.ext.dto.Product">
         INSERT INTO PRODUCT (PRODUCT_ID, PRODUCT_NAME, PRICE, STOCK)
         VALUES (#{productId}, #{productName}, #{price}, #{stock})
