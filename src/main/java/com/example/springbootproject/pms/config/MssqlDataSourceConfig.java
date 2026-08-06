@@ -45,6 +45,12 @@ public class MssqlDataSourceConfig {
         // Alias 패키지 지정
         factoryBean.setTypeAliasesPackage("com.example.springbootproject.pms");
 
+        // MyBatis 설정 직접 주입
+        org.apache.ibatis.session.Configuration configuration = new org.apache.ibatis.session.Configuration();
+        //configuration.setMapUnderscoreToCamelCase(true);
+        configuration.setLogImpl(org.apache.ibatis.logging.stdout.StdOutImpl.class); // 로그 출력
+        factoryBean.setConfiguration(configuration);
+
         return factoryBean.getObject();
     }
 

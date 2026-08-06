@@ -12,9 +12,9 @@ spring:
 
     # Oracle Second DB
     oracle:
-      jdbcUrl: jdbc:oracle:thin:@localhost:1521:XEPDB1
-      username: system
-      password: 1234
+      jdbcUrl: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+      username: ERP
+      password: erp1234
       driver-class-name: oracle.jdbc.OracleDriver
 
   kafka:
