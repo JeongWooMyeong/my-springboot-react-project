@@ -52,6 +52,9 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.springframework.boot:spring-boot-starter-amqp' //rabbitmq 필요
     implementation 'com.oracle.database.jdbc:ojdbc8:23.2.0.0'
+    // Redis 관련
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
 
     //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'

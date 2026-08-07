@@ -3,9 +3,12 @@ package com.example.springbootproject.pms.ext.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class Product {
+//직렬화 필요
+public class Product implements Serializable {
     private Long productId;     // 상품 ID
     private String productName; // 상품명
     private Double price;       // 가격

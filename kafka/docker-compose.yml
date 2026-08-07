@@ -42,3 +42,10 @@ services:
 
       # RabbitMQ 관리 페이지 포트
       - "15672:15672"
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
