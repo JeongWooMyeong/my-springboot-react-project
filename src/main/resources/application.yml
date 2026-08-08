@@ -25,6 +25,9 @@ spring:
       password: erp1234
       driver-class-name: oracle.jdbc.OracleDriver
 
+  elasticsearch:
+    uris: http://localhost:9200
+
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -77,9 +80,13 @@ logging:
     org.springframework.jdbc.core: DEBUG
     org.springframework.jdbc.core.StatementCreatorUtils: TRACE
 
+    tracer: TRACE
+    org.springframework.data.elasticsearch: DEBUG
+    co.elastic.clients: DEBUG
 font:
   upload:
     path: C:/Project/SpringBootProject/upload/fonts/
+
 
 project:
   root:

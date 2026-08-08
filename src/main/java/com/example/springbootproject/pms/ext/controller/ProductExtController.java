@@ -1,6 +1,7 @@
 package com.example.springbootproject.pms.ext.controller;
 
 import com.example.springbootproject.pms.ext.dto.Product;
+import com.example.springbootproject.pms.ext.dto.ProductPageResponse;
 import com.example.springbootproject.pms.ext.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,8 +18,11 @@ public class ProductExtController {
     }
 
     @GetMapping
-    public List<Product> getProducts() {
-        return productService.getProducts();
+    public ProductPageResponse getProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "50") int size
+    ) {
+        return productService.getProducts(page, size);
     }
 
     @GetMapping("/{id}")

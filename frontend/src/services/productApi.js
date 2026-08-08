@@ -1,8 +1,11 @@
 import axios from "axios";
 
-//전체 상품 조회
-export async function getProducts(query) {
-    const res = await axios.get(`/api/ext/products?query=${query}`);
+// 전체 상품 조회
+export async function getProducts(page = 0, size = 50) {
+    const res = await axios.get(
+        `/api/ext/products?page=${page}&size=${size}`
+    );
+
     return res.data;
 }
 
@@ -11,8 +14,20 @@ export async function getProduct(id) {
     return res.data;
 }
 
-export async function getProductByName(name) {
-    const res = await axios.get(`/api/ext/products/name/${name}`);
+export async function getProductByName(
+    name,
+    size = 50,
+    cursor = null
+) {
+    let url =
+        `/api/es/products/search?keyword=${encodeURIComponent(name)}&size=${size}`;
+
+    if (cursor !== null) {
+        url += `&cursor=${cursor}`;
+    }
+
+    const res = await axios.get(url);
+
     return res.data;
 }
 

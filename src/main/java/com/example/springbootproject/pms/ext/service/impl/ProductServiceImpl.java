@@ -1,6 +1,7 @@
 package com.example.springbootproject.pms.ext.service.impl;
 
 import com.example.springbootproject.pms.ext.dto.Product;
+import com.example.springbootproject.pms.ext.dto.ProductPageResponse;
 import com.example.springbootproject.pms.ext.service.ProductService;
 import com.example.springbootproject.pms.ext.service.dao.oracle.ProductMapper;
 import org.springframework.cache.annotation.CacheEvict;
@@ -22,9 +23,39 @@ public class ProductServiceImpl implements ProductService {
     // 전체 조회
     @Override
     @Cacheable(value = "productList")
-    public List<Product> getProducts() {
-        System.out.println("DB에서 전체 조회");
-        return productMapper.findAll();
+    public ProductPageResponse getProducts(int page, int size) {
+
+        // 잘못된 페이지 방지
+        if (page < 0) {
+            page = 0;
+        }
+
+        if (size <= 0) {
+            size = 50;
+        }
+
+        // Oracle OFFSET 계산
+        int offset = page * size;
+
+        // 현재 페이지 상품 조회
+        List<Product> products =
+                productMapper.findPage(offset, size);
+
+        // 전체 상품 개수
+        long totalCount =
+                productMapper.countProducts();
+
+        // 전체 페이지 수
+        long totalPages =
+                (totalCount + size - 1) / size;
+
+        return new ProductPageResponse(
+                products,
+                page,
+                size,
+                totalCount,
+                totalPages
+        );
     }
 
     // ID 조회

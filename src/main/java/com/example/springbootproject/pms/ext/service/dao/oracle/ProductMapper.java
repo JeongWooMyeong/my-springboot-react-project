@@ -14,4 +14,17 @@ public interface ProductMapper {
     void insert(Product product);
     void update(Product product);
     void delete(Long productId);
+    List<Product> findProductsForIndex(
+            @Param("lastId") Long lastId,
+            @Param("size") int size
+    );
+
+    // 페이지 조회
+    List<Product> findPage(
+            @Param("offset") int offset,
+            @Param("size") int size
+    );
+
+    // 전체 상품 개수
+    long countProducts();
 }

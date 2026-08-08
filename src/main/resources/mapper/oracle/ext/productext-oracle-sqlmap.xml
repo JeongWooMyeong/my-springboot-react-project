@@ -46,4 +46,40 @@
         DELETE FROM PRODUCT WHERE PRODUCT_ID = #{productId}
     </delete>
 
+    <select id="findProductsForIndex"
+            resultMap="ProductResultMap">
+
+        SELECT PRODUCT_ID,
+               PRODUCT_NAME,
+               PRICE,
+               STOCK
+        FROM PRODUCT
+        WHERE PRODUCT_ID > #{lastId}
+        ORDER BY PRODUCT_ID
+            FETCH NEXT #{size} ROWS ONLY
+
+    </select>
+
+    <select id="findPage"
+            resultMap="ProductResultMap">
+
+        SELECT PRODUCT_ID,
+               PRODUCT_NAME,
+               PRICE,
+               STOCK
+        FROM PRODUCT
+        ORDER BY PRODUCT_ID
+        OFFSET #{offset} ROWS
+            FETCH NEXT #{size} ROWS ONLY
+
+    </select>
+
+    <select id="countProducts"
+            resultType="long">
+
+        SELECT COUNT(*)
+        FROM PRODUCT
+
+    </select>
+
 </mapper>
