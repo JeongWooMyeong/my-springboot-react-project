@@ -29,9 +29,32 @@
         WHERE PRODUCT_NAME = #{productname}
     </select>
 
-    <insert id="insert" parameterType="com.example.springbootproject.pms.ext.dto.Product">
-        INSERT INTO PRODUCT (PRODUCT_ID, PRODUCT_NAME, PRICE, STOCK)
-        VALUES (#{productId}, #{productName}, #{price}, #{stock})
+    <insert id="insert"
+            parameterType="com.example.springbootproject.pms.ext.dto.Product">
+
+        <selectKey
+                keyProperty="productId"
+                resultType="long"
+                order="BEFORE">
+
+            SELECT PRODUCT_SEQ.NEXTVAL
+            FROM DUAL
+
+        </selectKey>
+
+        INSERT INTO PRODUCT (
+        PRODUCT_ID,
+        PRODUCT_NAME,
+        PRICE,
+        STOCK
+        )
+        VALUES (
+        #{productId},
+        #{productName},
+        #{price},
+        #{stock}
+        )
+
     </insert>
 
     <update id="update" parameterType="com.example.springbootproject.pms.ext.dto.Product">

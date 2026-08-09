@@ -52,6 +52,8 @@ export default function useProductSearch() {
             cursor
         );
 
+        console.log(data.totalPages);
+
         setResults(data.content || []);
 
         setPage(targetPage);
@@ -64,7 +66,9 @@ export default function useProductSearch() {
             data.hasNext ?? false
         );
 
-        setTotalPages(0);
+        setTotalPages(
+            data.totalPages ?? 0
+        );
 
         setSelected([]);
     };

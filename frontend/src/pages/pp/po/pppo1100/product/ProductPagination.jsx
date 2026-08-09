@@ -36,9 +36,7 @@ export default function ProductPagination({
             </button>
 
             <span>
-                {isSearch
-                    ? `${page + 1} 페이지`
-                    : `${page + 1} / ${totalPages}`}
+                {`${page + 1} / ${totalPages}`}
             </span>
 
             <button

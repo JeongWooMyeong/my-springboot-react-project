@@ -70,7 +70,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                     s.index("products")
                             .size(size)
-
+                            // 전체 검색 결과 수 정확하게 계산
+                            .trackTotalHits(t -> t.enabled(true))
                             // QueryBuilder가 만든 검색 조건
                             .query(query)
 
@@ -95,6 +96,16 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 
                 }, ProductDocument.class);
 
+        // ⭐ 여기 추가
+        long totalCount =
+                response.hits().total() != null
+                        ? response.hits().total().value()
+                        : 0;
+
+        long totalPages =
+                (totalCount + size - 1) / size;
+
+        System.out.println("totals" + totalPages);
 
         List<ProductDocument> products =
                 new ArrayList<>();
@@ -132,7 +143,8 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         return new ProductSearchResponse(
                 products,
                 nextCursor,
-                hasNext
+                hasNext,
+                totalPages
         );
     }
 

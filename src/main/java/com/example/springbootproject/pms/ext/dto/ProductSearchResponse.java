@@ -16,4 +16,6 @@ public class ProductSearchResponse {
 
     // 다음 페이지 존재 여부
     private boolean hasNext;
+
+    private long totalPages;
 }

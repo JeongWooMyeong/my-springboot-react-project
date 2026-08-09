@@ -2,6 +2,8 @@ package com.example.springbootproject.pms.ext.service.impl;
 
 import com.example.springbootproject.pms.ext.dto.Product;
 import com.example.springbootproject.pms.ext.dto.ProductPageResponse;
+import com.example.springbootproject.pms.ext.kafka.dto.ProductEvent;
+import com.example.springbootproject.pms.ext.kafka.producer.ProductEventProducer;
 import com.example.springbootproject.pms.ext.service.ProductService;
 import com.example.springbootproject.pms.ext.service.dao.oracle.ProductMapper;
 import org.springframework.cache.annotation.CacheEvict;
@@ -15,9 +17,11 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductMapper productMapper;
+    private final ProductEventProducer productEventProducer;
 
-    public ProductServiceImpl(ProductMapper productMapper) {
+    public ProductServiceImpl(ProductMapper productMapper, ProductEventProducer productEventProducer) {
         this.productMapper = productMapper;
+        this.productEventProducer = productEventProducer;
     }
 
     // 전체 조회
@@ -78,18 +82,36 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @CacheEvict(value = "productList", allEntries = true)
     public void addProduct(Product product) {
+        // 1. Oracle 등록
         productMapper.insert(product);
+
+        System.out.println(
+                "생성된 상품 ID = " + product.getProductId()
+        );
+
+        // 2. Oracle 등록 성공 후 Kafka 이벤트 발행
+        ProductEvent event =
+                new ProductEvent(
+                        "CREATE",
+                        product.getProductId()
+                );
+
+        productEventProducer.send(event);
     }
 
     // 수정
     @Override
-    @Caching(evict = {
-            @CacheEvict(value = "product", key = "#product.productId"),
-            @CacheEvict(value = "productList", allEntries = true),
-            @CacheEvict(value = "productByName", allEntries = true)
-    })
+    @CacheEvict(value = "productList", allEntries = true)
     public void updateProduct(Product product) {
+
         productMapper.update(product);
+
+        ProductEvent event = new ProductEvent(
+                "UPDATE",
+                product.getProductId()
+        );
+
+        productEventProducer.send(event);
     }
 
     // 삭제
@@ -100,6 +122,14 @@ public class ProductServiceImpl implements ProductService {
             @CacheEvict(value = "productByName", allEntries = true)
     })
     public void removeProduct(Long productId) {
+
         productMapper.delete(productId);
+
+        ProductEvent event = new ProductEvent(
+                "DELETE",
+                productId
+        );
+
+        productEventProducer.send(event);
     }
 }
