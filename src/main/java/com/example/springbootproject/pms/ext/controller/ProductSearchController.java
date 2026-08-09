@@ -1,6 +1,7 @@
 package com.example.springbootproject.pms.ext.controller;
 
 import com.example.springbootproject.pms.ext.dto.ProductDocument;
+import com.example.springbootproject.pms.ext.dto.ProductSearchCondition;
 import com.example.springbootproject.pms.ext.dto.ProductSearchResponse;
 import com.example.springbootproject.pms.ext.service.ProductSearchService;
 import org.springframework.data.domain.Page;
@@ -25,13 +26,13 @@ public class ProductSearchController {
 
     @GetMapping("/search")
     public ProductSearchResponse search(
-            @RequestParam String keyword,
+            ProductSearchCondition condition,
             @RequestParam(defaultValue = "50") int size,
             @RequestParam(required = false) Long cursor
     ) throws IOException {
 
         return productSearchService.search(
-                keyword,
+                condition,
                 size,
                 cursor
         );

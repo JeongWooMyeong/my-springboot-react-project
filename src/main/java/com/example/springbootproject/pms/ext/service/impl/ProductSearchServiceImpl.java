@@ -8,7 +8,9 @@ import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Hit;
 import com.example.springbootproject.pms.ext.dto.Product;
 import com.example.springbootproject.pms.ext.dto.ProductDocument;
+import com.example.springbootproject.pms.ext.dto.ProductSearchCondition;
 import com.example.springbootproject.pms.ext.dto.ProductSearchResponse;
+import com.example.springbootproject.pms.ext.query.ProductSearchQueryBuilder;
 import com.example.springbootproject.pms.ext.service.ProductSearchService;
 import com.example.springbootproject.pms.ext.service.dao.oracle.ProductMapper;
 import com.example.springbootproject.pms.ext.service.repository.ProductSearchRepository;
@@ -27,15 +29,19 @@ public class ProductSearchServiceImpl implements ProductSearchService {
     private final ProductMapper productMapper;
     private final ProductSearchRepository repository;
     private final ElasticsearchClient elasticsearchClient;
+    private final ProductSearchQueryBuilder queryBuilder;
 
     public ProductSearchServiceImpl(
             ProductMapper productMapper,
             ProductSearchRepository repository,
-            ElasticsearchClient elasticsearchClient
+            ElasticsearchClient elasticsearchClient,
+            ProductSearchQueryBuilder queryBuilder
+
     ) {
         this.productMapper = productMapper;
         this.repository = repository;
         this.elasticsearchClient = elasticsearchClient;
+        this.queryBuilder = queryBuilder;
     }
 
     // Elasticsearch 검색
@@ -49,16 +55,26 @@ public class ProductSearchServiceImpl implements ProductSearchService {
 //    }
     @Override
     public ProductSearchResponse search(
-            String keyword,
+            ProductSearchCondition condition,
             int size,
             Long cursor
     ) throws IOException {
+
+        // 검색 조건 → Elasticsearch Query 생성
+        Query query =
+                queryBuilder.build(condition);
+
 
         SearchResponse<ProductDocument> response =
                 elasticsearchClient.search(s -> {
 
                     s.index("products")
                             .size(size)
+
+                            // QueryBuilder가 만든 검색 조건
+                            .query(query)
+
+                            // 상품 ID 기준 정렬
                             .sort(sort -> sort
                                     .field(field -> field
                                             .field("productId")
@@ -66,23 +82,6 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                                     )
                             );
 
-                    // 검색어가 있으면 상품명 검색
-                    if (keyword != null && !keyword.trim().isEmpty()) {
-
-                        s.query(q -> q
-                                .wildcard(w -> w
-                                        .field("productName.keyword")
-                                        .value("*" + keyword.trim() + "*")
-                                )
-                        );
-
-                    } else {
-
-                        // 검색어가 없으면 전체 상품
-                        s.query(q -> q
-                                .matchAll(m -> m)
-                        );
-                    }
 
                     // 다음 페이지
                     if (cursor != null) {
@@ -97,12 +96,18 @@ public class ProductSearchServiceImpl implements ProductSearchService {
                 }, ProductDocument.class);
 
 
-        List<ProductDocument> products = new ArrayList<>();
+        List<ProductDocument> products =
+                new ArrayList<>();
 
-        for (Hit<ProductDocument> hit : response.hits().hits()) {
+
+        for (Hit<ProductDocument> hit :
+                response.hits().hits()) {
 
             if (hit.source() != null) {
-                products.add(hit.source());
+
+                products.add(
+                        hit.source()
+                );
             }
         }
 
@@ -119,7 +124,7 @@ public class ProductSearchServiceImpl implements ProductSearchService {
         }
 
 
-        // 현재 size만큼 가져왔다면 다음 데이터가 있을 가능성이 있음
+        // 다음 페이지 존재 여부
         boolean hasNext =
                 products.size() == size;
 
