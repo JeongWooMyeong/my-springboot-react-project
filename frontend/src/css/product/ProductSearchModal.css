@@ -1,0 +1,290 @@
+
+    /* ========================================
+       Modal Overlay
+    ======================================== */
+
+.product-search-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1000;
+}
+
+
+/* ========================================
+   Modal
+======================================== */
+
+.product-search-modal {
+    background: #fff;
+
+    padding: 20px;
+
+    border-radius: 8px;
+
+    width: 700px;
+    max-width: 90vw;
+
+    max-height: 80vh;
+
+    overflow-y: auto;
+
+    box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.3);
+
+    box-sizing: border-box;
+}
+
+
+/* ========================================
+   Title
+======================================== */
+
+.product-search-modal__title {
+    margin: 0 0 15px 0;
+}
+
+
+/* ========================================
+   Search Area
+======================================== */
+
+.product-search-modal__search {
+    margin-bottom: 15px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.product-search-modal__search-input {
+    padding: 7px 10px;
+
+    width: 250px;
+
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+
+.product-search-modal__search-input:focus {
+    border-color: #1677ff;
+}
+
+
+.product-search-modal__search-button,
+.product-search-modal__close-button {
+    padding: 7px 12px;
+
+    border: 1px solid #d9d9d9;
+
+    border-radius: 4px;
+
+    background: #fff;
+
+    cursor: pointer;
+}
+
+
+.product-search-modal__search-button:hover,
+.product-search-modal__close-button:hover {
+    background: #f5f5f5;
+}
+
+
+/* ========================================
+   Empty Result
+======================================== */
+
+.product-search-modal__empty {
+    padding: 20px;
+
+    text-align: center;
+
+    color: #666;
+}
+
+
+/* ========================================
+   Table
+======================================== */
+
+.product-search-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+
+.product-search-table th,
+.product-search-table td {
+    border: 1px solid #ddd;
+
+    padding: 8px;
+
+    text-align: left;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+}
+
+
+.product-search-table th {
+    background: #f5f5f5;
+
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+/* 체크박스 */
+
+.product-search-table th:first-child,
+.product-search-table td:first-child {
+    width: 45px;
+
+    text-align: center;
+}
+
+
+/* 상품코드 */
+
+.product-search-table th:nth-child(2),
+.product-search-table td:nth-child(2) {
+    width: 90px;
+}
+
+
+/* 상품명 */
+
+.product-search-table th:nth-child(3),
+.product-search-table td:nth-child(3) {
+    width: auto;
+}
+
+
+/* 가격 */
+
+.product-search-table th:nth-child(4),
+.product-search-table td:nth-child(4) {
+    width: 100px;
+
+    text-align: right;
+}
+
+
+/* 재고 */
+
+.product-search-table th:nth-child(5),
+.product-search-table td:nth-child(5) {
+    width: 80px;
+
+    text-align: right;
+}
+
+
+/* ========================================
+   Pagination
+======================================== */
+
+.product-search-pagination {
+    margin-top: 15px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.product-search-pagination__button {
+    min-width: 60px;
+
+    padding: 6px 10px;
+
+    border: 1px solid #d9d9d9;
+
+    border-radius: 4px;
+
+    background: #fff;
+
+    cursor: pointer;
+}
+
+
+.product-search-pagination__button:hover:not(:disabled) {
+    background: #f5f5f5;
+}
+
+
+.product-search-pagination__button:disabled {
+    color: #aaa;
+
+    background: #f5f5f5;
+
+    cursor: not-allowed;
+}
+
+
+.product-search-pagination__page {
+    min-width: 100px;
+
+    text-align: center;
+}
+
+
+/* ========================================
+   Footer
+======================================== */
+
+.product-search-modal__footer {
+    margin-top: 15px;
+
+    display: flex;
+
+    justify-content: flex-end;
+}
+
+
+.product-search-modal__apply-button {
+    padding: 7px 14px;
+
+    border: none;
+
+    border-radius: 4px;
+
+    background: #52c41a;
+
+    color: #fff;
+
+    cursor: pointer;
+}
+
+
+.product-search-modal__apply-button:hover {
+    background: #389e0d;
+}
