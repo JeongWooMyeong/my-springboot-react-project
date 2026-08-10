@@ -4,32 +4,30 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: 192.168.1.102
       port: 6379
 
-    cache:
-      type: redis
+  cache:
+    type: redis
 
   datasource:
-    # 기본 MSSQL
     primary:
-      jdbcUrl: jdbc:sqlserver://localhost:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
+      jdbcUrl: jdbc:sqlserver://192.168.1.102:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
       username: pms01
       password: pms01
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-    # Oracle Second DB
     oracle:
-      jdbcUrl: jdbc:oracle:thin:@//localhost:1521/XEPDB1
+      jdbcUrl: jdbc:oracle:thin:@//192.168.1.102:1521/XEPDB1
       username: ERP
       password: erp1234
       driver-class-name: oracle.jdbc.OracleDriver
 
   elasticsearch:
-    uris: http://localhost:9200
+    uris: http://192.168.1.102:9200
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: 192.168.1.102:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -42,7 +40,7 @@ spring:
         spring.json.trusted.packages: "*"
 
   rabbitmq:
-    host: localhost
+    host: 192.168.1.102
     port: 5672
     username: guest
     password: guest
@@ -79,15 +77,5 @@ logging:
     com.example.springbootproject.pms.sy.sm.service.impl: DEBUG
     org.springframework.jdbc.core: DEBUG
     org.springframework.jdbc.core.StatementCreatorUtils: TRACE
-
-    tracer: TRACE
     org.springframework.data.elasticsearch: DEBUG
     co.elastic.clients: DEBUG
-font:
-  upload:
-    path: C:/Project/SpringBootProject/upload/fonts/
-
-
-project:
-  root:
-    path: C:/Project/SpringBootProject

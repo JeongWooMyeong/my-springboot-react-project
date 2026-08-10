@@ -18,6 +18,9 @@ spec:
         imagePullPolicy: Always      # 레지스트리 기반에서는 Never 대신 IfNotPresent 권장
         ports:
           - containerPort: 8081
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: k8s
         resources:
           requests:
             memory: "512Mi"

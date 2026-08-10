@@ -58,6 +58,8 @@ dependencies {
 
     // Elasticsearch
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+    // MinIO
+    implementation 'io.minio:minio:9.0.3'
 
 
     //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
