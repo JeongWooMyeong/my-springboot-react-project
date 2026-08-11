@@ -7,7 +7,10 @@ import com.example.springbootproject.pms.pp.po.service.Pppo1000Service;
 import com.example.springbootproject.pms.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +27,10 @@ import java.util.UUID;
 public class Pppo1000Controller {
 
     private final Pppo1000Service service;
+    private final MinioClient minioClient;
+
+    @Value("${storage.bucket}")
+    private String bucketName;
 
     // -----------------------------
     // 저장 (1000 + 1100 같이 저장)
@@ -54,20 +61,38 @@ public class Pppo1000Controller {
     }
 
     @PostMapping("/upload/image")
-    public Map<String, String> upload(@RequestParam MultipartFile file) throws Exception {
+    public Map<String, String> upload(
+            @RequestParam MultipartFile file
+    ) throws Exception {
 
-        String fileName = UUID.randomUUID() + ".png";
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("이미지 파일이 없습니다.");
+        }
 
-        String dir = System.getProperty("user.dir") + "/upload/userimage/";
+        String fileName =
+                UUID.randomUUID() + ".png";
 
-        Path path = Paths.get(dir, fileName);
+        String objectName =
+                "userimage/" + fileName;
 
-        Files.createDirectories(path.getParent());
-
-        file.transferTo(path);
+        minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .stream(
+                                file.getInputStream(),
+                                file.getSize(),
+                                (long) (10 * 1024 * 1024)
+                        )
+                        .contentType(
+                                file.getContentType()
+                        )
+                        .build()
+        );
 
         return Map.of(
-                "url", "http://localhost:8081/upload/userimage/" + fileName
+                "url",
+                "/upload/userimage/" + fileName
         );
     }
 }

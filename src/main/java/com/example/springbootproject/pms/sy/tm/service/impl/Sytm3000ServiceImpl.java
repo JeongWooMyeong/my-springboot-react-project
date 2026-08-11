@@ -3,6 +3,8 @@ package com.example.springbootproject.pms.sy.tm.service.impl;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm3000Service;
 import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm3000Mapper;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -18,73 +20,82 @@ import java.util.List;
 public class Sytm3000ServiceImpl
         implements Sytm3000Service {
 
-
-
     private final Sytm3000Mapper sytm3000Mapper;
 
-    @Value("${font.upload.path}")
-    private String uploadPath;
+    private final MinioClient minioClient;
 
-
-
+    @Value("${storage.bucket}")
+    private String bucketName;
 
 
     @Override
-    public List<Sytm3000Dto> getFontList(){
-
+    public List<Sytm3000Dto> getFontList() {
 
         return sytm3000Mapper.selectFontList();
-
     }
 
 
-
-
-
     @Override
-    public void uploadFont(MultipartFile file) throws Exception {
+    public void uploadFont(
+            MultipartFile file
+    ) throws Exception {
 
-
-        // 폴더 없으면 생성
-        File uploadDir = new File(uploadPath);
-
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("폰트 파일이 없습니다.");
         }
 
 
-        String filename = file.getOriginalFilename();
+        String filename =
+                file.getOriginalFilename();
 
 
-        // 실제 저장 파일
-        File saveFile = new File(
-                uploadDir,
-                filename
+        if (filename == null || filename.isBlank()) {
+            throw new RuntimeException("파일명이 없습니다.");
+        }
+
+
+        /*
+         * MinIO 저장 경로
+         *
+         * springbootproject
+         * └── fonts
+         *     └── font.ttf
+         */
+        String objectName =
+                "fonts/" + filename;
+
+
+        minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .stream(
+                                file.getInputStream(),
+                                file.getSize(),
+                                (long) (10 * 1024 * 1024)
+                        )
+                        .contentType(
+                                file.getContentType()
+                        )
+                        .build()
         );
 
 
-        // 실제 파일 저장
-        file.transferTo(saveFile);
-
-
-
-        Sytm3000Dto dto = new Sytm3000Dto();
-
+        /*
+         * DB 정보 저장
+         */
+        Sytm3000Dto dto =
+                new Sytm3000Dto();
 
         dto.setFontfilename(filename);
-
 
         dto.setFontfamily(
                 extractFontFamily(filename)
         );
 
-
-        // DB 저장 경로
-//        dto.setFontfilepath(
-//                saveFile.getAbsolutePath()
-//        );
-        dto.setFontfilepath("/upload/fonts/" + filename);
-
+        dto.setFontfilepath(
+                "/upload/fonts/" + filename
+        );
 
         dto.setFontweight(400);
 
@@ -94,38 +105,25 @@ public class Sytm3000ServiceImpl
 
 
         sytm3000Mapper.insertFont(dto);
-
     }
 
 
     @Override
     public void deleteFont(
             Integer fontid
-    ){
+    ) {
 
-
-        sytm3000Mapper.deleteFont(
-                fontid
-        );
-
+        sytm3000Mapper.deleteFont(fontid);
     }
-
-
-
 
 
     private String extractFontFamily(
             String filename
-    ){
-
+    ) {
 
         return filename
-                .replace(".ttf","")
-                .replace(".otf","");
-
-
+                .replace(".ttf", "")
+                .replace(".otf", "");
     }
-
-
 
 }

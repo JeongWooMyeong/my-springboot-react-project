@@ -99,4 +99,184 @@ public class FileController {
                 )
                 .body(resource);
     }
+
+    @GetMapping("/upload/fonts/{fileName}")
+    public ResponseEntity<Resource> getFont(
+            @PathVariable String fileName
+    ) throws Exception {
+
+        Path localPath =
+                Paths.get(
+                        "upload",
+                        "fonts",
+                        fileName
+                );
+
+        /*
+         * 1. 기존 로컬 파일 확인
+         */
+        if (Files.exists(localPath)) {
+
+            String contentType =
+                    Files.probeContentType(localPath);
+
+            if (contentType == null) {
+                contentType =
+                        "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    contentType
+                            )
+                    )
+                    .body(
+                            new InputStreamResource(
+                                    Files.newInputStream(
+                                            localPath
+                                    )
+                            )
+                    );
+        }
+
+
+        /*
+         * 2. 없으면 MinIO 조회
+         */
+        InputStreamResource resource =
+                new InputStreamResource(
+                        minioClient.getObject(
+                                GetObjectArgs.builder()
+                                        .bucket(bucketName)
+                                        .object(
+                                                "fonts/"
+                                                        + fileName
+                                        )
+                                        .build()
+                        )
+                );
+
+
+        return ResponseEntity.ok()
+                .contentType(
+                        MediaType.parseMediaType(
+                                "font/ttf"
+                        )
+                )
+                .body(resource);
+    }
+
+    @GetMapping("/upload/userimage/{fileName}")
+    public ResponseEntity<Resource> getUserImage(
+            @PathVariable String fileName
+    ) throws Exception {
+
+        Path localPath =
+                Paths.get(
+                        "upload",
+                        "userimage",
+                        fileName
+                );
+
+        // 기존 로컬 파일
+        if (Files.exists(localPath)) {
+
+            String contentType =
+                    Files.probeContentType(localPath);
+
+            if (contentType == null) {
+                contentType =
+                        MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(
+                            MediaType.parseMediaType(contentType)
+                    )
+                    .body(
+                            new InputStreamResource(
+                                    Files.newInputStream(localPath)
+                            )
+                    );
+        }
+
+        // MinIO
+        InputStreamResource resource =
+                new InputStreamResource(
+                        minioClient.getObject(
+                                GetObjectArgs.builder()
+                                        .bucket(bucketName)
+                                        .object(
+                                                "userimage/"
+                                                        + fileName
+                                        )
+                                        .build()
+                        )
+                );
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG)
+                .body(resource);
+    }
+
+    @GetMapping("/upload/template/{fileName}")
+    public ResponseEntity<Resource> getTemplateImage(
+            @PathVariable String fileName
+    ) throws Exception {
+
+        Path localPath =
+                Paths.get(
+                        "upload",
+                        "template",
+                        fileName
+                );
+
+        // 기존 로컬 파일
+        if (Files.exists(localPath)) {
+
+            String contentType =
+                    Files.probeContentType(localPath);
+
+            if (contentType == null) {
+                contentType =
+                        MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    contentType
+                            )
+                    )
+                    .body(
+                            new InputStreamResource(
+                                    Files.newInputStream(
+                                            localPath
+                                    )
+                            )
+                    );
+        }
+
+        // MinIO
+        InputStreamResource resource =
+                new InputStreamResource(
+                        minioClient.getObject(
+                                GetObjectArgs.builder()
+                                        .bucket(bucketName)
+                                        .object(
+                                                "template/"
+                                                        + fileName
+                                        )
+                                        .build()
+                        )
+                );
+
+        return ResponseEntity.ok()
+                .contentType(
+                        MediaType.IMAGE_PNG
+                )
+                .body(resource);
+    }
+
 }
