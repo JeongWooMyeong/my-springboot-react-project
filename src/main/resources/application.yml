@@ -1,3 +1,5 @@
+server-host: 192.168.1.102
+
 spring:
   application:
     name: SpringBootProject
@@ -12,22 +14,22 @@ spring:
 
   datasource:
     primary:
-      jdbcUrl: jdbc:sqlserver://192.168.1.102:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
+      jdbcUrl: jdbc:sqlserver://${server-host}:1433;databaseName=pms02_jwm;encrypt=false;trustServerCertificate=true
       username: pms01
       password: pms01
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
     oracle:
-      jdbcUrl: jdbc:oracle:thin:@//192.168.1.102:1521/XEPDB1
+      jdbcUrl: jdbc:oracle:thin:@//${server-host}:1521/XEPDB1
       username: ERP
       password: erp1234
       driver-class-name: oracle.jdbc.OracleDriver
 
   elasticsearch:
-    uris: http://192.168.1.102:9200
+    uris: http://${server-host}:9200
 
   kafka:
-    bootstrap-servers: 192.168.1.102:9092
+    bootstrap-servers: ${server-host}:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -40,7 +42,7 @@ spring:
         spring.json.trusted.packages: "*"
 
   rabbitmq:
-    host: 192.168.1.102
+    host: ${server-host}
     port: 5672
     username: guest
     password: guest
@@ -79,3 +81,18 @@ logging:
     org.springframework.jdbc.core.StatementCreatorUtils: TRACE
     org.springframework.data.elasticsearch: DEBUG
     co.elastic.clients: DEBUG
+
+font:
+  upload:
+    path: C:/Project/SpringBootProject/upload/fonts/
+
+project:
+  root:
+    path: C:/Project/SpringBootProject
+
+storage:
+  type: minio
+  endpoint: ${MINIO_ENDPOINT:http://${server-host}:9000}
+  access-key: ${MINIO_ACCESS_KEY:admin}
+  secret-key: ${MINIO_SECRET_KEY:admin12345}
+  bucket: ${MINIO_BUCKET:SpringBootProject}

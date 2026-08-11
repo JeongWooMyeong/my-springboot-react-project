@@ -1,9 +1,0 @@
-spring:
-  config:
-    activate:
-      on-profile: k8s
-
-storage:
-  type: minio
-  endpoint: http://192.168.1.102:9000
-  bucket: springbootproject
