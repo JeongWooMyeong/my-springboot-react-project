@@ -1,7 +1,10 @@
 package com.example.springbootproject.pms.sy.tm.service.impl;
 
 import com.example.springbootproject.pms.sy.tm.service.TemplateImageService;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,97 +22,56 @@ public class TemplateImageServiceImpl
 
 
 
-    private final String uploadPath =
-            "upload/template/";
+    private final MinioClient minioClient;
 
-
-
+    @Value("${storage.bucket}")
+    private String bucketName;
 
     @Override
     public String uploadImage(
             MultipartFile file
     ) throws Exception {
 
-
-
-        if(file == null ||
-                file.isEmpty()){
-
-            throw new RuntimeException(
-                    "이미지 파일 없음"
-            );
-
+        if (file == null || file.isEmpty()) {
+            throw new RuntimeException("이미지 파일 없음");
         }
-
-
-
 
         String originalName =
                 file.getOriginalFilename();
 
-
-
-
         String extension = "";
 
-        if(originalName != null){
+        if (originalName != null &&
+                originalName.contains(".")) {
 
             extension =
                     originalName.substring(
                             originalName.lastIndexOf(".")
                     );
-
         }
-
-
-
 
         String saveName =
-                UUID.randomUUID()
-                        + extension;
+                UUID.randomUUID() + extension;
 
+        String objectName =
+                "template/" + saveName;
 
-
-
-
-        File directory =
-                new File(uploadPath);
-
-
-
-        if(!directory.exists()){
-
-            directory.mkdirs();
-
-        }
-
-
-
-
-
-        Path target =
-                Paths.get(
-                        uploadPath,
-                        saveName
-                );
-
-
-
-
-
-        Files.copy(
-                file.getInputStream(),
-                target,
-                StandardCopyOption.REPLACE_EXISTING
+        minioClient.putObject(
+                PutObjectArgs.builder()
+                        .bucket(bucketName)
+                        .object(objectName)
+                        .stream(
+                                file.getInputStream(),
+                                file.getSize(),
+                                (long) (10 * 1024 * 1024)
+                        )
+                        .contentType(
+                                file.getContentType()
+                        )
+                        .build()
         );
 
-
-
-
-
-        return
-                "/upload/template/"
-                        + saveName;
+        return "/upload/template/" + saveName;
 
 
     }

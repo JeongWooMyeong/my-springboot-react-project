@@ -95,4 +95,4 @@ storage:
   endpoint: ${MINIO_ENDPOINT:http://${server-host}:9000}
   access-key: ${MINIO_ACCESS_KEY:admin}
   secret-key: ${MINIO_SECRET_KEY:admin12345}
-  bucket: ${MINIO_BUCKET:SpringBootProject}
+  bucket: ${MINIO_BUCKET:springbootproject}
