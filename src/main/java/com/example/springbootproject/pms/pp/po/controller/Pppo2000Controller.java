@@ -8,8 +8,12 @@ import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
 import com.example.springbootproject.pms.pp.po.producer.PdfJobProducer;
 import com.example.springbootproject.pms.pp.po.service.PdfJobService;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
+import io.minio.GetObjectArgs;
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -29,6 +33,10 @@ public class Pppo2000Controller {
     private final Pppo2000Service pppo2000Service;
     private final PdfJobService pdfJobService;
     private final PdfJobProducer pdfJobProducer;
+    private final MinioClient minioClient;
+
+    @Value("${storage.bucket}")
+    private String bucketName;
 
     //신청 내역 리스트
     @GetMapping("/list")
@@ -170,44 +178,86 @@ public class Pppo2000Controller {
     @GetMapping("/pdf/download/{jobid}")
     public ResponseEntity<Resource> downloadPdf(
             @PathVariable String jobid
-    ){
+    ) throws Exception {
 
         PdfJobDto job =
                 pdfJobService.findByJobid(jobid);
 
 
-        if(job == null){
+        if (job == null) {
 
             return ResponseEntity.notFound().build();
 
         }
 
 
-        File file =
-                new File(
-                        job.getFilepath()
+        /*
+         * DB에 저장된 MinIO Object 경로
+         *
+         * 예:
+         * pdf/PDF_20260813_123456_abc123.pdf
+         */
+        String objectName =
+                job.getFilepath();
+
+
+        if (objectName == null ||
+                objectName.isBlank()) {
+
+            return ResponseEntity.notFound().build();
+
+        }
+
+
+        /*
+         * MinIO에서 파일 조회
+         */
+        InputStreamResource resource =
+                new InputStreamResource(
+                        minioClient.getObject(
+                                GetObjectArgs.builder()
+                                        .bucket(bucketName)
+                                        .object(objectName)
+                                        .build()
+                        )
                 );
 
 
-        if(!file.exists()){
+        /*
+         * 파일명
+         */
+        String filename =
+                job.getFilepath();
 
-            return ResponseEntity.notFound().build();
 
+        if (filename == null ||
+                filename.isBlank()) {
+
+            filename =
+                    objectName.substring(
+                            objectName.lastIndexOf("/") + 1
+                    );
         }
 
 
-        Resource resource =
-                new FileSystemResource(file);
+        /*
+         * PDF / ZIP Content-Type
+         */
+        MediaType mediaType =
+                objectName.toLowerCase()
+                        .endsWith(".zip")
+                        ? MediaType.APPLICATION_OCTET_STREAM
+                        : MediaType.APPLICATION_PDF;
 
 
         return ResponseEntity.ok()
                 .header(
                         HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + file.getName() + "\""
+                        "attachment; filename=\"" +
+                                filename +
+                                "\""
                 )
-                .contentType(
-                        MediaType.APPLICATION_OCTET_STREAM
-                )
+                .contentType(mediaType)
                 .body(resource);
 
     }

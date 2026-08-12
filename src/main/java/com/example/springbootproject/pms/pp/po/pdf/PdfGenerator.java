@@ -10,6 +10,7 @@ import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.geom.PageSize;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 
@@ -19,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 
-
+@Slf4j
 @Component
 public class PdfGenerator {
 

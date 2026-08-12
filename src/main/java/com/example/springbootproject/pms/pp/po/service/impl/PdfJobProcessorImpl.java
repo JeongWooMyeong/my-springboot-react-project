@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @Slf4j
 public class PdfJobProcessorImpl implements PdfJobProcessor {
+
     private final Pppo2000Service pdfService;
 
     private final PdfJobService pdfJobService;
@@ -32,24 +33,27 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
     @Override
     public void process(PdfGenerateJob job) {
 
-
         String jobId = job.getJobid();
 
         ScheduledFuture<?> heartbeatTask = null;
 
 
+        // JOB 조회
         PdfJobDto currentJob =
                 pdfJobService.findByJobid(jobId);
 
 
-        if(currentJob == null){
+        if (currentJob == null) {
+
             throw new RuntimeException(
                     "PDF JOB 없음"
             );
+
         }
 
 
-        if("COMPLETE".equals(currentJob.getStatus())){
+        // 이미 완료된 JOB이면 중복 처리하지 않음
+        if ("COMPLETE".equals(currentJob.getStatus())) {
 
             log.info(
                     "이미 완료된 작업입니다. jobId={}",
@@ -62,13 +66,11 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
 
         try {
 
-
             // 작업 시작
             pdfJobService.start(jobId);
 
 
-
-            // heartbeat 시작
+            // Heartbeat 시작
             heartbeatTask =
                     heartbeatScheduler.scheduleAtFixedRate(
                             () -> {
@@ -79,14 +81,12 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
                                             jobId
                                     );
 
-
                                     log.info(
                                             "PDF heartbeat update jobId={}",
                                             jobId
                                     );
 
-
-                                } catch(Exception e){
+                                } catch (Exception e) {
 
                                     log.error(
                                             "heartbeat 실패 jobId={}",
@@ -103,22 +103,18 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
                     );
 
 
-
+            // PDF / ZIP 생성
             byte[] result;
 
-
-            if(job.getType()
-                    == PdfGenerateJob.GenerateType.PDF){
-
+            if (job.getType()
+                    == PdfGenerateJob.GenerateType.PDF) {
 
                 result =
                         pdfService.generatePdf(
                                 job.getOrdnos().get(0)
                         );
 
-
             } else {
-
 
                 result =
                         pdfService.generateZip(
@@ -128,7 +124,7 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
             }
 
 
-
+            // 확장자 결정
             String extension =
                     job.getType()
                             == PdfGenerateJob.GenerateType.PDF
@@ -136,7 +132,8 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
                             : ".zip";
 
 
-
+            // 결과 저장
+            // 실제 저장은 PdfJobService → MinIO
             pdfJobService.saveResult(
                     jobId,
                     result,
@@ -144,20 +141,18 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
             );
 
 
-
+            // 작업 완료
             pdfJobService.complete(jobId);
 
 
-
+            // 완료 알림
             pdfNotifyService.sendComplete(
                     jobId,
                     "/api/pppo2000/pdf/download/" + jobId
             );
 
 
-
-        } catch(Exception e) {
-
+        } catch (Exception e) {
 
             log.error(
                     "PDF 생성 실패 jobId={}",
@@ -166,12 +161,14 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
             );
 
 
+            // 실패 상태 저장
             pdfJobService.fail(
                     jobId,
                     e.getMessage()
             );
 
 
+            // 실패 알림
             pdfNotifyService.sendFail(
                     jobId,
                     "PDF 생성 실패"
@@ -186,17 +183,15 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
 
         } finally {
 
+            // Heartbeat 종료
+            if (heartbeatTask != null) {
 
-            // heartbeat 종료
-            if(heartbeatTask != null){
-
-                heartbeatTask.cancel(
-                        true
-                );
+                heartbeatTask.cancel(true);
 
             }
 
         }
 
     }
+
 }
