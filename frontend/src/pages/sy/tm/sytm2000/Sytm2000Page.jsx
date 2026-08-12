@@ -158,10 +158,6 @@ export default function Sytm2000Page(){
 
 
             {
-
-                templates.length > 0 && (
-
-
                     <Sytm2000List
 
 
@@ -215,12 +211,7 @@ export default function Sytm2000Page(){
                         }
 
 
-
                     />
-
-
-                )
-
             }
 
 
