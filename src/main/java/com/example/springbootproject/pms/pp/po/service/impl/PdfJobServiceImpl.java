@@ -1,14 +1,12 @@
 package com.example.springbootproject.pms.pp.po.service.impl;
 
+import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
 import com.example.springbootproject.pms.pp.po.enums.PdfJobStatus;
 import com.example.springbootproject.pms.pp.po.service.PdfJobService;
 import com.example.springbootproject.pms.pp.po.service.dao.mssql.PdfJobMapper;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -24,11 +22,7 @@ public class PdfJobServiceImpl implements PdfJobService {
 
     private final PdfJobMapper pdfJobMapper;
 
-    private final MinioClient minioClient;
-
-    @Value("${storage.bucket}")
-    private String bucketName;
-
+    private final MinioStorageService minioStorageService;
 
     @Override
     public void insertJob(
@@ -79,27 +73,13 @@ public class PdfJobServiceImpl implements PdfJobService {
 
 
             /*
-             * byte[] → MinIO 업로드
+            minio 공통
              */
-            try (ByteArrayInputStream inputStream =
-                         new ByteArrayInputStream(result)) {
-
-                minioClient.putObject(
-                        PutObjectArgs.builder()
-                                .bucket(bucketName)
-                                .object(objectName)
-                                .stream(
-                                        inputStream,
-                                        (long)result.length,
-                                (long)10 * 1024 * 1024
-                                )
-                                .contentType(
-                                        getContentType(extension)
-                                )
-                                .build()
-                );
-
-            }
+            minioStorageService.upload(
+                    objectName,
+                    result,
+                    getContentType(extension)
+            );
 
 
             /*

@@ -1,23 +1,14 @@
 package com.example.springbootproject.pms.pp.po.controller;
 
-import com.example.springbootproject.pms.config.JwtConfig;
+import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
 import com.example.springbootproject.pms.login.dto.Syep4000VO;
 import com.example.springbootproject.pms.pp.po.dto.Pppo1000Dto;
 import com.example.springbootproject.pms.pp.po.service.Pppo1000Service;
 import com.example.springbootproject.pms.util.JwtUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,10 +18,7 @@ import java.util.UUID;
 public class Pppo1000Controller {
 
     private final Pppo1000Service service;
-    private final MinioClient minioClient;
-
-    @Value("${storage.bucket}")
-    private String bucketName;
+    private final MinioStorageService minioStorageService;
 
     // -----------------------------
     // 저장 (1000 + 1100 같이 저장)
@@ -60,35 +48,58 @@ public class Pppo1000Controller {
         return ResponseEntity.ok(service.find(ordNo));
     }
 
+    // -----------------------------
+    // 사용자 이미지 업로드
+    // -----------------------------
     @PostMapping("/upload/image")
     public Map<String, String> upload(
             @RequestParam MultipartFile file
     ) throws Exception {
 
-        if (file == null || file.isEmpty()) {
-            throw new RuntimeException("이미지 파일이 없습니다.");
+
+        if (
+                file == null
+                        ||
+                        file.isEmpty()
+        ) {
+
+            throw new RuntimeException(
+                    "이미지 파일이 없습니다."
+            );
         }
 
+
+        /*
+         * 파일명
+         */
+
         String fileName =
-                UUID.randomUUID() + ".png";
+                UUID.randomUUID()
+                        + ".png";
+
+
+        /*
+         * MinIO Object 경로
+         */
 
         String objectName =
                 "userimage/" + fileName;
 
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .stream(
-                                file.getInputStream(),
-                                file.getSize(),
-                                (long) (10 * 1024 * 1024)
-                        )
-                        .contentType(
-                                file.getContentType()
-                        )
-                        .build()
+
+        /*
+         * MinIO 업로드
+         */
+
+        minioStorageService.upload(
+                objectName,
+                file.getBytes(),
+                file.getContentType()
         );
+
+
+        /*
+         * 외부 접근 URL
+         */
 
         return Map.of(
                 "url",

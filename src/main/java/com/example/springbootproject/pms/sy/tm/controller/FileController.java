@@ -1,9 +1,7 @@
 package com.example.springbootproject.pms.sy.tm.controller;
 
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
+import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -12,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -20,26 +19,20 @@ import java.nio.file.Paths;
 @RequiredArgsConstructor
 public class FileController {
 
-    private final MinioClient minioClient;
-
-    @Value("${storage.bucket}")
-    private String bucketName;
+    private final MinioStorageService minioStorageService;
 
 
     /**
      * 썸네일 조회
      *
      * 1. 기존 로컬 upload/thumb 확인
-     * 2. 없으면 MinIO에서 조회
+     * 2. 없으면 MinIO 조회
      */
     @GetMapping("/upload/thumb/{fileName}")
     public ResponseEntity<Resource> getThumbnail(
             @PathVariable String fileName
     ) throws Exception {
 
-        /*
-         * 1. 기존 로컬 파일 확인
-         */
         Path localPath =
                 Paths.get(
                         "upload",
@@ -47,12 +40,18 @@ public class FileController {
                         fileName
                 );
 
+
+        /*
+         * 기존 로컬 파일
+         */
+
         if (Files.exists(localPath)) {
 
             String contentType =
                     Files.probeContentType(localPath);
 
             if (contentType == null) {
+
                 contentType =
                         MediaType.APPLICATION_OCTET_STREAM_VALUE;
             }
@@ -74,32 +73,30 @@ public class FileController {
 
 
         /*
-         * 2. 로컬에 없으면 MinIO 조회
+         * MinIO
          */
-        InputStreamResource resource =
-                new InputStreamResource(
-                        minioClient.getObject(
-                                GetObjectArgs.builder()
-                                        .bucket(bucketName)
-                                        .object(
-                                                "thumb/"
-                                                        + fileName
-                                        )
-                                        .build()
-                        )
+
+        InputStream inputStream =
+                minioStorageService.getInputStream(
+                        "thumb/" + fileName
                 );
 
 
-        /*
-         * 3. 이미지 반환
-         */
         return ResponseEntity.ok()
                 .contentType(
                         MediaType.IMAGE_PNG
                 )
-                .body(resource);
+                .body(
+                        new InputStreamResource(
+                                inputStream
+                        )
+                );
     }
 
+
+    /**
+     * 폰트 조회
+     */
     @GetMapping("/upload/fonts/{fileName}")
     public ResponseEntity<Resource> getFont(
             @PathVariable String fileName
@@ -112,15 +109,18 @@ public class FileController {
                         fileName
                 );
 
+
         /*
-         * 1. 기존 로컬 파일 확인
+         * 기존 로컬 파일
          */
+
         if (Files.exists(localPath)) {
 
             String contentType =
                     Files.probeContentType(localPath);
 
             if (contentType == null) {
+
                 contentType =
                         "application/octet-stream";
             }
@@ -142,19 +142,12 @@ public class FileController {
 
 
         /*
-         * 2. 없으면 MinIO 조회
+         * MinIO
          */
-        InputStreamResource resource =
-                new InputStreamResource(
-                        minioClient.getObject(
-                                GetObjectArgs.builder()
-                                        .bucket(bucketName)
-                                        .object(
-                                                "fonts/"
-                                                        + fileName
-                                        )
-                                        .build()
-                        )
+
+        InputStream inputStream =
+                minioStorageService.getInputStream(
+                        "fonts/" + fileName
                 );
 
 
@@ -164,9 +157,17 @@ public class FileController {
                                 "font/ttf"
                         )
                 )
-                .body(resource);
+                .body(
+                        new InputStreamResource(
+                                inputStream
+                        )
+                );
     }
 
+
+    /**
+     * 사용자 이미지 조회
+     */
     @GetMapping("/upload/userimage/{fileName}")
     public ResponseEntity<Resource> getUserImage(
             @PathVariable String fileName
@@ -179,66 +180,18 @@ public class FileController {
                         fileName
                 );
 
-        // 기존 로컬 파일
+
+        /*
+         * 기존 로컬 파일
+         */
+
         if (Files.exists(localPath)) {
 
             String contentType =
                     Files.probeContentType(localPath);
 
             if (contentType == null) {
-                contentType =
-                        MediaType.APPLICATION_OCTET_STREAM_VALUE;
-            }
 
-            return ResponseEntity.ok()
-                    .contentType(
-                            MediaType.parseMediaType(contentType)
-                    )
-                    .body(
-                            new InputStreamResource(
-                                    Files.newInputStream(localPath)
-                            )
-                    );
-        }
-
-        // MinIO
-        InputStreamResource resource =
-                new InputStreamResource(
-                        minioClient.getObject(
-                                GetObjectArgs.builder()
-                                        .bucket(bucketName)
-                                        .object(
-                                                "userimage/"
-                                                        + fileName
-                                        )
-                                        .build()
-                        )
-                );
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG)
-                .body(resource);
-    }
-
-    @GetMapping("/upload/template/{fileName}")
-    public ResponseEntity<Resource> getTemplateImage(
-            @PathVariable String fileName
-    ) throws Exception {
-
-        Path localPath =
-                Paths.get(
-                        "upload",
-                        "template",
-                        fileName
-                );
-
-        // 기존 로컬 파일
-        if (Files.exists(localPath)) {
-
-            String contentType =
-                    Files.probeContentType(localPath);
-
-            if (contentType == null) {
                 contentType =
                         MediaType.APPLICATION_OCTET_STREAM_VALUE;
             }
@@ -258,25 +211,94 @@ public class FileController {
                     );
         }
 
-        // MinIO
-        InputStreamResource resource =
-                new InputStreamResource(
-                        minioClient.getObject(
-                                GetObjectArgs.builder()
-                                        .bucket(bucketName)
-                                        .object(
-                                                "template/"
-                                                        + fileName
-                                        )
-                                        .build()
-                        )
+
+        /*
+         * MinIO
+         */
+
+        InputStream inputStream =
+                minioStorageService.getInputStream(
+                        "userimage/" + fileName
                 );
+
 
         return ResponseEntity.ok()
                 .contentType(
                         MediaType.IMAGE_PNG
                 )
-                .body(resource);
+                .body(
+                        new InputStreamResource(
+                                inputStream
+                        )
+                );
     }
 
+
+    /**
+     * 템플릿 이미지 조회
+     */
+    @GetMapping("/upload/template/{fileName}")
+    public ResponseEntity<Resource> getTemplateImage(
+            @PathVariable String fileName
+    ) throws Exception {
+
+        Path localPath =
+                Paths.get(
+                        "upload",
+                        "template",
+                        fileName
+                );
+
+
+        /*
+         * 기존 로컬 파일
+         */
+
+        if (Files.exists(localPath)) {
+
+            String contentType =
+                    Files.probeContentType(localPath);
+
+            if (contentType == null) {
+
+                contentType =
+                        MediaType.APPLICATION_OCTET_STREAM_VALUE;
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(
+                            MediaType.parseMediaType(
+                                    contentType
+                            )
+                    )
+                    .body(
+                            new InputStreamResource(
+                                    Files.newInputStream(
+                                            localPath
+                                    )
+                            )
+                    );
+        }
+
+
+        /*
+         * MinIO
+         */
+
+        InputStream inputStream =
+                minioStorageService.getInputStream(
+                        "template/" + fileName
+                );
+
+
+        return ResponseEntity.ok()
+                .contentType(
+                        MediaType.IMAGE_PNG
+                )
+                .body(
+                        new InputStreamResource(
+                                inputStream
+                        )
+                );
+    }
 }

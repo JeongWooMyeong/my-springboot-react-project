@@ -8,11 +8,8 @@ import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
 import com.example.springbootproject.pms.pp.po.producer.PdfJobProducer;
 import com.example.springbootproject.pms.pp.po.service.PdfJobService;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
-import io.minio.GetObjectArgs;
-import io.minio.MinioClient;
+import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,8 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.util.Arrays;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -33,10 +29,7 @@ public class Pppo2000Controller {
     private final Pppo2000Service pppo2000Service;
     private final PdfJobService pdfJobService;
     private final PdfJobProducer pdfJobProducer;
-    private final MinioClient minioClient;
-
-    @Value("${storage.bucket}")
-    private String bucketName;
+    private final MinioStorageService minioStorageService;
 
     //신청 내역 리스트
     @GetMapping("/list")
@@ -212,14 +205,9 @@ public class Pppo2000Controller {
         /*
          * MinIO에서 파일 조회
          */
-        InputStreamResource resource =
-                new InputStreamResource(
-                        minioClient.getObject(
-                                GetObjectArgs.builder()
-                                        .bucket(bucketName)
-                                        .object(objectName)
-                                        .build()
-                        )
+        InputStream resource =
+                minioStorageService.getInputStream(
+                        objectName
                 );
 
 
@@ -258,7 +246,11 @@ public class Pppo2000Controller {
                                 "\""
                 )
                 .contentType(mediaType)
-                .body(resource);
+                .body(
+                        new InputStreamResource(
+                                resource
+                        )
+                );
 
     }
 

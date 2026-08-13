@@ -1,17 +1,14 @@
 package com.example.springbootproject.pms.sy.tm.service.impl;
 
+import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
 import com.example.springbootproject.pms.sy.tm.dto.Sytm3000Dto;
 import com.example.springbootproject.pms.sy.tm.service.Sytm3000Service;
 import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm3000Mapper;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 @Service
@@ -22,10 +19,7 @@ public class Sytm3000ServiceImpl
 
     private final Sytm3000Mapper sytm3000Mapper;
 
-    private final MinioClient minioClient;
-
-    @Value("${storage.bucket}")
-    private String bucketName;
+    private final MinioStorageService minioStorageService;
 
 
     @Override
@@ -40,71 +34,103 @@ public class Sytm3000ServiceImpl
             MultipartFile file
     ) throws Exception {
 
+
+        /*
+         * 파일 확인
+         */
+
         if (file == null || file.isEmpty()) {
-            throw new RuntimeException("폰트 파일이 없습니다.");
+
+            throw new RuntimeException(
+                    "폰트 파일이 없습니다."
+            );
         }
 
+
+        /*
+         * 파일명
+         */
 
         String filename =
                 file.getOriginalFilename();
 
 
-        if (filename == null || filename.isBlank()) {
-            throw new RuntimeException("파일명이 없습니다.");
+        if (
+                filename == null
+                        ||
+                        filename.isBlank()
+        ) {
+
+            throw new RuntimeException(
+                    "파일명이 없습니다."
+            );
         }
 
 
         /*
          * MinIO 저장 경로
          *
-         * springbootproject
+         * bucket
          * └── fonts
          *     └── font.ttf
          */
+
         String objectName =
                 "fonts/" + filename;
 
 
-        minioClient.putObject(
-                PutObjectArgs.builder()
-                        .bucket(bucketName)
-                        .object(objectName)
-                        .stream(
-                                file.getInputStream(),
-                                file.getSize(),
-                                (long) (10 * 1024 * 1024)
-                        )
-                        .contentType(
-                                file.getContentType()
-                        )
-                        .build()
+        /*
+         * MinIO 업로드
+         */
+
+        minioStorageService.upload(
+                objectName,
+                file.getBytes(),
+                file.getContentType()
         );
 
 
         /*
          * DB 정보 저장
          */
+
         Sytm3000Dto dto =
                 new Sytm3000Dto();
 
-        dto.setFontfilename(filename);
+
+        dto.setFontfilename(
+                filename
+        );
+
 
         dto.setFontfamily(
-                extractFontFamily(filename)
+                extractFontFamily(
+                        filename
+                )
         );
 
+
         dto.setFontfilepath(
-                "/upload/fonts/" + filename
+                "/fonts/" + filename
         );
+
 
         dto.setFontweight(400);
 
-        dto.setFontstyle("NORMAL");
 
-        dto.setRegid("SYSTEM");
+        dto.setFontstyle(
+                "NORMAL"
+        );
 
 
-        sytm3000Mapper.insertFont(dto);
+        dto.setRegid(
+                "SYSTEM"
+        );
+
+
+        sytm3000Mapper.insertFont(
+                dto
+        );
     }
 
 
@@ -113,7 +139,9 @@ public class Sytm3000ServiceImpl
             Integer fontid
     ) {
 
-        sytm3000Mapper.deleteFont(fontid);
+        sytm3000Mapper.deleteFont(
+                fontid
+        );
     }
 
 
@@ -125,5 +153,4 @@ public class Sytm3000ServiceImpl
                 .replace(".ttf", "")
                 .replace(".otf", "");
     }
-
 }
