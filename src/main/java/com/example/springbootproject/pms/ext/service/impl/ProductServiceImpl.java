@@ -26,7 +26,10 @@ public class ProductServiceImpl implements ProductService {
 
     // 전체 조회
     @Override
-    @Cacheable(value = "productList")
+    @Cacheable(
+            value = "productList",
+            key = "#page + ':' + #size"
+    )
     public ProductPageResponse getProducts(int page, int size) {
 
         // 잘못된 페이지 방지
@@ -101,7 +104,20 @@ public class ProductServiceImpl implements ProductService {
 
     // 수정
     @Override
-    @CacheEvict(value = "productList", allEntries = true)
+    @Caching(evict = {
+            @CacheEvict(
+                    value = "product",
+                    key = "#product.productId"
+            ),
+            @CacheEvict(
+                    value = "productList",
+                    allEntries = true
+            ),
+            @CacheEvict(
+                    value = "productByName",
+                    allEntries = true
+            )
+    })
     public void updateProduct(Product product) {
 
         productMapper.update(product);
