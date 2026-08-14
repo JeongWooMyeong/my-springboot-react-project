@@ -1,7 +1,10 @@
 package com.example.springbootproject.pms.ext.service.impl;
 
+import com.example.springbootproject.pms.ext.kafka.dto.FailedProductEvent;
 import com.example.springbootproject.pms.ext.kafka.dto.ProductEvent;
 import com.example.springbootproject.pms.ext.service.ProductDltService;
+import com.example.springbootproject.pms.ext.service.ProductSearchSyncService;
+import com.example.springbootproject.pms.ext.service.dao.oracle.FailedProductEventMapper;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,59 +12,89 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class ProductDltServiceImpl implements ProductDltService {
+public class ProductDltServiceImpl
+        implements ProductDltService {
 
-    private static final String PRODUCT_TOPIC =
-            "product-events";
-
-    private final KafkaTemplate<String, ProductEvent> kafkaTemplate;
-
-    private final Map<Long, ProductEvent> dltEvents =
-            new ConcurrentHashMap<>();
+    private final FailedProductEventMapper failedProductEventMapper;
+    private final ProductSearchSyncService productSearchSyncService;
 
     public ProductDltServiceImpl(
-            KafkaTemplate<String, ProductEvent> kafkaTemplate
+            FailedProductEventMapper failedProductEventMapper,
+            ProductSearchSyncService productSearchSyncService
     ) {
-        this.kafkaTemplate = kafkaTemplate;
+        this.failedProductEventMapper =
+                failedProductEventMapper;
+
+        this.productSearchSyncService =
+                productSearchSyncService;
     }
 
     @Override
     public void saveDltEvent(ProductEvent event) {
 
-        dltEvents.put(
-                event.getProductId(),
-                event
+        FailedProductEvent failedEvent =
+                new FailedProductEvent();
+
+        failedEvent.setEventType(
+                event.getEventType()
         );
 
+        failedEvent.setProductId(
+                event.getProductId()
+        );
+
+        failedEvent.setStatus("FAILED");
+        failedEvent.setErrorMessage(
+                "Kafka DLT 이동"
+        );
+
+
+        failedProductEventMapper.save(failedEvent);
+
         System.out.println(
-                "DLT 이벤트 저장 = productId: "
+                "DLT 이벤트 DB 저장 완료 = productId: "
                         + event.getProductId()
         );
     }
 
     @Override
-    public void retry(Long productId) {
+    public void retry(Long id) {
 
-        ProductEvent event =
-                dltEvents.get(productId);
+        FailedProductEvent event =
+                failedProductEventMapper.findById(id);
 
         if (event == null) {
             throw new RuntimeException(
-                    "재처리할 DLT 이벤트가 없습니다. productId="
-                            + productId
+                    "재처리할 이벤트가 없습니다. id=" + id
             );
         }
 
-        kafkaTemplate.send(
-                PRODUCT_TOPIC,
-                event
-        );
+        if ("RESOLVED".equals(event.getStatus())) {
+            throw new RuntimeException(
+                    "이미 처리된 이벤트입니다. id=" + id
+            );
+        }
 
-        dltEvents.remove(productId);
+        System.out.println("PRODUCTID" + event.getProductId());
+
+        if ("DELETE".equals(event.getEventType())) {
+
+            productSearchSyncService.delete(
+                    event.getProductId()
+            );
+
+        } else {
+
+            productSearchSyncService.sync(
+                    event.getProductId()
+            );
+        }
+
+        // ES 처리가 성공했을 때만 실행
+        failedProductEventMapper.resolve(id);
 
         System.out.println(
-                "DLT 재처리 요청 = productId: "
-                        + productId
+                "DLT 재처리 완료 = id: " + id
         );
     }
 }

@@ -3,6 +3,7 @@ package com.example.springbootproject.pms.ext.kafka.consumer;
 import com.example.springbootproject.pms.ext.dto.Product;
 import com.example.springbootproject.pms.ext.dto.ProductDocument;
 import com.example.springbootproject.pms.ext.kafka.dto.ProductEvent;
+import com.example.springbootproject.pms.ext.service.ProductSearchSyncService;
 import com.example.springbootproject.pms.ext.service.dao.oracle.ProductMapper;
 import com.example.springbootproject.pms.ext.service.repository.ProductSearchRepository;
 import org.springframework.kafka.annotation.DltHandler;
@@ -14,15 +15,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ProductEventConsumer {
 
-    private final ProductMapper productMapper;
-    private final ProductSearchRepository productSearchRepository;
+    private final ProductSearchSyncService productSearchSyncService;
 
     public ProductEventConsumer(
-            ProductMapper productMapper,
-            ProductSearchRepository productSearchRepository
+            ProductSearchSyncService productSearchSyncService
     ) {
-        this.productMapper = productMapper;
-        this.productSearchRepository = productSearchRepository;
+        this.productSearchSyncService =
+                productSearchSyncService;
     }
 
     @RetryableTopic(
@@ -39,55 +38,18 @@ public class ProductEventConsumer {
     )
     public void consume(ProductEvent event) {
 
-        System.out.println(
-                "Kafka 상품 이벤트 수신 = " + event
-        );
-
         if ("CREATE".equals(event.getEventType())
                 || "UPDATE".equals(event.getEventType())) {
 
-            Product product =
-                    productMapper.findById(
-                            event.getProductId()
-                    );
-
-            if (product == null) {
-                System.out.println(
-                        "상품을 찾을 수 없음 : "
-                                + event.getProductId()
-                );
-                return;
-            }
-
-            ProductDocument document =
-                    new ProductDocument(
-                            product.getProductId(),
-                            product.getProductName(),
-                            product.getPrice(),
-                            product.getStock()
-                    );
-            //RETRY 테스트
-//            if (product.getProductId().equals(1000004L)) {
-//                throw new RuntimeException("Retry 테스트");
-//            }
-
-            productSearchRepository.save(document);
-
-            System.out.println(
-                    "Elasticsearch 상품 저장 완료 = "
-                            + product.getProductId()
-            );
-        }
-
-        if ("DELETE".equals(event.getEventType())) {
-
-            productSearchRepository.deleteById(
+            productSearchSyncService.sync(
                     event.getProductId()
             );
 
-            return;
+        } else if ("DELETE".equals(event.getEventType())) {
+
+            productSearchSyncService.delete(
+                    event.getProductId()
+            );
         }
-
     }
-
 }
