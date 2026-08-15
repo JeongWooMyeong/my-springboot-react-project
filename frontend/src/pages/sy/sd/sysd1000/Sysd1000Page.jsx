@@ -13,7 +13,7 @@ import {
     deleteProduct,
 } from '../../../../services/sysd1000Api.js';
 
-import './SySd1000Page.css';
+import '../../../../css/sysd1000/Sysd1000Page.css';
 
 const SySd1000Page = () => {
     const [products, setProducts] = useState([]);
