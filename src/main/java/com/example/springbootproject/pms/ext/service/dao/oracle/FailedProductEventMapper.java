@@ -3,6 +3,8 @@ package com.example.springbootproject.pms.ext.service.dao.oracle;
 import com.example.springbootproject.pms.ext.kafka.dto.FailedProductEvent;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface FailedProductEventMapper {
     //DLT 이벤트를 DB에 저장
@@ -13,4 +15,6 @@ public interface FailedProductEventMapper {
     //    ↓
     //재처리 성공 후 FAILED → RESOLVED
     void resolve(Long id);
+
+    List<FailedProductEvent> findAll();
 }

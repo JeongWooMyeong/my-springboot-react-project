@@ -8,6 +8,7 @@ import com.example.springbootproject.pms.ext.service.dao.oracle.FailedProductEve
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -96,5 +97,10 @@ public class ProductDltServiceImpl
         System.out.println(
                 "DLT 재처리 완료 = id: " + id
         );
+    }
+
+    @Override
+    public List<FailedProductEvent> findAll() {
+        return failedProductEventMapper.findAll();
     }
 }

@@ -54,4 +54,21 @@
 
     </update>
 
+
+    <select id="findAll"
+            resultType="com.example.springbootproject.pms.ext.kafka.dto.FailedProductEvent">
+
+        SELECT
+        ID AS id,
+        EVENT_TYPE AS eventType,
+        PRODUCT_ID AS productId,
+        STATUS AS status,
+        ERROR_MESSAGE AS errorMessage,
+        CREATED_AT AS createdAt,
+        RESOLVED_AT AS resolvedAt
+        FROM FAILED_PRODUCT_EVENT
+        ORDER BY CREATED_AT DESC
+
+    </select>
+
 </mapper>

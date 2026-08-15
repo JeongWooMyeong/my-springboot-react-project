@@ -36,7 +36,7 @@ public class ProductSearchSyncServiceImpl
         }
 
         // ===== Retry / DLT 테스트 =====
-//        if (productId.equals(1000004L)) {
+//        if (productId.equals(1000005L)) {
 //            throw new RuntimeException(
 //                    "Retry 테스트 : productId=" + productId
 //            );
