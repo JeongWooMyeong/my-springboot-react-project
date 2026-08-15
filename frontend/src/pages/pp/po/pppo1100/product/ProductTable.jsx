@@ -7,72 +7,87 @@ export default function ProductTable({
                                      }) {
 
     return (
-        <table
-            style={{
-                width: "100%",
-                borderCollapse: "collapse"
-            }}
-        >
+        <div className="product-table-wrapper">
 
-            <thead>
-            <tr>
-                <th>
-                    <input
-                        type="checkbox"
-                        checked={allSelected}
-                        onChange={onToggleSelectAll}
-                    />
-                </th>
+            <table className="product-table">
 
-                <th>상품코드</th>
-                <th>상품명</th>
-                <th>가격</th>
-                <th>재고</th>
-            </tr>
-            </thead>
+                <thead>
+                <tr>
 
-            <tbody>
-
-            {results.map(product => (
-
-                <tr key={product.productId}>
-
-                    <td>
+                    <th className="checkbox-column">
                         <input
                             type="checkbox"
-                            checked={selected.some(
-                                p =>
-                                    p.productId ===
-                                    product.productId
-                            )}
-                            onChange={() =>
-                                onToggleSelect(product)
-                            }
+                            checked={allSelected}
+                            onChange={onToggleSelectAll}
                         />
-                    </td>
+                    </th>
 
-                    <td>
-                        {product.productId}
-                    </td>
+                    <th className="product-code-column">
+                        상품코드
+                    </th>
 
-                    <td>
-                        {product.productName}
-                    </td>
+                    <th className="product-name-column">
+                        상품명
+                    </th>
 
-                    <td>
-                        {product.price}
-                    </td>
+                    <th className="price-column">
+                        가격
+                    </th>
 
-                    <td>
-                        {product.stock}
-                    </td>
+                    <th className="stock-column">
+                        재고
+                    </th>
 
                 </tr>
+                </thead>
 
-            ))}
+                <tbody>
 
-            </tbody>
+                {results.map(product => (
 
-        </table>
+                    <tr key={product.productId}>
+
+                        <td className="checkbox-column">
+                            <input
+                                type="checkbox"
+                                checked={selected.some(
+                                    p =>
+                                        p.productId ===
+                                        product.productId
+                                )}
+                                onChange={() =>
+                                    onToggleSelect(product)
+                                }
+                            />
+                        </td>
+
+                        <td className="product-code-column">
+                            {product.productId}
+                        </td>
+
+                        <td
+                            className="product-name-column"
+                            title={product.productName}
+                        >
+                            {product.productName}
+                        </td>
+
+                        <td className="price-column">
+                            {product.price?.toLocaleString()}
+                        </td>
+
+                        <td className="stock-column">
+                            {product.stock?.toLocaleString()}
+                        </td>
+
+                    </tr>
+
+                ))}
+
+                </tbody>
+
+            </table>
+
+        </div>
     );
 }

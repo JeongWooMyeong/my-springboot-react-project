@@ -6,13 +6,7 @@ export default function ProductSearchInput({
                                            }) {
 
     return (
-        <div
-            style={{
-                marginBottom: 10,
-                display: "flex",
-                alignItems: "center"
-            }}
-        >
+        <div className="product-search-input">
 
             <input
                 value={query}
@@ -20,20 +14,26 @@ export default function ProductSearchInput({
                     onChange(e.target.value)
                 }
                 onKeyDown={e => {
-
                     if (e.key === "Enter") {
                         onSearch();
                     }
-
                 }}
                 placeholder="상품명 입력"
             />
 
-            <button onClick={onSearch}>
+            <button
+                type="button"
+                className="search-button"
+                onClick={onSearch}
+            >
                 검색
             </button>
 
-            <button onClick={onClose}>
+            <button
+                type="button"
+                className="close-button"
+                onClick={onClose}
+            >
                 닫기
             </button>
 

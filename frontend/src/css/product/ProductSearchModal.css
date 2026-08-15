@@ -1,130 +1,140 @@
-
-    /* ========================================
-       Modal Overlay
-    ======================================== */
+/* =========================
+   상품 검색 모달
+========================= */
 
 .product-search-modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    background: rgba(0, 0, 0, 0.5);
+    inset: 0;
+    z-index: 9999;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.45);
 }
 
 
-/* ========================================
+/* =========================
    Modal
-======================================== */
+========================= */
 
 .product-search-modal {
+    width: 900px;
+    max-width: calc(100vw - 40px);
+    max-height: 85vh;
+
+    padding: 24px;
+
     background: #fff;
+    border-radius: 6px;
 
-    padding: 20px;
-
-    border-radius: 8px;
-
-    width: 700px;
-    max-width: 90vw;
-
-    max-height: 80vh;
-
-    overflow-y: auto;
-
-    box-shadow:
-            0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 
     box-sizing: border-box;
+
+    overflow-y: auto;
 }
 
 
-/* ========================================
-   Title
-======================================== */
+/* 제목 */
 
-.product-search-modal__title {
-    margin: 0 0 15px 0;
+.product-search-modal h3 {
+    margin: 0 0 20px;
+
+    font-size: 20px;
+    font-weight: 600;
+
+    color: #222;
 }
 
 
-/* ========================================
-   Search Area
-======================================== */
+/* =========================
+   검색 영역
+========================= */
 
-.product-search-modal__search {
-    margin-bottom: 15px;
-
+.product-search-modal .product-search-input {
     display: flex;
     align-items: center;
     gap: 8px;
+
+    margin-bottom: 16px;
 }
 
 
-.product-search-modal__search-input {
-    padding: 7px 10px;
+/* 검색 Input */
 
-    width: 250px;
+.product-search-modal .product-search-input input {
+    flex: 1;
 
-    border: 1px solid #d9d9d9;
+    height: 38px;
+
+    padding: 0 12px;
+
+    border: 1px solid #ccc;
     border-radius: 4px;
 
+    font-size: 13px;
+
     outline: none;
+    box-sizing: border-box;
+}
+
+.product-search-modal .product-search-input input:focus {
+    border-color: #333;
+}
+
+
+/* 버튼 공통 */
+
+.product-search-modal button {
+    height: 36px;
+
+    padding: 0 14px;
+
+    border-radius: 4px;
+
+    font-size: 13px;
+
+    cursor: pointer;
 
     box-sizing: border-box;
 }
 
 
-.product-search-modal__search-input:focus {
-    border-color: #1677ff;
+/* 검색 버튼 */
+
+.product-search-modal .search-button {
+    border: 1px solid #333;
+
+    background: #333;
+    color: #fff;
+}
+
+.product-search-modal .search-button:hover {
+    background: #222;
 }
 
 
-.product-search-modal__search-button,
-.product-search-modal__close-button {
-    padding: 7px 12px;
+/* 닫기 버튼 */
 
-    border: 1px solid #d9d9d9;
-
-    border-radius: 4px;
+.product-search-modal .close-button {
+    border: 1px solid #ccc;
 
     background: #fff;
-
-    cursor: pointer;
+    color: #444;
 }
 
-
-.product-search-modal__search-button:hover,
-.product-search-modal__close-button:hover {
+.product-search-modal .close-button:hover {
     background: #f5f5f5;
 }
 
 
-/* ========================================
-   Empty Result
-======================================== */
+/* =========================
+   검색 결과
+========================= */
 
-.product-search-modal__empty {
-    padding: 20px;
-
-    text-align: center;
-
-    color: #666;
-}
-
-
-/* ========================================
-   Table
-======================================== */
-
-.product-search-table {
+.product-search-modal .product-table {
     width: 100%;
 
     border-collapse: collapse;
@@ -133,158 +143,376 @@
 }
 
 
-.product-search-table th,
-.product-search-table td {
-    border: 1px solid #ddd;
+/* 헤더 */
 
-    padding: 8px;
+.product-search-modal .product-table thead th {
+    height: 42px;
 
-    text-align: left;
+    background: #f5f6f8;
 
-    overflow: hidden;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ccc;
 
-    text-overflow: ellipsis;
+    color: #444;
 
-    white-space: nowrap;
-}
-
-
-.product-search-table th {
-    background: #f5f5f5;
-
+    font-size: 13px;
     font-weight: 600;
 
     text-align: center;
 }
 
 
-/* 체크박스 */
+/* 데이터 */
 
-.product-search-table th:first-child,
-.product-search-table td:first-child {
-    width: 45px;
+.product-search-modal .product-table tbody td {
+    height: 42px;
+
+    padding: 0 8px;
+
+    border-bottom: 1px solid #eee;
+
+    color: #444;
+
+    font-size: 13px;
 
     text-align: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
-/* 상품코드 */
+/* Hover */
 
-.product-search-table th:nth-child(2),
-.product-search-table td:nth-child(2) {
-    width: 90px;
+.product-search-modal .product-table tbody tr:hover {
+    background: #fafafa;
 }
 
 
-/* 상품명 */
+/* 체크박스 */
 
-.product-search-table th:nth-child(3),
-.product-search-table td:nth-child(3) {
-    width: auto;
-}
+.product-search-modal .product-table input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
 
-
-/* 가격 */
-
-.product-search-table th:nth-child(4),
-.product-search-table td:nth-child(4) {
-    width: 100px;
-
-    text-align: right;
-}
-
-
-/* 재고 */
-
-.product-search-table th:nth-child(5),
-.product-search-table td:nth-child(5) {
-    width: 80px;
-
-    text-align: right;
-}
-
-
-/* ========================================
-   Pagination
-======================================== */
-
-.product-search-pagination {
-    margin-top: 15px;
-
-    display: flex;
-
-    justify-content: center;
-
-    align-items: center;
-
-    gap: 10px;
-}
-
-
-.product-search-pagination__button {
-    min-width: 60px;
-
-    padding: 6px 10px;
-
-    border: 1px solid #d9d9d9;
-
-    border-radius: 4px;
-
-    background: #fff;
+    margin: 0;
 
     cursor: pointer;
 }
 
 
-.product-search-pagination__button:hover:not(:disabled) {
+/* =========================
+   Pagination
+========================= */
+
+.product-search-modal .product-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    padding: 18px 0;
+}
+
+
+/* 페이지 버튼 */
+
+.product-search-modal .product-pagination button {
+    min-width: 32px;
+    height: 32px;
+
+    padding: 0 8px;
+
+    border: 1px solid #ddd;
+
+    background: #fff;
+    color: #555;
+
+    font-size: 12px;
+}
+
+
+/* Hover */
+
+.product-search-modal .product-pagination button:hover:not(:disabled) {
     background: #f5f5f5;
 }
 
 
-.product-search-pagination__button:disabled {
-    color: #aaa;
+/* Disabled */
 
-    background: #f5f5f5;
+.product-search-modal .product-pagination button:disabled {
+    color: #bbb;
+    background: #f8f8f8;
 
     cursor: not-allowed;
 }
 
 
-.product-search-pagination__page {
-    min-width: 100px;
+/* =========================
+   하단 버튼 영역
+========================= */
+
+.product-search-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    margin-top: 10px;
+    padding-top: 16px;
+
+    border-top: 1px solid #eee;
+}
+
+
+/* 적용 */
+
+.product-search-modal .apply-button {
+    min-width: 70px;
+
+    border: 1px solid #333;
+
+    background: #333;
+    color: #fff;
+}
+
+.product-search-modal .apply-button:hover {
+    background: #222;
+}
+
+
+/* =========================
+   상품 테이블
+========================= */
+
+.product-search-modal .product-table-wrapper {
+    width: 100%;
+
+    max-height: 420px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
+
+/* 테이블 */
+
+.product-search-modal .product-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+}
+
+
+/* 헤더 */
+
+.product-search-modal .product-table thead {
+    position: sticky;
+    top: 0;
+
+    z-index: 1;
+}
+
+
+.product-search-modal .product-table th {
+    height: 42px;
+
+    background: #f5f6f8;
+
+    border-bottom: 1px solid #ccc;
+
+    color: #444;
+
+    font-size: 13px;
+    font-weight: 600;
 
     text-align: center;
+
+    white-space: nowrap;
 }
 
 
-/* ========================================
-   Footer
-======================================== */
+/* 데이터 */
 
-.product-search-modal__footer {
-    margin-top: 15px;
+.product-search-modal .product-table td {
+    height: 42px;
 
-    display: flex;
+    padding: 0 10px;
 
-    justify-content: flex-end;
+    border-bottom: 1px solid #eee;
+
+    color: #444;
+
+    font-size: 13px;
+
+    text-align: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 
-.product-search-modal__apply-button {
-    padding: 7px 14px;
+/* 마지막 행 */
 
-    border: none;
+.product-search-modal .product-table tbody tr:last-child td {
+    border-bottom: none;
+}
 
-    border-radius: 4px;
 
-    background: #52c41a;
+/* Hover */
 
-    color: #fff;
+.product-search-modal .product-table tbody tr:hover {
+    background: #fafafa;
+}
+
+
+/* =========================
+   컬럼 너비
+========================= */
+
+.product-search-modal .checkbox-column {
+    width: 50px;
+}
+
+.product-search-modal .product-code-column {
+    width: 120px;
+}
+
+.product-search-modal .product-name-column {
+    width: auto;
+
+    text-align: left !important;
+}
+
+.product-search-modal .price-column {
+    width: 120px;
+}
+
+.product-search-modal .stock-column {
+    width: 100px;
+}
+
+
+/* =========================
+   체크박스
+========================= */
+
+.product-search-modal .product-table input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+
+    margin: 0;
+
+    vertical-align: middle;
 
     cursor: pointer;
 }
 
 
-.product-search-modal__apply-button:hover {
-    background: #389e0d;
+/* 선택된 행 */
+
+.product-search-modal .product-table tbody tr:has(
+    input[type="checkbox"]:checked
+) {
+    background: #f0f6ff;
+}
+
+/* =========================
+   상품 검색 영역
+========================= */
+
+.product-search-modal .product-search-input {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    gap: 8px;
+
+    margin-bottom: 16px;
+}
+
+
+/* 검색 입력 */
+
+.product-search-modal .product-search-input input {
+    flex: 1;
+
+    width: 100%;
+    height: 38px;
+
+    padding: 0 12px;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    background: #fff;
+
+    color: #333;
+    font-size: 13px;
+
+    outline: none;
+
+    box-sizing: border-box;
+}
+
+.product-search-modal .product-search-input input::placeholder {
+    color: #aaa;
+}
+
+.product-search-modal .product-search-input input:focus {
+    border-color: #555;
+}
+
+
+/* 버튼 공통 */
+
+.product-search-modal .product-search-input button {
+    flex-shrink: 0;
+
+    height: 38px;
+
+    padding: 0 18px;
+
+    border-radius: 4px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+
+/* 검색 */
+
+.product-search-modal .product-search-input .search-button {
+    border: 1px solid #333;
+
+    background: #333;
+    color: #fff;
+}
+
+.product-search-modal .product-search-input .search-button:hover {
+    background: #222;
+}
+
+
+/* 닫기 */
+
+.product-search-modal .product-search-input .close-button {
+    border: 1px solid #ccc;
+
+    background: #fff;
+    color: #444;
+}
+
+.product-search-modal .product-search-input .close-button:hover {
+    background: #f5f5f5;
 }
