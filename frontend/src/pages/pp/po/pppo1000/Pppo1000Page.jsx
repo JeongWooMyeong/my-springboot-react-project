@@ -4,7 +4,7 @@ import CategorySelector from "./CategorySelector";
 import Pppo1000List from "./Pppo1000List";
 import Pppo1100Page from "../pppo1100/Pppo1100Page";
 
-import "../../../../css/pages/pp/pppo1000-page.css";
+import "../../../../css/pages/pp/pppo1000/pppo1000-page.css";
 
 
 export default function Pppo1000Page() {

@@ -18,7 +18,7 @@ import {
     useNotification
 } from "../../../../context/NotificationContext.jsx";
 
-import "../../../../css/pages/pp/pppo2000-page.css";
+import "../../../../css/pages/pp/pppo2000/pppo2000-page.css";
 
 
 export default function Pppo2000Page() {

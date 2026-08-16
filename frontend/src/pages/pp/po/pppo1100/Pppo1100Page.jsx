@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import DataForm from "./DataForm";
 import CanvasPreview from "./CanvasPreview";
-import "../../../../css/pages/pp/pppo1100-page.css";
+import "../../../../css/pages/pp/pppo1100/pppo1100-page.css";
 
 import {
     getTemplate,
