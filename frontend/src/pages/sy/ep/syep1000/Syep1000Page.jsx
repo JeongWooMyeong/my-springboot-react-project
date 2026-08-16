@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Select } from "antd";
-import "../../../../css/layout.css";
+import "../../../../css/pages/sy/syep1000/jijum-page.css";
 
 import { buildTree } from "./TreeUtils";
 import {
@@ -173,191 +173,104 @@ function Syep1000Page() {
 
 
     return (
+        <div className="jijum-page">
 
-        <div className="layout">
+            {/* 상단 영역 */}
+            <div className="jijum-header">
 
-            <div className="content">
-
-
-                <div
-                    className="tree-headers"
-                    style={{
-                        width:350,
-                        border:"1px solid #ddd",
-                        padding:"15px",
-                        borderRadius:"6px",
-                        marginBottom:"20px"
-                    }}
-                >
-
-                    <div className="header-title">
-                        지점 관리
-                    </div>
-
-
-
-                    <div
-                        className="company-select"
-                        style={{
-                            display:"flex",
-                            alignItems:"center",
-                            gap:"10px",
-                            marginTop:"10px"
-                        }}
-                    >
-
-                        <span>
-                            고객사 선택 :
-                        </span>
-
-
-
-                        <Select
-
-                            placeholder="고객사 선택"
-
-                            style={{
-                                width:180
-                            }}
-
-                            onChange={value => {
-
-                                setSelectedCoId(value);
-
-                                setSelectedJijumCd(null);
-
-                                setDetail(null);
-
-                            }}
-
-                        >
-
-                            {
-                                companies.map(c => (
-
-                                    <Select.Option
-                                        key={c.coid}
-                                        value={c.coid}
-                                    >
-                                        {c.coname}
-                                    </Select.Option>
-
-                                ))
-                            }
-
-                        </Select>
-
-
-
-                        <Button
-
-                            type="primary"
-
-                            disabled={!selectedCoId}
-
-                            onClick={() => {
-
-                                setDetail(null);
-
-                                setIsEditMode(false);
-
-                                setIsModalVisible(true);
-
-                            }}
-
-                        >
-                            등록
-                        </Button>
-
-
-                    </div>
-
-
+                <div className="header-title">
+                    지점 관리
                 </div>
 
+                <div className="company-select">
 
+                <span>
+                    고객사 선택 :
+                </span>
 
-                <div
-                    style={{
-                        display:"flex",
-                        gap:"20px",
-                        alignItems:"flex-start"
-                    }}
-                >
+                    <Select
+                        placeholder="고객사 선택"
+                        className="company-select-box"
+                        onChange={value => {
 
+                            setSelectedCoId(value);
+                            setSelectedJijumCd(null);
+                            setDetail(null);
 
-                    <JijumTree
+                        }}
+                    >
+                        {companies.map(c => (
+                            <Select.Option
+                                key={c.coid}
+                                value={c.coid}
+                            >
+                                {c.coname}
+                            </Select.Option>
+                        ))}
+                    </Select>
 
-                        treeData={treeData}
+                    <Button
+                        type="primary"
+                        disabled={!selectedCoId}
+                        onClick={() => {
 
-                        onSelect={onSelect}
-
-                    />
-
-
-
-                    <JijumDetail
-
-                        detail={detail}
-
-                        visibleColumns={visibleColumns}
-
-                        onEdit={() => {
-
-                            setIsEditMode(true);
-
+                            setDetail(null);
+                            setIsEditMode(false);
                             setIsModalVisible(true);
 
                         }}
-
-                        onDelete={handleDelete}
-
-                    />
-
+                    >
+                        등록
+                    </Button>
 
                 </div>
-
-
-
-                <JijumModal
-
-
-                    open={isModalVisible}
-
-
-                    onCancel={() => {
-
-                        setIsModalVisible(false);
-
-                    }}
-
-
-                    isEditMode={isEditMode}
-
-
-                    detail={detail}
-
-
-                    selectedJijumCd={selectedJijumCd}
-
-
-                    selectedCoId={selectedCoId}
-
-
-                    onFinish={
-                        isEditMode
-                            ? handleUpdate
-                            : handleCreate
-                    }
-
-                />
-
 
             </div>
 
 
-        </div>
+            {/* 지점 트리 + 상세 */}
+            <div className="jijum-workspace">
 
+                <JijumTree
+                    treeData={treeData}
+                    onSelect={onSelect}
+                />
+
+                <JijumDetail
+                    detail={detail}
+                    visibleColumns={visibleColumns}
+                    onEdit={() => {
+
+                        setIsEditMode(true);
+                        setIsModalVisible(true);
+
+                    }}
+                    onDelete={handleDelete}
+                />
+
+            </div>
+
+
+            <JijumModal
+                open={isModalVisible}
+
+                onCancel={() => {
+                    setIsModalVisible(false);
+                }}
+
+                isEditMode={isEditMode}
+                detail={detail}
+                selectedJijumCd={selectedJijumCd}
+                selectedCoId={selectedCoId}
+
+                onFinish={
+                    isEditMode
+                        ? handleUpdate
+                        : handleCreate
+                }
+            />
+
+        </div>
     );
 
 }

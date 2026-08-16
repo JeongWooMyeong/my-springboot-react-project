@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Search from "./Search.jsx";
 import Table from "./Table.jsx";
 import { findAll } from "../../../../services/sysd2000Api";
-import "../../../../css/sysd2000/Sysd2000Page.css";
+import "../../../../css/pages/sy/sysd2000/sysd2000-page.css";
 
 function Sysd2000Page() {
 

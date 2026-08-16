@@ -5,7 +5,8 @@ import RoleList from "./RoleList.jsx";
 import RoleMenuTree from "./RoleMenuTree.jsx";
 import PermissionTable from "./PermissionTable.jsx";
 import RoleModal from "./RoleModal.jsx";
-import "../../../../css/layout.css";
+
+import "../../../../css/pages/sy/sysm2000/sysm2000-page.css";
 
 import {
     getRoles,
@@ -20,9 +21,7 @@ import { buildTree } from "./utils.js";
 
 function Sysm2000Page() {
 
-
     const { routesFromDB } = useMenu();
-
 
     const [roles, setRoles] = useState([]);
     const [selectedRole, setSelectedRole] = useState(null);
@@ -38,9 +37,7 @@ function Sysm2000Page() {
     const [mode, setMode] = useState("create");
 
 
-
     const treeData = buildTree(routesFromDB);
-
 
 
     // Role 목록
@@ -62,14 +59,9 @@ function Sysm2000Page() {
     };
 
 
-
     useEffect(() => {
-
         fetchRoles();
-
     }, []);
-
-
 
 
     // 권한 조회
@@ -79,71 +71,50 @@ function Sysm2000Page() {
             return;
         }
 
-
         const loadPermissions = async () => {
 
-            const data =
-                await getPermissions(
-                    selectedRole.roleno,
-                    selectedMenu
-                );
-
+            const data = await getPermissions(
+                selectedRole.roleno,
+                selectedMenu
+            );
 
             const result = selectedMenu.map(menuCd => {
 
-                const item =
-                    data.find(
-                        x => x.menucd === menuCd
-                    );
-
+                const item = data.find(
+                    x => x.menucd === menuCd
+                );
 
                 return {
-
                     menucd: menuCd,
-
                     qryrole: item?.qryrole ?? "F",
                     saverole: item?.saverole ?? "F",
                     updrole: item?.updrole ?? "F",
                     delrole: item?.delrole ?? "F",
                     excelrole: item?.excelrole ?? "F",
                     etcrole: item?.etcrole ?? "F"
-
                 };
 
             });
-
 
             setPermissions(result);
             setOriginalPermissions(result);
 
         };
 
-
         loadPermissions();
 
-
-    }, [
-        selectedRole,
-        selectedMenu
-    ]);
-
-
-
+    }, [selectedRole, selectedMenu]);
 
 
     // 권한 저장
     const handleSave = async () => {
 
-
         if (!selectedRole) return;
 
-
-        const payload =
-            permissions.map(item => ({
-                roleno: selectedRole.roleno,
-                ...item
-            }));
-
+        const payload = permissions.map(item => ({
+            roleno: selectedRole.roleno,
+            ...item
+        }));
 
         try {
 
@@ -161,18 +132,12 @@ function Sysm2000Page() {
     };
 
 
-
-
-
-
     // Role 저장
-    const saveRole = async(values) => {
-
+    const saveRole = async (values) => {
 
         try {
 
-
-            if(mode === "create") {
+            if (mode === "create") {
 
                 await createRole(values);
 
@@ -185,13 +150,10 @@ function Sysm2000Page() {
 
             }
 
-
             fetchRoles();
             setIsModalOpen(false);
 
-
-        } catch(e) {
-
+        } catch (e) {
 
             console.error(e);
             alert("Role 저장 실패");
@@ -201,58 +163,72 @@ function Sysm2000Page() {
     };
 
 
-
-
-
     return (
 
-        <>
+        <div className="sysm2000-page">
 
+            {/* Role 목록 */}
+            <section className="role-section">
 
-            <RoleList
-                roles={roles}
-                selectedRole={selectedRole}
-                setSelectedRole={setSelectedRole}
-
-                selectedRoles={selectedRoles}
-                setSelectedRoles={setSelectedRoles}
-
-                setMode={setMode}
-                setIsModalOpen={setIsModalOpen}
-
-                fetchRoles={fetchRoles}
-            />
-
-
-
-            {
-                selectedRole &&
-                <RoleMenuTree
+                <RoleList
+                    roles={roles}
                     selectedRole={selectedRole}
-                    treeData={treeData}
-                    setSelectedMenu={setSelectedMenu}
+                    setSelectedRole={setSelectedRole}
+
+                    selectedRoles={selectedRoles}
+                    setSelectedRoles={setSelectedRoles}
+
+                    setMode={setMode}
+                    setIsModalOpen={setIsModalOpen}
+
+                    fetchRoles={fetchRoles}
                 />
+
+            </section>
+
+
+            {/* 메뉴 트리 */}
+            {
+                selectedRole && (
+
+                    <section className="role-section">
+
+                        <RoleMenuTree
+                            selectedRole={selectedRole}
+                            treeData={treeData}
+                            setSelectedMenu={setSelectedMenu}
+                        />
+
+                    </section>
+
+                )
             }
 
 
-
+            {/* 권한 테이블 */}
             {
                 selectedRole &&
-                selectedMenu.length > 0 &&
-                <PermissionTable
-                    selectedRole={selectedRole}
+                selectedMenu.length > 0 && (
 
-                    permissions={permissions}
-                    setPermissions={setPermissions}
+                    <section className="role-section permission-section">
 
-                    originalPermissions={
-                        originalPermissions
-                    }
+                        <PermissionTable
+                            selectedRole={selectedRole}
 
-                    handleSave={handleSave}
-                />
+                            permissions={permissions}
+                            setPermissions={setPermissions}
+
+                            originalPermissions={
+                                originalPermissions
+                            }
+
+                            handleSave={handleSave}
+                        />
+
+                    </section>
+
+                )
             }
-
 
 
             <RoleModal
@@ -267,7 +243,7 @@ function Sysm2000Page() {
                 }
             />
 
-        </>
+        </div>
 
     );
 

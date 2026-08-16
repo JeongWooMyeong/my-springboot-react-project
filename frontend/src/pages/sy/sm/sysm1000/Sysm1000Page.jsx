@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import "../../../../css/layout.css";
+import "../../../../css/pages/sy/sysm1000/menu-page.css";
+
 import { Button, Form } from "antd";
 import { useMenu } from "../../../../context/MenuContext";
 
@@ -43,19 +44,19 @@ function Sysm1000Page() {
     }, []);
 
 
-
     // 선택 메뉴 상세 조회
     useEffect(() => {
 
         if (selectedMenuCd) {
+
             getMenu(selectedMenuCd)
                 .then(data => {
                     setMenuDetail(data);
                 });
+
         }
 
     }, [selectedMenuCd]);
-
 
 
     // 트리 선택
@@ -66,7 +67,6 @@ function Sysm1000Page() {
         );
 
     };
-
 
 
     // 삭제
@@ -85,7 +85,6 @@ function Sysm1000Page() {
     };
 
 
-
     // 수정
     const handleUpdate = async (values) => {
 
@@ -94,20 +93,17 @@ function Sysm1000Page() {
             values
         );
 
-
         setMenuDetail(data);
 
         alert("수정 완료!");
 
         setIsModalVisible(false);
 
-
         await loadMenus();
 
         fetchMenus();
 
     };
-
 
 
     // 등록
@@ -119,13 +115,11 @@ function Sysm1000Page() {
 
         setIsModalVisible(false);
 
-
         await loadMenus();
 
         fetchMenus();
 
     };
-
 
 
     const columns = [
@@ -181,97 +175,76 @@ function Sysm1000Page() {
     ];
 
 
-
     return (
 
-        <div className="layout">
+        <div className="menu-page">
 
-            <div className="content">
+            {/* 상단 */}
+            <div className="tree-header">
 
+                <h2 className="section-title">
+                    메뉴관리
+                </h2>
 
-                <div className="tree-header">
+                <Button
+                    type="primary"
+                    onClick={() => {
 
-                    <h2 className="section-title">
-                        메뉴관리
-                    </h2>
+                        form.resetFields();
 
+                        setMenuDetail(null);
 
-                    <Button
-                        type="primary"
-                        onClick={() => {
+                        setIsEditMode(false);
 
-                            form.resetFields();
+                        setIsModalVisible(true);
 
-                            setMenuDetail(null);
-
-                            setIsEditMode(false);
-
-                            setIsModalVisible(true);
-
-                        }}
-                    >
-                        등록
-                    </Button>
-
-
-                </div>
-
-
-
-                <div
-                    className="tree-table-container"
-                    style={{
-                        display: "flex",
-                        gap: "20px",
-                        alignItems: "flex-start"
                     }}
                 >
-
-
-                    <MenuTree
-                        menuData={menuData}
-                        onSelect={onSelect}
-                    />
-
-
-
-                    <MenuDetail
-                        menuDetail={menuDetail}
-                        columns={columns}
-                        handleDelete={handleDelete}
-                        setIsEditMode={setIsEditMode}
-                        setIsModalVisible={setIsModalVisible}
-                    />
-
-
-                </div>
-
-
-
-
-                <MenuModal
-
-                    isModalVisible={isModalVisible}
-
-                    setIsModalVisible={setIsModalVisible}
-
-                    isEditMode={isEditMode}
-
-                    menuDetail={menuDetail}
-
-                    selectedMenuCd={selectedMenuCd}
-
-                    form={form}
-
-                    handleCreate={handleCreate}
-
-                    handleUpdate={handleUpdate}
-
-                />
-
-
+                    등록
+                </Button>
 
             </div>
+
+
+            {/* 메뉴 트리 + 상세 */}
+            <div className="menu-workspace">
+
+                <MenuTree
+                    menuData={menuData}
+                    onSelect={onSelect}
+                />
+
+                <MenuDetail
+                    menuDetail={menuDetail}
+                    columns={columns}
+                    handleDelete={handleDelete}
+                    setIsEditMode={setIsEditMode}
+                    setIsModalVisible={setIsModalVisible}
+                />
+
+            </div>
+
+
+            {/* 등록/수정 Modal */}
+            <MenuModal
+
+                isModalVisible={isModalVisible}
+
+                setIsModalVisible={setIsModalVisible}
+
+                isEditMode={isEditMode}
+
+                menuDetail={menuDetail}
+
+                selectedMenuCd={selectedMenuCd}
+
+                form={form}
+
+                handleCreate={handleCreate}
+
+                handleUpdate={handleUpdate}
+
+            />
 
         </div>
 

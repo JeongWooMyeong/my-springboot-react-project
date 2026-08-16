@@ -1,0 +1,65 @@
+.sytm1000-page {
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* PC */
+
+.sytm1000-workspace {
+    display: flex;
+
+    gap: 20px;
+
+    width: 100%;
+    min-width: 0;
+
+    align-items: flex-start;
+}
+
+
+/* 왼쪽 */
+
+.sytm1000-select-section {
+    flex: 1;
+    min-width: 0;
+}
+
+
+/* 오른쪽 */
+
+.sytm1000-tree-section {
+    flex: 2;
+    min-width: 0;
+}
+
+
+/* =========================
+   태블릿
+   ========================= */
+
+@media (max-width: 900px) {
+
+    .sytm1000-workspace {
+        gap: 12px;
+    }
+
+}
+
+
+/* =========================
+   모바일
+   ========================= */
+
+@media (max-width: 768px) {
+
+    .sytm1000-workspace {
+        flex-direction: column;
+    }
+
+    .sytm1000-select-section,
+    .sytm1000-tree-section {
+        width: 100%;
+    }
+
+}

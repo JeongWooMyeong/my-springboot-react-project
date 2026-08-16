@@ -1,0 +1,101 @@
+.jijum-page {
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* =========================
+   상단
+   ========================= */
+
+.jijum-header {
+    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 6px;
+
+    margin-bottom: 20px;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+
+/* 고객사 선택 */
+
+.company-select {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-top: 10px;
+
+    flex-wrap: wrap;
+}
+
+.company-select-box {
+    width: 180px;
+}
+
+
+/* =========================
+   트리 + 상세
+   ========================= */
+
+.jijum-workspace {
+    display: flex;
+
+    gap: 20px;
+
+    width: 100%;
+    min-width: 0;
+
+    align-items: flex-start;
+}
+
+.jijum-workspace > * {
+    min-width: 0;
+}
+
+
+/* =========================
+   화면 축소
+   ========================= */
+
+@media (max-width: 768px) {
+
+    .jijum-workspace {
+        flex-direction: column;
+    }
+
+    .jijum-workspace > * {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================
+   작은 화면
+   ========================= */
+
+@media (max-width: 480px) {
+
+    .jijum-header {
+        padding: 12px;
+    }
+
+    .company-select {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .company-select-box {
+        width: 100%;
+    }
+
+}

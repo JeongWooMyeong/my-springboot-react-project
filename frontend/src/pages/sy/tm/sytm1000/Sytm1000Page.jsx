@@ -10,6 +10,9 @@ import Sytm1000Modal from "./Sytm1000Modal.jsx";
 import useSytm1000 from "./useSytm1000.js";
 import LoadingOverlay from "../../../components/Loading/LoadingOverlay.jsx";
 
+import "../../../../css/pages/sy/sytm1000/sytm1000-page.css";
+
+
 export default function Sytm1000Page() {
 
     const [form] = Form.useForm();
@@ -69,31 +72,26 @@ export default function Sytm1000Page() {
 
 
     return (
-        <>
+        <div className="sytm1000-page">
+
             <LoadingOverlay
                 open={loading}
                 text="하위 지점 저장중..."
             />
 
 
-            <div
-                style={{
-                    display:"flex",
-                    gap:"20px"
-                }}
-            >
+            <div className="sytm1000-workspace">
 
-                {/* 지점 선택 */}
-                <div
-                    style={{
-                        flex:1
-                    }}
-                >
+                {/* =========================
+                    왼쪽 - 지점 선택
+                   ========================= */}
+
+                <section className="sytm1000-select-section">
 
                     <Form
                         form={form}
                         initialValues={{
-                            jijumcd:""
+                            jijumcd: ""
                         }}
                     >
 
@@ -103,16 +101,14 @@ export default function Sytm1000Page() {
 
                     </Form>
 
-                </div>
+                </section>
 
 
+                {/* =========================
+                    오른쪽 - 템플릿 분류
+                   ========================= */}
 
-                {/* 오른쪽 */}
-                <div
-                    style={{
-                        flex:2
-                    }}
-                >
+                <section className="sytm1000-tree-section">
 
                     <h2>
                         템플릿 분류 트리
@@ -187,11 +183,10 @@ export default function Sytm1000Page() {
 
                     />
 
-                </div>
+                </section>
 
             </div>
 
-        </>
+        </div>
     );
-
 }

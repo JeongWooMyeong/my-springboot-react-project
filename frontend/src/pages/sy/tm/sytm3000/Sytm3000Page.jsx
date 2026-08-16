@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 
 import FontUpload from "./FontUpload.jsx";
 import FontList from "./FontList.jsx";
@@ -9,37 +9,35 @@ import {
     deleteFont
 } from "../../../../services/sytm3000Api";
 
-
-export default function Sytm3000Page(){
-
-    const [fonts,setFonts] = useState([]);
-
-    const [selectedFont,setSelectedFont] = useState(null);
+import "../../../../css/pages/sy/sytm3000/sytm3000-page.css";
 
 
+export default function Sytm3000Page() {
 
-    useEffect(()=>{
+    const [fonts, setFonts] = useState([]);
+
+    const [selectedFont, setSelectedFont] = useState(null);
+
+
+    useEffect(() => {
 
         loadFonts();
 
-    },[]);
+    }, []);
 
 
+    const loadFonts = async () => {
 
-    const loadFonts = async()=>{
-
-        const data =
-            await getFontList();
+        const data = await getFontList();
 
         setFonts(data);
 
     };
 
 
+    const handleDelete = async (fontId) => {
 
-    const handleDelete = async(fontId)=>{
-
-        if(!confirm("삭제하시겠습니까?")){
+        if (!confirm("삭제하시겠습니까?")) {
             return;
         }
 
@@ -47,60 +45,72 @@ export default function Sytm3000Page(){
         await deleteFont(fontId);
 
 
-        if(
-            selectedFont?.fontId === fontId
-        ){
+        if (selectedFont?.fontId === fontId) {
             setSelectedFont(null);
         }
 
 
-        loadFonts();
+        await loadFonts();
 
     };
 
 
-
     return (
 
-        <div
-            style={{
-                padding:20
-            }}
-        >
+        <div className="sytm3000-page">
 
-            <h2>
+            <h2 className="sytm3000-title">
                 폰트 관리
             </h2>
 
 
-            <FontUpload
-                reload={loadFonts}
-            />
+            {/* 폰트 업로드 */}
+
+            <section className="sytm3000-section">
+
+                <FontUpload
+                    reload={loadFonts}
+                />
+
+            </section>
 
 
-            <hr/>
+            <div className="sytm3000-divider" />
 
 
-            <FontList
-                fonts={fonts}
-                onSelect={setSelectedFont}
-                onDelete={handleDelete}
-            />
+            {/* 폰트 목록 */}
+
+            <section className="sytm3000-section">
+
+                <FontList
+                    fonts={fonts}
+                    onSelect={setSelectedFont}
+                    onDelete={handleDelete}
+                />
+
+            </section>
 
 
-            <hr/>
+            <div className="sytm3000-divider" />
 
+
+            {/* 폰트 미리보기 */}
 
             {
-                selectedFont &&
-                <FontPreview
-                    font={selectedFont}
-                />
-            }
+                selectedFont && (
 
+                    <section className="sytm3000-preview">
+
+                        <FontPreview
+                            font={selectedFont}
+                        />
+
+                    </section>
+
+                )
+            }
 
         </div>
 
     );
-
 }

@@ -1,0 +1,87 @@
+/* =========================
+   메뉴관리 페이지
+   ========================= */
+
+.menu-page {
+    width: 100%;
+    min-width: 0;
+}
+
+
+/* 상단 제목 + 등록 버튼 */
+
+.tree-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+
+/* 메뉴 트리 + 상세 */
+
+.menu-workspace {
+    display: flex;
+
+    gap: 20px;
+
+    width: 100%;
+    min-width: 0;
+
+    align-items: flex-start;
+}
+
+
+/*
+ * MenuTree / MenuDetail이
+ * 부모보다 커져서 화면 밖으로
+ * 튀어나가지 않도록
+ */
+.menu-workspace > * {
+    min-width: 0;
+}
+
+
+/* =========================
+   태블릿
+   ========================= */
+
+@media (max-width: 1000px) {
+
+    .menu-workspace {
+        gap: 12px;
+    }
+
+}
+
+
+/* =========================
+   모바일
+   ========================= */
+
+@media (max-width: 768px) {
+
+    .menu-workspace {
+        flex-direction: column;
+    }
+
+    .menu-workspace > * {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================
+   작은 모바일
+   ========================= */
+
+@media (max-width: 480px) {
+
+    .tree-header {
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+}

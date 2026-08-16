@@ -1,274 +1,140 @@
 import React from "react";
 
+import Sytm2000Tree from "./Sytm2000Tree.jsx";
+import Sytm2000List from "./Sytm2000List.jsx";
+import Sytm2000Modal from "./Sytm2000Modal.jsx";
 
-import Sytm2000Tree
-    from "./Sytm2000Tree.jsx";
+import useSytm2000 from "./useSytm2000.js";
 
-
-import Sytm2000List
-    from "./Sytm2000List.jsx";
-
-
-import Sytm2000Modal
-    from "./Sytm2000Modal.jsx";
+import "../../../../css/pages/sy/sytm2000/sytm2000-page.css";
 
 
-import useSytm2000
-    from "./useSytm2000.js";
-
-
-
-export default function Sytm2000Page(){
-
+export default function Sytm2000Page() {
 
     const {
 
-
         treeData,
-
 
         selectedKeys,
         setSelectedKeys,
 
-
         templates,
-
 
         currentTemplates,
 
-
         selectedTemplates,
-
 
         handleCheck,
 
-
         handleDelete,
-
 
         handleAdd,
 
-
         handleEdit,
 
-
-
         currentPage,
-
         setCurrentPage,
 
-
         pageSize,
-
 
         isEditorOpen,
 
         editingTemplate,
 
-
         handleEditorClose,
 
-
         handleEditorSave
-
-
 
     } = useSytm2000();
 
 
-
-
-
     return (
 
+        <div className="sytm2000-page">
 
-        <div
-
-            style={{
-
-                display:"flex"
-
-            }}
-
-        >
+            <div className="sytm2000-workspace">
 
 
+                {/* =========================
+                    분류 트리
+                   ========================= */}
 
+                <section className="sytm2000-tree-section">
 
+                    <h3>
+                        템플릿 분류
+                    </h3>
 
-            {/* 분류 트리 */}
+                    <Sytm2000Tree
 
-            <div
+                        treeData={treeData}
 
-                style={{
+                        selectedKeys={selectedKeys}
 
-                    width:"300px",
+                        onSelect={setSelectedKeys}
 
-                    borderRight:
-                        "1px solid #ddd",
+                    />
 
-                    padding:"10px"
-
-                }}
-
-            >
-
-
-                <h3>
-
-                    템플릿 분류
-
-                </h3>
+                </section>
 
 
 
+                {/* =========================
+                    템플릿 리스트
+                   ========================= */}
 
-                <Sytm2000Tree
+                <section className="sytm2000-list-section">
 
+                    <Sytm2000List
 
-                    treeData={
-                        treeData
-                    }
+                        templates={templates}
 
+                        currentTemplates={currentTemplates}
 
-                    selectedKeys={
-                        selectedKeys
-                    }
+                        selectedTemplates={selectedTemplates}
 
+                        handleCheck={handleCheck}
 
-                    onSelect={
-                        setSelectedKeys
-                    }
+                        handleDelete={handleDelete}
 
+                        handleEdit={handleEdit}
 
+                        handleAdd={handleAdd}
 
-                />
+                        currentPage={currentPage}
+
+                        setCurrentPage={setCurrentPage}
+
+                        pageSize={pageSize}
+
+                    />
+
+                </section>
 
 
             </div>
 
 
 
-
-
-
-
-            {/* 템플릿 리스트 */}
-
-
-
-            {
-                    <Sytm2000List
-
-
-                        templates={
-                            templates
-                        }
-
-
-                        currentTemplates={
-                            currentTemplates
-                        }
-
-
-                        selectedTemplates={
-                            selectedTemplates
-                        }
-
-
-                        handleCheck={
-                            handleCheck
-                        }
-
-
-                        handleDelete={
-                            handleDelete
-                        }
-
-
-                        handleEdit={
-                            handleEdit
-                        }
-
-
-                        handleAdd={
-                            handleAdd
-                        }
-
-
-                        currentPage={
-                            currentPage
-                        }
-
-
-                        setCurrentPage={
-                            setCurrentPage
-                        }
-
-
-                        pageSize={
-                            pageSize
-                        }
-
-
-                    />
-            }
-
-
-
-
-
-
-
-
-            {/* 템플릿 에디터 모달 */}
-
-
+            {/* =========================
+                템플릿 에디터
+               ========================= */}
 
             <Sytm2000Modal
 
+                open={isEditorOpen}
 
-                open={
-                    isEditorOpen
-                }
+                onCancel={handleEditorClose}
 
+                editingTemplate={editingTemplate}
 
+                clcd={selectedKeys[0]}
 
-                onCancel={
-                    handleEditorClose
-                }
-
-
-
-                editingTemplate={
-                    editingTemplate
-                }
-
-
-
-                clcd={
-
-                    selectedKeys[0]
-
-                }
-
-
-
-                onSave={
-                    handleEditorSave
-                }
-
-
+                onSave={handleEditorSave}
 
             />
 
-
-
-
         </div>
 
-
     );
-
-
 }

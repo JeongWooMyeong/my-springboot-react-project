@@ -1,0 +1,28 @@
+/* =========================
+   관리자 전체 Layout
+   ========================= */
+
+.admin-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-layout-body {
+    flex: 1;
+
+    display: flex;
+    flex-wrap: nowrap;
+
+    padding-top: 64px;
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-content {
+    flex: 1;
+    min-width: 0;
+
+    padding: 24px;
+    box-sizing: border-box;
+}
