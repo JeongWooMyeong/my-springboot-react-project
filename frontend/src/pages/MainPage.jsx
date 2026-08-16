@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import "../css/pages/main.css";
+import "../css/pages/main/main-page.css";
 import {selectMainNoticeList} from "../services/sybs1000Api";
 
 

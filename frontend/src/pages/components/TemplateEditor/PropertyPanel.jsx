@@ -1,4 +1,4 @@
-import "../../../css/component.css";
+import "../../../css/template/editor/template-editor.css";
 
 export default function PropertyPanel({
                                           selectedElement,

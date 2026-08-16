@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import "../css/pages/login.css";
+import "../css/pages/login/login-page.css";
 import { useTranslation } from "react-i18next";
 
 function LoginPage() {
