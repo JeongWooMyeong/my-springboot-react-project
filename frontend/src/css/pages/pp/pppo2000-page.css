@@ -1,0 +1,117 @@
+/* 전체 페이지 */
+.pop-request-page {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+
+/* ================================
+   검색 영역
+================================ */
+
+.pop-request-filter {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+
+/* ================================
+   목록 + 상세
+================================ */
+
+.pop-request-content {
+    width: 100%;
+    min-width: 0;
+
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
+
+    gap: 20px;
+
+    align-items: stretch;
+}
+
+
+/* ================================
+   신청 목록
+================================ */
+
+.pop-request-list {
+    min-width: 0;
+    width: 100%;
+
+    box-sizing: border-box;
+
+    overflow-x: auto;
+}
+
+
+/* ================================
+   상세 / 미리보기
+================================ */
+
+.pop-request-detail {
+    min-width: 0;
+    width: 100%;
+
+    box-sizing: border-box;
+
+    /*
+     * 상세 영역 자체가 화면 높이를
+     * 전부 먹지 않도록 제한
+     */
+    max-height: calc(100vh - 180px);
+
+    overflow: auto;
+
+    border: 1px solid #ddd;
+    border-radius: 8px;
+
+    background: #fff;
+}
+
+
+/* ================================
+   화면이 작아지면
+   목록
+   ↓
+   상세
+   형태로 변경
+================================ */
+
+@media (max-width: 1000px) {
+
+    .pop-request-content {
+        grid-template-columns: 1fr;
+    }
+
+
+    .pop-request-detail {
+        max-height: 700px;
+    }
+
+}
+
+
+/* ================================
+   모바일
+================================ */
+
+@media (max-width: 600px) {
+
+    .pop-request-page {
+        padding: 0;
+    }
+
+
+    .pop-request-content {
+        gap: 12px;
+    }
+
+
+    .pop-request-detail {
+        max-height: 600px;
+    }
+
+}

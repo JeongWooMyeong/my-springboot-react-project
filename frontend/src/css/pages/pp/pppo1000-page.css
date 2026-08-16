@@ -1,0 +1,81 @@
+.pppo1000-page {
+    width: 100%;
+    max-width: 1600px;
+
+    margin: 0 auto;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   분류 영역
+========================= */
+
+.pppo1000-category {
+    width: 100%;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================
+   템플릿 영역
+========================= */
+
+.pppo1000-content {
+    width: 100%;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    min-width: 0;
+
+    background: #fff;
+}
+
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 1024px) {
+
+    .pppo1000-page {
+        padding: 15px;
+    }
+
+    .pppo1000-content {
+        padding: 15px;
+    }
+
+}
+
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 768px) {
+
+    .pppo1000-page {
+        padding: 10px;
+    }
+
+    .pppo1000-content {
+        padding: 10px;
+
+        /*
+         * 내부 컴포넌트가 화면을
+         * 강제로 넓히지 못하도록
+         */
+        overflow-x: auto;
+    }
+
+}

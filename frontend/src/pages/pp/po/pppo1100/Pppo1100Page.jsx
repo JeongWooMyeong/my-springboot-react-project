@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import DataForm from "./DataForm";
 import CanvasPreview from "./CanvasPreview";
+import "../../../../css/pages/pp/pppo1100-page.css";
 
 import {
     getTemplate,
@@ -308,40 +309,38 @@ export default function Pppo1100Page({ templateid, onBack }) {
     };
 
     return (
+        <div className="pop-editor">
 
-        <div
-            style={{
-                display: "flex",
-                height: "100%"
-            }}
-        >
+            {/* 왼쪽 상품 데이터 입력 */}
+            <section className="pop-editor-form">
+                <DataForm
+                    templateData={templateData}
+                    productData={productData}
 
-            <DataForm
-                templateData={templateData}
-                productData={productData}
+                    productList={productList}
+                    setProductList={setProductList}
 
-                productList={productList}
-                setProductList={setProductList}   // 추가
-                currentIndex={currentIndex}
-                setCurrentIndex={setCurrentIndex}
+                    currentIndex={currentIndex}
+                    setCurrentIndex={setCurrentIndex}
 
-                handleAddProduct={handleAddProduct}
-                handleDeleteProduct={handleDeleteProduct}
+                    handleAddProduct={handleAddProduct}
+                    handleDeleteProduct={handleDeleteProduct}
 
-                handleChange={handleChange}
-                handleImageUpload={handleImageUpload}
-                handleExcelUpload={handleExcelUpload}
-                handleExcelTemplateDownload={handleExcelTemplateDownload}
-                saveData={handleSave}
-                setFocusField={setFocusField}
-                onBack={onBack}
-            />
+                    handleChange={handleChange}
+                    handleImageUpload={handleImageUpload}
+                    handleExcelUpload={handleExcelUpload}
+                    handleExcelTemplateDownload={handleExcelTemplateDownload}
 
-            <div
-                style={{
-                    padding: 20
-                }}
-            >
+                    saveData={handleSave}
+
+                    setFocusField={setFocusField}
+                    onBack={onBack}
+                />
+            </section>
+
+
+            {/* 오른쪽 미리보기 */}
+            <section className="pop-editor-preview">
 
                 <CanvasPreview
                     key={fontReady ? "ready" : "loading"}
@@ -351,10 +350,9 @@ export default function Pppo1100Page({ templateid, onBack }) {
                     setFocusField={setFocusField}
                 />
 
-            </div>
+            </section>
 
         </div>
-
     );
 
 }

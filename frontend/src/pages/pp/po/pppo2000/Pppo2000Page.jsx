@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Form } from "antd";
+
 import Pppo2000Filter from "./Pppo2000Filter.jsx";
 import Pppo2000List from "./Pppo2000List.jsx";
 import Pppo2000Detail from "./Pppo2000Detail.jsx";
+
 import {
     searchRequests,
     getRequestDetail,
@@ -16,58 +18,112 @@ import {
     useNotification
 } from "../../../../context/NotificationContext.jsx";
 
+import "../../../../css/pages/pp/pppo2000-page.css";
+
+
 export default function Pppo2000Page() {
+
     const [form] = Form.useForm();
+
     const [selectedDetail, setSelectedDetail] = useState(null);
     const [selectedOrdnos, setSelectedOrdnos] = useState([]);
     const [status, setStatus] = useState("");
     const [requestList, setRequestList] = useState([]);
 
-    const {
-        showMessage
-    } = useNotification();
+    const { showMessage } = useNotification();
+
 
     const handleSearch = async () => {
-        const jijumcd = form.getFieldValue("jijumcd");
-        const data = await searchRequests(jijumcd, status);
+
+        const jijumcd =
+            form.getFieldValue("jijumcd");
+
+        const data =
+            await searchRequests(
+                jijumcd,
+                status
+            );
+
         setRequestList(data);
     };
 
+
     const handleSelect = async (req) => {
-        const detail = await getRequestDetail(req.ordno);
+
+        const detail =
+            await getRequestDetail(
+                req.ordno
+            );
+
         setSelectedDetail(detail);
     };
 
-    const handleCheckboxChange = (ordno, checked) => {
+
+    const handleCheckboxChange = (
+        ordno,
+        checked
+    ) => {
+
         setSelectedOrdnos(prev =>
-            checked ? [...prev, ordno] : prev.filter(o => o !== ordno)
+            checked
+                ? [...prev, ordno]
+                : prev.filter(o => o !== ordno)
         );
     };
 
+
     const handleApprove = async () => {
+
         if (selectedOrdnos.length === 0) {
-            alert("선택된 신청내역이 없습니다.");
+
+            alert(
+                "선택된 신청내역이 없습니다."
+            );
+
             return;
         }
-        await updateRequests(selectedOrdnos, 20);
-        setSelectedOrdnos([]);   // 체크 해제
+
+        await updateRequests(
+            selectedOrdnos,
+            20
+        );
+
+        setSelectedOrdnos([]);
+
         await handleSearch();
     };
 
+
     const handleReject = async () => {
+
         if (selectedOrdnos.length === 0) {
-            alert("선택된 신청내역이 없습니다.");
+
+            alert(
+                "선택된 신청내역이 없습니다."
+            );
+
             return;
         }
-        await updateRequests(selectedOrdnos, 50);
-        setSelectedOrdnos([]);   // 체크 해제
+
+        await updateRequests(
+            selectedOrdnos,
+            50
+        );
+
+        setSelectedOrdnos([]);
+
         await handleSearch();
     };
+
 
     const handlePdf = async () => {
 
         if (selectedOrdnos.length === 0) {
-            alert("선택된 신청내역이 없습니다.");
+
+            alert(
+                "선택된 신청내역이 없습니다."
+            );
+
             return;
         }
 
@@ -77,7 +133,6 @@ export default function Pppo2000Page() {
             let response;
 
 
-            // 단건
             if (selectedOrdnos.length === 1) {
 
                 response =
@@ -85,33 +140,23 @@ export default function Pppo2000Page() {
                         selectedOrdnos[0]
                     );
 
-            }
-            // 다건
-            else {
+            } else {
 
                 response =
                     await requestPdfBulk(
                         selectedOrdnos
                     );
-
             }
-
 
 
             const jobid =
                 response.data.jobid;
 
 
-
-            // 생성 요청 알림
-
             showMessage(
                 "PDF 생성 요청되었습니다."
             );
 
-
-
-            // SSE 연결
 
             subscribePdf(
                 jobid,
@@ -119,20 +164,43 @@ export default function Pppo2000Page() {
             );
 
 
+        } catch (e) {
 
-        } catch(e) {
-
-            alert("PDF 생성 요청 실패");
+            alert(
+                "PDF 생성 요청 실패"
+            );
 
         }
 
     };
 
+
     return (
-        <div>
-            <Pppo2000Filter form={form} status={status} setStatus={setStatus} onSearch={handleSearch} />
-            <div style={{ display: "flex", gap: 20 }}>
-                <div style={{ flex: 1.5 }}>
+
+        <div className="pop-request-page">
+
+            {/* 검색 조건 */}
+
+            <section className="pop-request-filter">
+
+                <Pppo2000Filter
+                    form={form}
+                    status={status}
+                    setStatus={setStatus}
+                    onSearch={handleSearch}
+                />
+
+            </section>
+
+
+            {/* 목록 + 상세 */}
+
+            <div className="pop-request-content">
+
+                {/* 신청 목록 */}
+
+                <section className="pop-request-list">
+
                     <Pppo2000List
                         data={requestList}
                         onSelect={handleSelect}
@@ -142,14 +210,24 @@ export default function Pppo2000Page() {
                         onPdf={handlePdf}
                         selectedOrdnos={selectedOrdnos}
                     />
-                </div>
-                <div style={{ flex: 1, minHeight: 700 }}>
+
+                </section>
+
+
+                {/* 상세 */}
+
+                <section className="pop-request-detail">
+
                     <Pppo2000Detail
                         key={selectedDetail?.ordno}
                         detail={selectedDetail}
                     />
-                </div>
+
+                </section>
+
             </div>
+
         </div>
+
     );
 }

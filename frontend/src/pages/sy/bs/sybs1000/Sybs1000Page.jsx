@@ -5,7 +5,7 @@ import Sybs1000Write from "./Sybs1000Write.jsx";
 import Sybs1000Detail from "./Sybs1000Detail.jsx";
 import Sybs1000List from "./Sybs1000List.jsx";
 import Sybs1000Update from "./Sybs1000Update.jsx";
-import "../../../../css/pages/sybs1000.css";
+import "../../../../css/pages/sy/sybs1000/sybs1000-page.css";
 
 
 function Sybs1000Page(){
