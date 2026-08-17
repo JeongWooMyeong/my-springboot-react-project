@@ -1,6 +1,6 @@
 package com.example.springbootproject.pms.pp.po.controller;
 
-import com.example.springbootproject.pms.pp.po.service.PdfNotifyService;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfNotifyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

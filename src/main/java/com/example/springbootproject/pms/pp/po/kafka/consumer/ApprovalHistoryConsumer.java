@@ -1,7 +1,7 @@
-package com.example.springbootproject.pms.pp.po.consumer;
+package com.example.springbootproject.pms.pp.po.kafka.consumer;
 
-import com.example.springbootproject.pms.pp.po.event.ApprovalHistoryEvent;
-import com.example.springbootproject.pms.pp.po.service.ApprovalHistoryService;
+import com.example.springbootproject.pms.pp.po.kafka.event.ApprovalHistoryEvent;
+import com.example.springbootproject.pms.pp.po.service.approval.ApprovalHistoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;

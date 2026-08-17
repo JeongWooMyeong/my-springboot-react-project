@@ -1,10 +1,10 @@
-package com.example.springbootproject.pms.pp.po.service.impl;
+package com.example.springbootproject.pms.pp.po.service.impl.pdf;
 
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
-import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
-import com.example.springbootproject.pms.pp.po.service.PdfJobProcessor;
-import com.example.springbootproject.pms.pp.po.service.PdfJobService;
-import com.example.springbootproject.pms.pp.po.service.PdfNotifyService;
+import com.example.springbootproject.pms.pp.po.kafka.event.PdfGenerateJob;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfJobProcessor;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfJobService;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfNotifyService;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

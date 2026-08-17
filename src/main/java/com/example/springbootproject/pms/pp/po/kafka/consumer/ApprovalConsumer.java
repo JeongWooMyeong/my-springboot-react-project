@@ -1,6 +1,6 @@
-package com.example.springbootproject.pms.pp.po.consumer;
+package com.example.springbootproject.pms.pp.po.kafka.consumer;
 
-import com.example.springbootproject.pms.pp.po.event.ApprovalEvent;
+import com.example.springbootproject.pms.pp.po.kafka.event.ApprovalEvent;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

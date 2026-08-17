@@ -1,12 +1,11 @@
 package com.example.springbootproject.pms.pp.po.controller;
 
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
-import com.example.springbootproject.pms.pp.po.dto.Pppo2000DetailDto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000PreviewDto;
-import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
-import com.example.springbootproject.pms.pp.po.producer.PdfJobProducer;
-import com.example.springbootproject.pms.pp.po.service.PdfJobService;
+import com.example.springbootproject.pms.pp.po.kafka.event.PdfGenerateJob;
+import com.example.springbootproject.pms.pp.po.kafka.producer.PdfJobProducer;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfJobService;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
 import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
-package com.example.springbootproject.pms.pp.po.producer;
+package com.example.springbootproject.pms.pp.po.kafka.producer;
 
-import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
+import com.example.springbootproject.pms.pp.po.kafka.event.PdfGenerateJob;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;

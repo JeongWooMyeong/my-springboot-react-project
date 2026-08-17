@@ -1,7 +1,7 @@
-package com.example.springbootproject.pms.pp.po.scheduler;
+package com.example.springbootproject.pms.pp.po.pdf.scheduler;
 
 import com.example.springbootproject.pms.pp.po.dto.PdfJobDto;
-import com.example.springbootproject.pms.pp.po.service.PdfJobService;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfJobService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -1,10 +1,7 @@
-package com.example.springbootproject.pms.pp.po.consumer;
+package com.example.springbootproject.pms.pp.po.kafka.consumer;
 
-import com.example.springbootproject.pms.pp.po.event.PdfGenerateJob;
-import com.example.springbootproject.pms.pp.po.service.PdfJobProcessor;
-import com.example.springbootproject.pms.pp.po.service.PdfJobService;
-import com.example.springbootproject.pms.pp.po.service.PdfNotifyService;
-import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
+import com.example.springbootproject.pms.pp.po.kafka.event.PdfGenerateJob;
+import com.example.springbootproject.pms.pp.po.service.pdf.PdfJobProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
