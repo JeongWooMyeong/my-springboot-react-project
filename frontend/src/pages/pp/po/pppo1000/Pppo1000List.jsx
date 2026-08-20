@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../../../util/axios";
 
 export default function Pppo1000List({ onSelect, clcd }) {
     const [list, setList] = useState([]);

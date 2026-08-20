@@ -1,37 +1,33 @@
+import axios from "../util/axios";
+
 export const getMenus = async () => {
-    const res = await fetch("/api/sysm1000/menus");
-    return res.json();
+    const res = await axios.get("/api/sysm1000/menus");
+    return res.data;
 };
 
 export const getMenu = async (menuCd) => {
-    const res = await fetch(`/api/sysm1000/menus/${menuCd}`);
-    return res.json();
+    const res = await axios.get(`/api/sysm1000/menus/${menuCd}`);
+    return res.data;
 };
 
 export const createMenu = async (data) => {
-    const res = await fetch("/api/sysm1000/menus", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
-    return res.json();
+    const res = await axios.post(
+        "/api/sysm1000/menus",
+        data
+    );
+    return res.data;
 };
 
 export const updateMenu = async (menuCd, data) => {
-    const res = await fetch(`/api/sysm1000/menus/${menuCd}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    });
-    return res.json();
+    const res = await axios.put(
+        `/api/sysm1000/menus/${menuCd}`,
+        data
+    );
+    return res.data;
 };
 
 export const deleteMenu = async (menuCd) => {
-    await fetch(`/api/sysm1000/menus/${menuCd}`, {
-        method: "DELETE"
-    });
+    await axios.delete(
+        `/api/sysm1000/menus/${menuCd}`
+    );
 };

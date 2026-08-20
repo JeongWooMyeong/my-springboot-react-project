@@ -1,5 +1,4 @@
-import axios from "axios";
-
+import axios from "../util/axios";
 
 // Role 목록 조회
 export const getRoles = async () => {

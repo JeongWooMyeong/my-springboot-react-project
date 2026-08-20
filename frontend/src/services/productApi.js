@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../util/axios";
 
 // 전체 상품 조회
 export async function getProducts(page = 0, size = 50) {

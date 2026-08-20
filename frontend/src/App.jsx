@@ -13,96 +13,118 @@ import Sybs1000MainDetail from "./pages/sy/bs/sybs1000/Sybs1000MainDetail.jsx";
 import Toast from "./pages/components/common/Toast.jsx";
 import {NotificationProvider} from "./context/NotificationContext.jsx";
 
-function AppRoutes() {
+// 실제 로그인된 화면들
+function AuthenticatedRoutes() {
+
     const { routesFromDB } = useMenu();
 
     return (
         <Routes>
-            {/* 로그인 페이지 */}
-            <Route path="/" element={<LoginPage />} />
 
-            {/* 메인 페이지 */}
-            <Route path="/main" element={
-                <ProtectedRoute>
+            <Route
+                path="/main"
+                element={
                     <Layout>
                         <MainPage />
                     </Layout>
-                </ProtectedRoute>
-            } />
+                }
+            />
 
             <Route
                 path="/sybs1000/detail"
                 element={
-                    <ProtectedRoute>
-                        <Layout>
-                            <Sybs1000MainDetail />
-                        </Layout>
-                    </ProtectedRoute>
+                    <Layout>
+                        <Sybs1000MainDetail />
+                    </Layout>
                 }
             />
 
-            {/* DB 기반 라우트 */}
             {routesFromDB.map(({ menuCd, dedName, xpn }) => {
+
                 const PageComponent = componentMap[xpn];
-                // menuCd가 "SY"로 시작하면 SidebarLayout, 아니면 기본 Layout
-                const LayoutComponent = menuCd.startsWith("SY") ? SidebarLayout : Layout;
+
+                const LayoutComponent =
+                    menuCd.startsWith("SY")
+                        ? SidebarLayout
+                        : Layout;
 
                 return (
                     <Route
                         key={dedName}
                         path={dedName}
                         element={
-                            <ProtectedRoute>
-                                <LayoutComponent>
-                                    <Suspense fallback={<div>Loading...</div>}>
-                                        <PageComponent />
-                                    </Suspense>
-                                </LayoutComponent>
-                            </ProtectedRoute>
+                            <LayoutComponent>
+                                <Suspense fallback={<div>Loading...</div>}>
+                                    <PageComponent />
+                                </Suspense>
+                            </LayoutComponent>
                         }
                     />
                 );
             })}
+
         </Routes>
     );
 }
 
+
+// 인증이 필요한 영역
+function ProtectedApp() {
+
+    return (
+        <ProtectedRoute>
+
+            <MenuProvider>
+
+                <AuthenticatedRoutes />
+
+            </MenuProvider>
+
+        </ProtectedRoute>
+    );
+}
+
+
 function App() {
-    const userinfo = JSON.parse(localStorage.getItem("user"));
 
-    useEffect(()=>{
+    const userinfo =
+        JSON.parse(localStorage.getItem("user"));
 
+    useEffect(() => {
         checkToken();
-
-
-    },[]);
+    }, []);
 
     return (
 
         <Router>
 
-
             <NotificationProvider>
 
+                <UserContext.Provider value={userinfo}>
 
-                <MenuProvider>
+                    <Toast />
 
-                    <UserContext.Provider
-                        value={userinfo}
-                    >
+                    <Routes>
 
-                        <Toast />
-                        <AppRoutes />
+                        {/* 로그인 페이지 */}
+                        <Route
+                            path="/"
+                            element={<LoginPage />}
+                        />
 
-                    </UserContext.Provider>
+                        {/* 로그인 이후 */}
+                        <Route
+                            path="*"
+                            element={<ProtectedApp />}
+                        />
 
-                </MenuProvider>
+                    </Routes>
+
+                </UserContext.Provider>
 
             </NotificationProvider>
 
-
         </Router>
-
     );
 }
 

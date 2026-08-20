@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../util/axios";
 
 const BASE_URL = "/api/kafka/dlt";
 

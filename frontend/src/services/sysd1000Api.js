@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "../util/axios";
 
 const PRODUCT_API_URL = '/api/ext/products';
 const PRODUCT_SEARCH_API_URL = '/api/es/products/search';

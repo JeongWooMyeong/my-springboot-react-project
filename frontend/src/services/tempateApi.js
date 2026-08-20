@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../util/axios";
 
 export function dataURLToBlob(dataURL) {
     const arr = dataURL.split(",");

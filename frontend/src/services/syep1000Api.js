@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../util/axios";
 
 // 고객사 목록 조회
 export const getCompanies = async () => {

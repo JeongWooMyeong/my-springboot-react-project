@@ -1,7 +1,7 @@
 // src/services/pppo2000Api.js
 
 // 신청내역 조회
-import axios from "axios";
+import axios from "../util/axios";
 
 export async function searchRequests(jijumcd, status) {
     const res = await fetch(`/api/pppo2000/search?jijumcd=${jijumcd}&status=${status}`);

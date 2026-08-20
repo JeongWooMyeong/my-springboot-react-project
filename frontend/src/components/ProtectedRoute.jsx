@@ -20,7 +20,10 @@ function ProtectedRoute({ children }) {
     }, [token]);
 
     if (valid === null) return <div>검증 중...</div>;
-    if (!valid) return <Navigate to="/" replace />;
+    if (!valid) {
+        localStorage.removeItem("user");
+        return <Navigate to="/" replace />;
+    }
     return children;
 }
 

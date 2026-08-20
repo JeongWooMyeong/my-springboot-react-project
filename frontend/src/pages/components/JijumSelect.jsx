@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form, Select } from "antd";
-import axios from "axios";
+import axios from "../../util/axios";
 
 export default function JijumSelect({ form, initialJijumCd }) {
     const [jijumList, setJijumList] = useState([]);
