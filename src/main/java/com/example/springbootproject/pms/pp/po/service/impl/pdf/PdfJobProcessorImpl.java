@@ -37,6 +37,14 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
 
         ScheduledFuture<?> heartbeatTask = null;
 
+        log.info("PDF process 시작. jobId={}", job.getJobid());
+
+        boolean testError = true;
+
+        if (testError) {
+            throw new RuntimeException("Kafka Retry 테스트");
+        }
+
 
         // JOB 조회
         PdfJobDto currentJob =
@@ -109,6 +117,7 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
             if (job.getType()
                     == PdfGenerateJob.GenerateType.PDF) {
 
+
                 result =
                         pdfService.generatePdf(
                                 job.getOrdnos().get(0)
@@ -162,24 +171,29 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
 
 
             // 실패 상태 저장
-            pdfJobService.fail(
-                    jobId,
-                    e.getMessage()
-            );
+//            pdfJobService.fail(
+//                    jobId,
+//                    e.getMessage()
+//            );
+//
+//
+//            // 실패 알림
+//            pdfNotifyService.sendFail(
+//                    jobId,
+//                    "PDF 생성 실패"
+//            );
 
 
-            // 실패 알림
-            pdfNotifyService.sendFail(
-                    jobId,
-                    "PDF 생성 실패"
-            );
-
-
+            /*
+             * 여기서 FAIL 처리하지 않는다.
+             *
+             * 예외를 Kafka Listener까지 전달해서
+             * DefaultErrorHandler가 Retry하도록 한다.
+             */
             throw new RuntimeException(
                     "PDF 생성 실패",
                     e
             );
-
 
         } finally {
 

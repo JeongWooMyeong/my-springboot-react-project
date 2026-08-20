@@ -19,6 +19,7 @@ public class PdfJobConsumer {
             groupId = "pdf-worker"
     )
     public void consume(PdfGenerateJob job) {
+
         pdfJobProcessor.process(job);
     }
 }
