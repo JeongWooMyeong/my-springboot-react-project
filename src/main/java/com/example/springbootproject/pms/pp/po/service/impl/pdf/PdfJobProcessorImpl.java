@@ -39,11 +39,11 @@ public class PdfJobProcessorImpl implements PdfJobProcessor {
 
         log.info("PDF process 시작. jobId={}", job.getJobid());
 
-        boolean testError = true;
-
-        if (testError) {
-            throw new RuntimeException("Kafka Retry 테스트");
-        }
+//        boolean testError = true;
+//
+//        if (testError) {
+//            throw new RuntimeException("Kafka Retry 테스트");
+//        }
 
 
         // JOB 조회
