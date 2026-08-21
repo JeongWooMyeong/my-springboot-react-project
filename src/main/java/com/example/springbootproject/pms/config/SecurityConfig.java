@@ -48,7 +48,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/login",
-                                "/upload/**"
+                                "/upload/**",
+                                "/api/auth/refresh"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

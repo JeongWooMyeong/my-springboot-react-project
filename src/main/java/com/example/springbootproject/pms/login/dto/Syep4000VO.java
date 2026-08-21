@@ -18,6 +18,15 @@ public class Syep4000VO {
     private List<Sysm2000Dto> roles;  // 메뉴별 권한 리스트
     private String jijumcd;
     private String coid;
+    private String refreshToken;
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
 
     public String getCoid() {
         return coid;

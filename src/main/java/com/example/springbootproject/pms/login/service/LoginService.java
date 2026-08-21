@@ -6,4 +6,6 @@ import com.example.springbootproject.pms.login.dto.Syep4000VO;
 public interface LoginService {
     Syep1000VO test(String userid);
     Syep4000VO getUserInfo(Syep4000VO vo);
+    // 추가
+    Syep4000VO getUserInfoByUserid(String userid);
 }

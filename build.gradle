@@ -62,6 +62,8 @@ dependencies {
     implementation 'io.minio:minio:9.0.3'
     //Spring Security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    // 추가 JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 
     //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'

@@ -1,9 +1,11 @@
 package com.example.springbootproject.pms.login.controller;
 
 import com.example.springbootproject.pms.config.JwtConfig;
+import com.example.springbootproject.pms.login.component.RefreshTokenStore;
 import com.example.springbootproject.pms.login.dto.Syep1000VO;
 import com.example.springbootproject.pms.login.dto.Syep4000VO;
 import com.example.springbootproject.pms.login.service.LoginService;
+import com.example.springbootproject.pms.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -16,49 +18,46 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.example.springbootproject.pms.util.JwtUtil.*;
 
 @RestController
 @RequestMapping("/api")
 public class LoginController {
 
     private final LoginService loginService;
+    private final RefreshTokenStore refreshTokenStore;
 
-    public LoginController(LoginService loginService){
+    public LoginController(LoginService loginService, RefreshTokenStore refreshTokenStore){
+
         this.loginService = loginService;
+        this.refreshTokenStore = refreshTokenStore;
     }
 
     @PostMapping("/login")
-    //public Syep4000VO login(@RequestParam String userid, @RequestParam String password){
-    public Syep4000VO login(@RequestBody Syep4000VO vo){
-        //System.out.println("vvv:" + vo.getJijumcd());
-//        Syep4000VO vo = new Syep4000VO();
-//        vo.setUserid(userid);
-//        vo.setPassword(password);
+    public Syep4000VO login(@RequestBody Syep4000VO vo) {
 
-        //Syep1000VO test = loginService.test(vo.getJijumcd());
         Syep4000VO userinfo = loginService.getUserInfo(vo);
-        System.out.println("user:" + userinfo.getUserid());
 
-        // 2. JWT 토큰 생성 (최소한의 정보만 claim에 넣기)
-        List<String> rolenoList = userinfo.getRoles()
-                .stream()
-                .map(r -> r.getRoleno())
-                .collect(Collectors.toList());
+        // Access Token 생성
+        String accessToken =
+                JwtUtil.createAccessToken(userinfo);
 
-        //2. jwt 토큰 생성
-        String token = Jwts.builder()
-                .subject(userinfo.getUserid()) // 사용자 ID
-                .claim("username", userinfo.getUsername()) // 이름
-                .claim("jijumcd", userinfo.getJijumcd())
-                .claim("coid", userinfo.getCoid())
-                .claim("roles", rolenoList) // ✅ roleno만 넣기
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효
-                .signWith(JwtConfig.getSecretKey())
-                .compact();
-        //토큰을 VO담아서 반환
-        userinfo.setToken(token);
+        // Refresh Token 생성
+        String refreshToken =
+                JwtUtil.createRefreshToken(userinfo.getUserid());
+
+        // 서버에 Refresh Token 저장
+        refreshTokenStore.save(
+                userinfo.getUserid(),
+                refreshToken
+        );
+
+        // 응답
+        userinfo.setToken(accessToken);
+        userinfo.setRefreshToken(refreshToken);
 
         return userinfo;
     }
@@ -89,6 +88,74 @@ public class LoginController {
         String userid = authentication.getName();
 
         return ResponseEntity.ok(userid);
+    }
+
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<?> refresh(@RequestBody Syep4000VO vo) {
+
+        String refreshToken = vo.getRefreshToken();
+
+        System.out.println("=================================");
+        System.out.println("[REFRESH] 요청 들어옴");
+        System.out.println("[REFRESH] refreshToken = " + refreshToken);
+
+        if (refreshToken == null) {
+            System.out.println("[REFRESH] refreshToken 없음");
+            return ResponseEntity.status(401).build();
+        }
+
+        try {
+
+            Claims claims = Jwts.parser()
+                    .verifyWith(JwtConfig.getSecretKey())
+                    .build()
+                    .parseSignedClaims(refreshToken)
+                    .getPayload();
+
+            String userid = claims.getSubject();
+
+            System.out.println("[REFRESH] userid = " + userid);
+
+            String savedToken = refreshTokenStore.get(userid);
+
+            if (savedToken == null) {
+                System.out.println("[REFRESH] 서버에 저장된 Refresh Token 없음");
+                return ResponseEntity.status(401).build();
+            }
+
+            if (!savedToken.equals(refreshToken)) {
+                System.out.println("[REFRESH] Refresh Token 불일치");
+                return ResponseEntity.status(401).build();
+            }
+
+            System.out.println("[REFRESH] Refresh Token 검증 성공");
+
+            Syep4000VO userinfo =
+                    loginService.getUserInfoByUserid(userid);
+
+            System.out.println("[REFRESH] 사용자 조회 성공");
+            System.out.println("[REFRESH] userid = " + userinfo.getUserid());
+
+            String newAccessToken =
+                    JwtUtil.createAccessToken(userinfo);
+
+            System.out.println("[REFRESH] 새로운 Access Token 발급");
+            System.out.println("[REFRESH] newAccessToken = " + newAccessToken);
+
+            userinfo.setToken(newAccessToken);
+
+            System.out.println("[REFRESH] 완료");
+            System.out.println("=================================");
+
+            return ResponseEntity.ok(userinfo);
+
+        } catch (Exception e) {
+
+            System.out.println("[REFRESH] 실패");
+            e.printStackTrace();
+
+            return ResponseEntity.status(401).build();
+        }
     }
 
 
