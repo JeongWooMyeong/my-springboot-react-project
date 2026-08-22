@@ -32,24 +32,32 @@ export async function updateRequests(ordnos, ordstate) {
 }
 
 // PDF 생성
-export const requestPdf = (ordno) => {
+export const requestPdf = (
+    ordno,
+    jobid
+) => {
 
     return axios.post(
         "/api/pppo2000/pdf",
         {
-            ordno: ordno
+            ordno: ordno,
+            jobid: jobid
         }
     );
 
 };
 
 // PDF 일괄 생성
-export const requestPdfBulk = (ordnos) => {
+export const requestPdfBulk = (
+    ordnos,
+    jobid
+) => {
 
     return axios.post(
         "/api/pppo2000/pdf/bulk",
         {
-            ordnos: ordnos
+            ordnos: ordnos,
+            jobid: jobid
         }
     );
 
@@ -61,64 +69,104 @@ export const subscribePdf = (
     onMessage
 ) => {
 
-    const eventSource =
-        new EventSource(
-            `/api/pppo2000/pdf/subscribe/${jobid}`
+    return new Promise((resolve, reject) => {
+
+        const eventSource =
+            new EventSource(
+                `/api/pppo2000/pdf/subscribe/${jobid}`
+            );
+
+
+        // ⭐ SSE 연결 성공
+        eventSource.onopen = () => {
+
+            console.log(
+                "🔥 SSE 연결 완료:",
+                jobid
+            );
+
+            resolve();
+        };
+
+
+        // ⭐ PDF 완료
+        eventSource.addEventListener(
+            "PDF_COMPLETE",
+            (event) => {
+
+                console.log(
+                    "🔥 PDF_COMPLETE 수신:",
+                    jobid
+                );
+
+                const data =
+                    JSON.parse(event.data);
+
+
+                if (data.status === "COMPLETE") {
+
+                    onMessage(
+                        "PDF 생성 완료. 다운로드를 시작합니다."
+                    );
+
+                    setTimeout(() => {
+
+                        window.location.href =
+                            `${import.meta.env.VITE_API_BASE_URL}`
+                            +
+                            data.downloadUrl;
+
+                    }, 1000);
+                }
+
+
+                eventSource.close();
+            }
         );
 
-    eventSource.addEventListener(
-        "PDF_COMPLETE",
-        (event) => {
 
-            const data =
-                JSON.parse(
-                    event.data
+        // ⭐ PDF 실패
+        eventSource.addEventListener(
+            "PDF_FAIL",
+            (event) => {
+
+                console.log(
+                    "🔥 PDF_FAIL 수신:",
+                    jobid
                 );
 
-            if (data.status === "COMPLETE") {
+                const data =
+                    JSON.parse(event.data);
+
 
                 onMessage(
-                    "PDF 생성 완료. 다운로드를 시작합니다."
+                    data.message ||
+                    "PDF 생성 실패"
                 );
 
-                setTimeout(() => {
 
-                    window.location.href =
-                        `${import.meta.env.VITE_API_BASE_URL}`
-                        +
-                        data.downloadUrl;
-
-                }, 1000);
+                eventSource.close();
             }
+        );
 
-            eventSource.close();
-        }
-    );
 
-    eventSource.addEventListener(
-        "PDF_FAIL",
-        (event) => {
+        // ⭐ 연결 실패
+        eventSource.onerror = () => {
 
-            const data =
-                JSON.parse(
-                    event.data
-                );
-
-            onMessage(
-                data.message || "PDF 생성 실패"
+            console.error(
+                "🔥 SSE 연결 실패:",
+                jobid
             );
 
             eventSource.close();
-        }
-    );
 
-    eventSource.onerror = () => {
+            reject(
+                new Error(
+                    "SSE 연결 실패"
+                )
+            );
+        };
 
-        onMessage(
-            "PDF 생성 상태 확인 실패"
-        );
-
-        eventSource.close();
-    };
+    });
 
 };

@@ -49,7 +49,9 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/login",
                                 "/upload/**",
-                                "/api/auth/refresh"
+                                "/api/auth/refresh",
+                                "/api/pppo2000/pdf/subscribe/**",
+                                "/api/pppo2000/pdf/download/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

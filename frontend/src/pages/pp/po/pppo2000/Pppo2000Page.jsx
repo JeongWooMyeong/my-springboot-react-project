@@ -127,30 +127,18 @@ export default function Pppo2000Page() {
             return;
         }
 
-
         try {
 
-            let response;
-
-
-            if (selectedOrdnos.length === 1) {
-
-                response =
-                    await requestPdf(
-                        selectedOrdnos[0]
-                    );
-
-            } else {
-
-                response =
-                    await requestPdfBulk(
-                        selectedOrdnos
-                    );
-            }
-
-
+            // ⭐ jobId를 PDF 요청 전에 생성
             const jobid =
-                response.data.jobid;
+                crypto.randomUUID();
+
+
+            // ⭐ SSE 먼저 연결
+            subscribePdf(
+                jobid,
+                showMessage
+            );
 
 
             showMessage(
@@ -158,13 +146,26 @@ export default function Pppo2000Page() {
             );
 
 
-            subscribePdf(
-                jobid,
-                showMessage
-            );
+            // ⭐ 생성한 jobId를 PDF 요청에 전달
+            if (selectedOrdnos.length === 1) {
+
+                await requestPdf(
+                    selectedOrdnos[0],
+                    jobid
+                );
+
+            } else {
+
+                await requestPdfBulk(
+                    selectedOrdnos,
+                    jobid
+                );
+            }
 
 
         } catch (e) {
+
+            console.error(e);
 
             alert(
                 "PDF 생성 요청 실패"

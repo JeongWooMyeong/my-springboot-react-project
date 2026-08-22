@@ -5,7 +5,6 @@ import com.example.springbootproject.pms.pp.po.dto.Pppo2000Dto;
 import com.example.springbootproject.pms.pp.po.dto.Pppo2000PreviewDto;
 import com.example.springbootproject.pms.pp.po.kafka.event.ApprovalEvent;
 import com.example.springbootproject.pms.pp.po.kafka.event.ApprovalHistoryEvent;
-import com.example.springbootproject.pms.pp.po.pdf.PdfGenerator;
 import com.example.springbootproject.pms.pp.po.kafka.producer.ApprovalHistoryProducer;
 import com.example.springbootproject.pms.pp.po.kafka.producer.ApprovalProducer;
 import com.example.springbootproject.pms.pp.po.service.Pppo2000Service;
@@ -25,7 +24,6 @@ import java.util.zip.ZipOutputStream;
 @RequiredArgsConstructor
 public class Pppo2000ServiceImpl implements Pppo2000Service {
 
-    private final PdfGenerator PdfGenerators;
     private final Pppo2000Mapper pppo2000Mapper;
     private final ApprovalProducer approvalProducer;
     private final ApprovalHistoryProducer approvalHistoryProducer;
@@ -128,42 +126,6 @@ public class Pppo2000ServiceImpl implements Pppo2000Service {
     @Override
     public List<Pppo2000Dto> searchRequests(String jijumcd, String status) {
         return pppo2000Mapper.searchRequests(jijumcd, status);
-    }
-
-    @Override
-    public byte[] generatePdf(String ordno) {
-
-
-        List<Pppo2000DetailDto> detailList =
-                pppo2000Mapper.selectRequestDetailList(ordno);
-
-
-
-        return PdfGenerators.generate(
-                detailList
-        );
-
-
-    }
-
-    @Override
-    public byte[] generateZip(List<String> ordnos) {
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ZipOutputStream zos = new ZipOutputStream(baos)) {
-
-            for (String ordno : ordnos) {
-                byte[] pdfBytes = generatePdf(ordno);
-                ZipEntry entry = new ZipEntry(ordno + ".pdf");
-                zos.putNextEntry(entry);
-                zos.write(pdfBytes);
-                zos.closeEntry();
-            }
-
-            zos.finish();
-            return baos.toByteArray();
-        } catch (Exception e) {
-            throw new RuntimeException("ZIP 생성 실패", e);
-        }
     }
 
     @Override

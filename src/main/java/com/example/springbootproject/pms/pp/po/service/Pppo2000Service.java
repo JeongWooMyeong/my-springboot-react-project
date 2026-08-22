@@ -13,8 +13,6 @@ public interface Pppo2000Service {
     Pppo2000PreviewDto getRequestDetailList(String ordno);
     // 조회용 메서드
     List<Pppo2000Dto> searchRequests(String jijumcd, String status);
-    byte[] generatePdf(String ordno);
-    byte[] generateZip(List<String> ordnos);
 
     // ✅ 승인/반려 추가
     void updateOrdstate(List<String> ordnos, Integer ordstate);

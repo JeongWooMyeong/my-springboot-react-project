@@ -59,10 +59,8 @@ public class Pppo2000Controller {
 
         String ordno = req.get("ordno");
 
-
         String jobid =
-                UUID.randomUUID().toString();
-
+                        req.get("jobid");
 
         PdfJobDto job =
                 new PdfJobDto();
@@ -103,16 +101,15 @@ public class Pppo2000Controller {
     // 여러건 PDF → ZIP 생성
     @PostMapping("/pdf/bulk")
     public ResponseEntity<?> generateZip(
-            @RequestBody Map<String, List<String>> req
+            @RequestBody Map<String, Object> req
     ) {
 
-        List<String> ordnos =
-                req.get("ordnos");
-
-
         String jobid =
-                UUID.randomUUID().toString();
+                (String) req.get("jobid");
 
+
+        List<String> ordnos =
+                (List<String>) req.get("ordnos");
 
         PdfJobDto job =
                 new PdfJobDto();

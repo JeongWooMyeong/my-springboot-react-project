@@ -42,10 +42,22 @@ public class SseServiceImpl implements SseService {
         SseEmitter emitter = emitters.get(key);
 
         if (emitter == null) {
+
+            System.out.println(
+                    "🔥 SSE emitter 없음: " + key
+            );
+
             return;
         }
 
         try {
+
+            System.out.println(
+                    "🔥 SSE 전송: key="
+                            + key
+                            + ", event="
+                            + eventName
+            );
 
             emitter.send(
                     SseEmitter.event()
@@ -57,8 +69,9 @@ public class SseServiceImpl implements SseService {
 
         } catch (Exception e) {
 
-            emitter.completeWithError(e);
+            e.printStackTrace();
 
+            emitter.completeWithError(e);
         }
     }
 }
