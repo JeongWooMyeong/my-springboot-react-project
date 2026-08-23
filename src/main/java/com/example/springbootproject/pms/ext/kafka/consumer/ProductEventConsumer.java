@@ -6,10 +6,10 @@ import com.example.springbootproject.pms.ext.kafka.dto.ProductEvent;
 import com.example.springbootproject.pms.ext.service.ProductSearchSyncService;
 import com.example.springbootproject.pms.ext.service.dao.oracle.ProductMapper;
 import com.example.springbootproject.pms.ext.service.repository.ProductSearchRepository;
+import org.springframework.kafka.annotation.BackOff;
 import org.springframework.kafka.annotation.DltHandler;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.RetryableTopic;
-import org.springframework.retry.annotation.Backoff;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -26,7 +26,7 @@ public class ProductEventConsumer {
 
     @RetryableTopic(
             attempts = "4",
-            backoff = @Backoff(
+            backOff = @BackOff(
                     delay = 2000,
                     multiplier = 2
             ),

@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.5'
+    id 'org.springframework.boot' version '4.1.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
@@ -25,77 +25,138 @@ repositories {
 }
 
 dependencies {
-    //implementation 'org.springframework.boot:spring-boot-starter-security'
-    //implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    //mybatis
-    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
-    // SQL Server JDBC Driver
-    //runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre17'
 
-    //implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    annotationProcessor 'org.projectlombok:lombok'
+    // =========================
+    // Spring
+    // =========================
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
+    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+
+    // =========================
+    // Kafka
+    // =========================
+
+    implementation 'org.springframework.boot:spring-boot-starter-kafka'
+
+
+    // =========================
+    // MyBatis
+    // =========================
+
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0'
+
+
+    // =========================
+    // Database
+    // =========================
+
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
-    // JWT 관련 라이브러리
+
+    implementation 'com.oracle.database.jdbc:ojdbc8:23.2.0.0'
+
+
+    // =========================
+    // JWT
+    // =========================
+
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    // 혹시 빠져 있다면 명시적으로 추가
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
 
-    // iText7 PDF 라이브러리 (최신 안정 버전)
+
+    // =========================
+    // PDF
+    // =========================
+
     implementation 'com.itextpdf:itext7-core:9.7.0'
-    implementation 'org.springframework.kafka:spring-kafka'
-    implementation 'org.springframework.boot:spring-boot-starter-amqp' //rabbitmq 필요
-    implementation 'com.oracle.database.jdbc:ojdbc8:23.2.0.0'
-    // Redis 관련
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-cache'
 
-    // Elasticsearch
-    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+
+    // =========================
     // MinIO
+    // =========================
+
     implementation 'io.minio:minio:9.0.3'
-    //Spring Security
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    // 추가 JPA
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 
-    //testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
-    //testImplementation 'org.springframework.boot:spring-boot-starter-data-jdbc-test'
-    //testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
-    //testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    //runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
-    //testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    // =========================
+    // Lombok
+    // =========================
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+
+    // =========================
+    // DevTools
+    // =========================
+
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    // =========================
+    // Test
+    // =========================
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
+
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    implementation 'org.springframework.boot:spring-boot-jackson2'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
 }
 
+
+// =========================
+// Frontend
+// =========================
+
 tasks.register('buildFrontend', Exec) {
-    onlyIf { project.hasProperty('frontend') }  // ✅ frontend flag 있을 때만 실행
+
+    onlyIf {
+        project.hasProperty('frontend')
+    }
+
     workingDir "$projectDir/frontend"
+
     if (org.gradle.internal.os.OperatingSystem.current().isWindows()) {
         commandLine "C:/Program Files/nodejs/npm.cmd", "run", "build"
     } else {
         commandLine "npm", "run", "build"
     }
-
 }
 
+
 tasks.register('copyFrontend', Copy) {
-    onlyIf { project.hasProperty('frontend') }  // ✅ frontend flag 있을 때만 실행
+
+    onlyIf {
+        project.hasProperty('frontend')
+    }
+
     from("$projectDir/frontend/dist")
     into("$projectDir/src/main/resources/static")
 }
 
+
 copyFrontend.dependsOn buildFrontend
 processResources.dependsOn copyFrontend
-
-
