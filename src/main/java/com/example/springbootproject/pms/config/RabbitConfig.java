@@ -1,11 +1,10 @@
 package com.example.springbootproject.pms.config;
 
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-
 
 @Configuration
 public class RabbitConfig {
@@ -20,25 +19,25 @@ public class RabbitConfig {
     @Bean
     public Queue templateQueue() {
 
-        return new Queue(
-                TEMPLATE_QUEUE,
-                true
-        );
+        return QueueBuilder
+                .durable(TEMPLATE_QUEUE)
+                .build();
     }
+
 
     @Bean
     public Queue templateStatusQueue() {
-        return new Queue(
-                TEMPLATE_STATUS_QUEUE,
-                true
-        );
+
+        return QueueBuilder
+                .durable(TEMPLATE_STATUS_QUEUE)
+                .build();
     }
 
+
     @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(){
+    public JacksonJsonMessageConverter jacksonJsonMessageConverter() {
 
-        return new Jackson2JsonMessageConverter();
-
+        return new JacksonJsonMessageConverter();
     }
 
 }
