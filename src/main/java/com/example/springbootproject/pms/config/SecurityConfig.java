@@ -52,7 +52,8 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/api/pppo2000/pdf/subscribe/**",
                                 "/api/pppo2000/pdf/download/**",
-                                "/api/es/products/**"
+                                "/api/es/products/**",
+                                "/actuator/health"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

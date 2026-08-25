@@ -45,22 +45,16 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
-
-
     // =========================
     // Kafka
     // =========================
 
     implementation 'org.springframework.boot:spring-boot-starter-kafka'
-
-
     // =========================
     // MyBatis
     // =========================
 
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:4.0.0'
-
-
     // =========================
     // Database
     // =========================
@@ -68,8 +62,6 @@ dependencies {
     runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 
     implementation 'com.oracle.database.jdbc:ojdbc8:23.2.0.0'
-
-
     // =========================
     // JWT
     // =========================
@@ -113,13 +105,12 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
-
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
-
     implementation 'org.springframework.boot:spring-boot-jackson2'
+    //의존성 해결
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 }
 
 tasks.named('test') {

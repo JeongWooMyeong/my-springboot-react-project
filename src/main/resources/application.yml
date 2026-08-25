@@ -1,4 +1,4 @@
-server-host: 192.168.1.100
+server-host: 192.168.1.103
 
 spring:
   application:
@@ -106,3 +106,13 @@ storage:
   access-key: ${MINIO_ACCESS_KEY:admin}
   secret-key: ${MINIO_SECRET_KEY:admin12345}
   bucket: ${MINIO_BUCKET:springbootproject}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+  endpoint:
+    health:
+      show-details: always
