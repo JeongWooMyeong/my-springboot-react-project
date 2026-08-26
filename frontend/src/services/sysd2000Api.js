@@ -1,6 +1,6 @@
 import axios from "../util/axios";
 
-const BASE_URL = "/api/kafka/dlt";
+const BASE_URL = "/api/ext/kafka/dlt";
 
 export const findAll = async () => {
     const response = await axios.get(BASE_URL);
