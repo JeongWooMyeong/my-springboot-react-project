@@ -15,42 +15,55 @@ import {
 
 import '../../../../css/pages/sy/sysd1000/sysd1000-page.css';
 
+
 const SySd1000Page = () => {
+
     const [products, setProducts] = useState([]);
 
+    // 검색 조건
     const [keyword, setKeyword] = useState('');
+    const [field, setField] = useState('productName');
 
-    // Oracle 페이지네이션
+
+    // 페이지네이션
     const [page, setPage] = useState(0);
     const [size] = useState(10);
 
     const [totalPages, setTotalPages] = useState(0);
     const [totalElements, setTotalElements] = useState(0);
 
-    // ES cursor 페이지네이션
-    const [cursor, setCursor] = useState(null);
-    const [cursorHistory, setCursorHistory] = useState([]);
-    const [hasNext, setHasNext] = useState(false);
 
+    // 상품 Form
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedProduct, setSelectedProduct] =
+        useState(null);
 
 
     // =========================================================
     // 전체 상품 조회
-    // 검색어 없음 → Oracle
+    // Oracle
     // =========================================================
 
-    const loadProducts = async (pageNumber = 0) => {
+    const loadProducts = async (
+        pageNumber = 0
+    ) => {
+
         try {
-            const response = await getProducts(
-                pageNumber,
-                size
+
+            const response =
+                await getProducts(
+                    pageNumber,
+                    size
+                );
+
+
+            setProducts(
+                response.content ?? []
             );
 
-            //console.log('상품 전체 조회 응답:', response);
-
-            setProducts(response.content ?? []);
+            setPage(
+                response.page ?? pageNumber
+            );
 
             setTotalPages(
                 response.totalPages ?? 0
@@ -60,9 +73,8 @@ const SySd1000Page = () => {
                 response.totalElements ?? 0
             );
 
-            setPage(pageNumber);
-
         } catch (error) {
+
             console.error(
                 '상품 목록 조회 실패:',
                 error
@@ -76,33 +88,59 @@ const SySd1000Page = () => {
 
 
     // =========================================================
-    // ES 상품 검색
+    // 상품 검색
+    // Redis Cache → Elasticsearch
     // =========================================================
 
     const loadSearchProducts = async (
+        searchField,
         searchKeyword,
-        searchCursor = null
+        pageNumber = 0
     ) => {
+
         try {
-            const response = await searchProducts(
-                searchKeyword,
-                size,
-                searchCursor
+
+            const response =
+                await searchProducts(
+                    searchField,
+                    searchKeyword,
+                    pageNumber,
+                    size
+                );
+
+
+            console.log(
+                '상품 검색 응답:',
+                response
             );
 
-            console.log('ES 검색 응답:', response);
 
-            setProducts(response.content ?? []);
+            setProducts(
+                response.content ?? []
+            );
 
-            setCursor(response.nextCursor ?? null);
-            setHasNext(response.hasNext ?? false);
+            setPage(
+                response.page ?? pageNumber
+            );
 
-            setTotalPages(response.totalPages ?? 0);
-            setTotalElements(response.content?.length ?? 0);
+            setTotalPages(
+                response.totalPages ?? 0
+            );
+
+            setTotalElements(
+                response.totalCount ?? 0
+            );
 
         } catch (error) {
-            console.error('상품 검색 실패:', error);
-            alert('상품 검색에 실패했습니다.');
+
+            console.error(
+                '상품 검색 실패:',
+                error
+            );
+
+            alert(
+                '상품 검색에 실패했습니다.'
+            );
         }
     };
 
@@ -112,7 +150,9 @@ const SySd1000Page = () => {
     // =========================================================
 
     useEffect(() => {
+
         loadProducts(0);
+
     }, []);
 
 
@@ -120,36 +160,58 @@ const SySd1000Page = () => {
     // 검색
     // =========================================================
 
-    const handleSearch = async (value) => {
-        const searchKeyword = value.trim();
+    const handleSearch = async (
+        searchField,
+        searchKeyword
+    ) => {
 
-        setKeyword(searchKeyword);
+        const trimmedKeyword =
+            searchKeyword.trim();
 
-        // 검색어 없음
-        // → Oracle 전체 조회
-        if (!searchKeyword) {
-            setPage(0);
 
-            setCursor(null);
-            setCursorHistory([]);
-            setHasNext(false);
+        setField(
+            searchField
+        );
+
+        setKeyword(
+            trimmedKeyword
+        );
+
+        setPage(0);
+
+
+        // 검색어가 없으면 전체 조회
+        if (!trimmedKeyword) {
 
             await loadProducts(0);
 
             return;
         }
 
-        // 검색어 있음
-        // → Elasticsearch 검색
-        setPage(0);
 
-        setCursor(null);
-        setCursorHistory([]);
-
+        // 검색어가 있으면
+        // Redis → Elasticsearch
         await loadSearchProducts(
-            searchKeyword,
-            null
+            searchField,
+            trimmedKeyword,
+            0
         );
+    };
+
+
+    // =========================================================
+    // 검색 필드 변경
+    // =========================================================
+
+    const handleFieldChange = (
+        newField
+    ) => {
+
+        setField(
+            newField
+        );
+
+        setPage(0);
     };
 
 
@@ -157,69 +219,36 @@ const SySd1000Page = () => {
     // 페이지 변경
     // =========================================================
 
-    const handlePageChange = async (pageNumber) => {
+    const handlePageChange = async (
+        pageNumber
+    ) => {
 
-        // 검색어가 있으면
-        // ES cursor pagination
+        if (pageNumber < 0) {
+            return;
+        }
+
+
+        if (
+            pageNumber >= totalPages
+        ) {
+            return;
+        }
+
+
+        // 검색 중
         if (keyword.trim()) {
 
-            // 다음 페이지
-            if (pageNumber > page) {
-
-                if (!cursor) {
-                    return;
-                }
-
-                // 현재 페이지의 cursor를 저장
-                setCursorHistory((prev) => [
-                    ...prev,
-                    cursor,
-                ]);
-
-                await loadSearchProducts(
-                    keyword,
-                    cursor
-                );
-
-                setPage(pageNumber);
-
-                return;
-            }
-
-            // 이전 페이지
-            if (pageNumber < page) {
-
-                const previousCursor =
-                    pageNumber === 0
-                        ? null
-                        : cursorHistory[pageNumber - 1];
-
-                const newHistory =
-                    cursorHistory.slice(
-                        0,
-                        pageNumber
-                    );
-
-                setCursorHistory(newHistory);
-
-                await loadSearchProducts(
-                    keyword,
-                    previousCursor
-                );
-
-                setPage(pageNumber);
-
-                return;
-            }
+            await loadSearchProducts(
+                field,
+                keyword,
+                pageNumber
+            );
 
             return;
         }
 
 
-        // 검색어가 없으면
-        // Oracle 일반 pagination
-        setPage(pageNumber);
-
+        // 전체 조회
         await loadProducts(
             pageNumber
         );
@@ -231,6 +260,7 @@ const SySd1000Page = () => {
     // =========================================================
 
     const handleCreate = () => {
+
         setSelectedProduct(null);
         setIsFormOpen(true);
     };
@@ -241,7 +271,11 @@ const SySd1000Page = () => {
     // =========================================================
 
     const handleEdit = (product) => {
-        setSelectedProduct(product);
+
+        setSelectedProduct(
+            product
+        );
+
         setIsFormOpen(true);
     };
 
@@ -250,7 +284,9 @@ const SySd1000Page = () => {
     // 상품 삭제
     // =========================================================
 
-    const handleDelete = async (productId) => {
+    const handleDelete = async (
+        productId
+    ) => {
 
         if (
             !window.confirm(
@@ -260,31 +296,38 @@ const SySd1000Page = () => {
             return;
         }
 
+
         try {
-            await deleteProduct(productId);
 
-            alert('상품이 삭제되었습니다.');
+            await deleteProduct(
+                productId
+            );
 
-            // 검색 중이면 ES 재검색
+            alert(
+                '상품이 삭제되었습니다.'
+            );
+
+
+            // 검색 중
             if (keyword.trim()) {
 
-                setCursor(null);
-                setCursorHistory([]);
-                setPage(0);
-
                 await loadSearchProducts(
+                    field,
                     keyword,
-                    null
+                    page
                 );
 
-            } else {
-
-                // 전체 조회 중이면
-                // 현재 페이지 재조회
-                await loadProducts(page);
+                return;
             }
 
+
+            // 전체 조회
+            await loadProducts(
+                page
+            );
+
         } catch (error) {
+
             console.error(
                 '상품 삭제 실패:',
                 error
@@ -301,13 +344,14 @@ const SySd1000Page = () => {
     // 상품 등록 / 수정
     // =========================================================
 
-    const handleFormSubmit = async (product) => {
+    const handleFormSubmit = async (
+        product
+    ) => {
 
         try {
 
             if (selectedProduct) {
 
-                // 수정
                 await updateProduct(
                     selectedProduct.productId,
                     product
@@ -319,8 +363,9 @@ const SySd1000Page = () => {
 
             } else {
 
-                // 등록
-                await createProduct(product);
+                await createProduct(
+                    product
+                );
 
                 alert(
                     '상품이 등록되었습니다.'
@@ -333,26 +378,20 @@ const SySd1000Page = () => {
             setSelectedProduct(null);
 
 
-            // =================================================
-            // 저장 후 재조회
-            // =================================================
-
+            // 저장 후 현재 조건으로 재조회
             if (keyword.trim()) {
 
-                // ES 검색 중
-                setCursor(null);
-                setCursorHistory([]);
-                setPage(0);
-
                 await loadSearchProducts(
+                    field,
                     keyword,
-                    null
+                    page
                 );
 
             } else {
 
-                // 전체 조회 중
-                await loadProducts(page);
+                await loadProducts(
+                    page
+                );
             }
 
         } catch (error) {
@@ -372,16 +411,25 @@ const SySd1000Page = () => {
     return (
         <div className="sy-sd-1000-page">
 
-            {/* Header */}
+
+            {/* =================================================
+                Header
+            ================================================= */}
+
             <header className="page-header">
 
                 <div>
-                    <h1>PRODUCT</h1>
+
+                    <h1>
+                        PRODUCT
+                    </h1>
 
                     <p>
                         상품 정보를 관리합니다.
                     </p>
+
                 </div>
+
 
                 <button
                     type="button"
@@ -394,62 +442,79 @@ const SySd1000Page = () => {
             </header>
 
 
-            {/* Search */}
+            {/* =================================================
+                Search
+            ================================================= */}
+
             <section className="search-section">
 
                 <ProductSearch
                     keyword={keyword}
-                    onSearch={handleSearch}
+                    field={field}
+                    onFieldChange={
+                        handleFieldChange
+                    }
+                    onSearch={
+                        handleSearch
+                    }
                 />
 
             </section>
 
 
-            {/* Table */}
+            {/* =================================================
+                Table
+            ================================================= */}
+
             <section className="product-section">
 
                 <ProductTable
                     products={products}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
-                    totalElements={totalElements}
+                    totalElements={
+                        totalElements
+                    }
                 />
 
             </section>
 
 
-            {/* Pagination */}
+            {/* =================================================
+                Pagination
+            ================================================= */}
+
             <ProductPagination
                 page={page}
-                totalPages={
-                    keyword.trim()
-                        ? null
-                        : totalPages
-                }
-                hasNext={
-                    keyword.trim()
-                        ? hasNext
-                        : null
-                }
+                totalPages={totalPages}
                 onPageChange={
                     handlePageChange
                 }
             />
 
 
-            {/* Form */}
+            {/* =================================================
+                Form
+            ================================================= */}
+
             {isFormOpen && (
 
                 <ProductForm
-                    product={selectedProduct}
+                    product={
+                        selectedProduct
+                    }
 
                     onSubmit={
                         handleFormSubmit
                     }
 
                     onClose={() => {
+
                         setIsFormOpen(false);
-                        setSelectedProduct(null);
+
+                        setSelectedProduct(
+                            null
+                        );
                     }}
                 />
 
@@ -458,5 +523,6 @@ const SySd1000Page = () => {
         </div>
     );
 };
+
 
 export default SySd1000Page;

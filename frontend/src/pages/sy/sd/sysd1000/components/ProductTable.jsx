@@ -18,7 +18,7 @@ const ProductTable = ({
             <table>
                 <thead>
                 <tr>
-                    <th>ID</th>
+                    <th>상품코드</th>
                     <th>상품명</th>
                     <th>가격</th>
                     <th>재고</th>
@@ -39,10 +39,10 @@ const ProductTable = ({
                     </tr>
                 ) : (
                     products.map((product) => (
-                        <tr key={product.productId}>
+                        <tr key={product.productCode}>
 
                             <td>
-                                {product.productId}
+                                {product.productCode}
                             </td>
 
                             <td>
@@ -81,7 +81,7 @@ const ProductTable = ({
                                         className="delete"
                                         onClick={() =>
                                             onDelete(
-                                                product.productId
+                                                product.productCode
                                             )
                                         }
                                     >
