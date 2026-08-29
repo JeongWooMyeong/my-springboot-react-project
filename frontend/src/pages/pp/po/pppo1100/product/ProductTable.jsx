@@ -45,15 +45,15 @@ export default function ProductTable({
 
                 {results.map(product => (
 
-                    <tr key={product.productId}>
+                    <tr key={product.productCode}>
 
                         <td className="checkbox-column">
                             <input
                                 type="checkbox"
                                 checked={selected.some(
                                     p =>
-                                        p.productId ===
-                                        product.productId
+                                        p.productCode ===
+                                        product.productCode
                                 )}
                                 onChange={() =>
                                     onToggleSelect(product)
@@ -62,7 +62,7 @@ export default function ProductTable({
                         </td>
 
                         <td className="product-code-column">
-                            {product.productId}
+                            {product.productCode}
                         </td>
 
                         <td

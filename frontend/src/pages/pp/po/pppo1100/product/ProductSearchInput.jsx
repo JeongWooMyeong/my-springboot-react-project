@@ -1,5 +1,7 @@
 export default function ProductSearchInput({
                                                query,
+                                               field,
+                                               onFieldChange,
                                                onChange,
                                                onSearch,
                                                onClose
@@ -8,6 +10,24 @@ export default function ProductSearchInput({
     return (
         <div className="product-search-input">
 
+            {/* 검색 대상 */}
+            <select
+                value={field}
+                onChange={e =>
+                    onFieldChange(e.target.value)
+                }
+            >
+                <option value="productName">
+                    상품명
+                </option>
+
+                <option value="productCode">
+                    상품코드
+                </option>
+            </select>
+
+
+            {/* 검색어 */}
             <input
                 value={query}
                 onChange={e =>
@@ -18,9 +38,17 @@ export default function ProductSearchInput({
                         onSearch();
                     }
                 }}
-                placeholder="상품명 입력"
+                placeholder={
+                    field === "productCode"
+                        ? "상품코드 입력"
+                        : field === "productName"
+                            ? "상품명 입력"
+                            : "상품명 또는 상품코드 입력"
+                }
             />
 
+
+            {/* 검색 */}
             <button
                 type="button"
                 className="search-button"
@@ -29,6 +57,8 @@ export default function ProductSearchInput({
                 검색
             </button>
 
+
+            {/* 닫기 */}
             <button
                 type="button"
                 className="close-button"

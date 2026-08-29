@@ -1,9 +1,6 @@
 export default function ProductPagination({
-                                              isSearch,
                                               page,
                                               totalPages,
-                                              hasNext,
-                                              nextCursor,
                                               onPrevious,
                                               onNext
                                           }) {
@@ -12,9 +9,7 @@ export default function ProductPagination({
         page > 0;
 
     const canNext =
-        isSearch
-            ? hasNext && nextCursor !== null
-            : page < totalPages - 1;
+        page < totalPages - 1;
 
 
     return (

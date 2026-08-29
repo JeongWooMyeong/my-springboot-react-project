@@ -24,14 +24,15 @@ export default function ProductSearchModal({
         query,
         setQuery,
 
+        // 검색 대상
+        field,
+        setField,
+
         results,
         selected,
 
         page,
         totalPages,
-
-        nextCursor,
-        hasNext,
 
         allSelected,
 
@@ -81,6 +82,8 @@ export default function ProductSearchModal({
 
                 <ProductSearchInput
                     query={query}
+                    field={field}
+                    onFieldChange={setField}
                     onChange={setQuery}
                     onSearch={search}
                     onClose={onClose}
@@ -109,13 +112,8 @@ export default function ProductSearchModal({
 
 
                         <ProductPagination
-                            isSearch={
-                                !!query.trim()
-                            }
                             page={page}
                             totalPages={totalPages}
-                            hasNext={hasNext}
-                            nextCursor={nextCursor}
                             onPrevious={previous}
                             onNext={next}
                         />

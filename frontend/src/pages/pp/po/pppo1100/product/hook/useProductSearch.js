@@ -1,13 +1,17 @@
 import { useState } from "react";
 
 import {
-    getProducts,
-    getProductByName
+    searchProducts
 } from "../../../../../../services/productApi";
 
 export default function useProductSearch() {
 
     const [query, setQuery] = useState("");
+
+    // 검색 대상
+    // all / productName / productCode
+    const [field, setField] = useState("productCode");
+
     const [results, setResults] = useState([]);
     const [selected, setSelected] = useState([]);
 
@@ -16,54 +20,26 @@ export default function useProductSearch() {
 
     const [totalPages, setTotalPages] = useState(0);
 
-    const [nextCursor, setNextCursor] = useState(null);
-    const [hasNext, setHasNext] = useState(false);
 
-    const [cursorHistory, setCursorHistory] = useState([]);
+    // 상품 검색
+    // Redis Cache → Elasticsearch
+    const loadProducts = async (
+        targetPage = 0
+    ) => {
 
-
-    const loadAllProducts = async (targetPage = 0) => {
-
-        const data = await getProducts(
+        const data = await searchProducts(
+            field,
+            query.trim(),
             targetPage,
             size
         );
 
-        setResults(data.content || []);
-        setPage(data.page ?? targetPage);
-        setTotalPages(data.totalPages ?? 0);
-
-        setNextCursor(null);
-        setHasNext(false);
-        setCursorHistory([]);
-
-        setSelected([]);
-    };
-
-
-    const loadSearchProducts = async (
-        cursor = null,
-        targetPage = 0
-    ) => {
-
-        const data = await getProductByName(
-            query.trim(),
-            size,
-            cursor
+        setResults(
+            data.content || []
         );
 
-        console.log(data.totalPages);
-
-        setResults(data.content || []);
-
-        setPage(targetPage);
-
-        setNextCursor(
-            data.nextCursor ?? null
-        );
-
-        setHasNext(
-            data.hasNext ?? false
+        setPage(
+            data.page ?? targetPage
         );
 
         setTotalPages(
@@ -74,106 +50,63 @@ export default function useProductSearch() {
     };
 
 
+    // 검색
     const search = async () => {
 
         setPage(0);
-        setNextCursor(null);
-        setHasNext(false);
-        setCursorHistory([]);
         setSelected([]);
 
-        if (query.trim()) {
-
-            await loadSearchProducts(
-                null,
-                0
-            );
-
-        } else {
-
-            await loadAllProducts(0);
-        }
+        await loadProducts(0);
     };
 
 
+    // 검색 대상 변경
+    const changeField = (newField) => {
+
+        setField(newField);
+
+        setPage(0);
+        setSelected([]);
+    };
+
+
+    // 이전
     const previous = async () => {
 
         if (page <= 0) {
             return;
         }
 
-        if (!query.trim()) {
-
-            await loadAllProducts(
-                page - 1
-            );
-
-            return;
-        }
-
-        const history = [
-            ...cursorHistory
-        ];
-
-        history.pop();
-
-        const previousCursor =
-            history.length > 0
-                ? history[history.length - 1]
-                : null;
-
-        setCursorHistory(history);
-
-        await loadSearchProducts(
-            previousCursor,
+        await loadProducts(
             page - 1
         );
     };
 
 
+    // 다음
     const next = async () => {
 
-        if (!query.trim()) {
-
-            if (page >= totalPages - 1) {
-                return;
-            }
-
-            await loadAllProducts(
-                page + 1
-            );
-
+        if (page >= totalPages - 1) {
             return;
         }
 
-        if (
-            !hasNext ||
-            nextCursor === null
-        ) {
-            return;
-        }
-
-        setCursorHistory(prev => [
-            ...prev,
-            nextCursor
-        ]);
-
-        await loadSearchProducts(
-            nextCursor,
+        await loadProducts(
             page + 1
         );
     };
 
 
+    // 상품 선택 / 선택 해제
     const toggleSelect = (product) => {
 
         setSelected(prev => {
 
-            const exists = prev.some(
-                p =>
-                    p.productId ===
-                    product.productId
-            );
+            const exists =
+                prev.some(
+                    p =>
+                        p.productId ===
+                        product.productId
+                );
 
             if (exists) {
 
@@ -192,6 +125,7 @@ export default function useProductSearch() {
     };
 
 
+    // 현재 페이지 전체 선택
     const toggleSelectAll = () => {
 
         const allSelected =
@@ -255,17 +189,15 @@ export default function useProductSearch() {
         query,
         setQuery,
 
-        results,
+        field,
+        setField: changeField,
 
+        results,
         selected,
 
         page,
         size,
-
         totalPages,
-
-        nextCursor,
-        hasNext,
 
         allSelected,
 
