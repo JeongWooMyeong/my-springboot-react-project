@@ -438,6 +438,35 @@
     margin-bottom: 16px;
 }
 
+/* 검색 필터 */
+
+.product-search-modal .product-search-input select {
+    flex-shrink: 0;
+
+    width: 110px;
+    height: 38px;
+
+    padding: 0 10px;
+
+    border: 1px solid #ccc;
+    border-radius: 4px;
+
+    background: #fff;
+
+    color: #333;
+    font-size: 13px;
+
+    outline: none;
+
+    box-sizing: border-box;
+
+    cursor: pointer;
+}
+
+.product-search-modal .product-search-input select:focus {
+    border-color: #555;
+}
+
 
 /* 검색 입력 */
 
