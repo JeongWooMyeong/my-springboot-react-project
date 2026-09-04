@@ -19,6 +19,7 @@ import {
 } from "../../../../context/NotificationContext.jsx";
 
 import "../../../../css/pages/pp/pppo2000/pppo2000-page.css";
+import Pppo2000PdfPreview from "./Pppo2000PdfPreview.jsx";
 
 
 export default function Pppo2000Page() {
@@ -29,6 +30,8 @@ export default function Pppo2000Page() {
     const [selectedOrdnos, setSelectedOrdnos] = useState([]);
     const [status, setStatus] = useState("");
     const [requestList, setRequestList] = useState([]);
+    const [pdfUrl, setPdfUrl] = useState(null); //260905
+    const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false); //260905
 
     const { showMessage } = useNotification();
 
@@ -137,7 +140,11 @@ export default function Pppo2000Page() {
             // ⭐ SSE 먼저 연결
             subscribePdf(
                 jobid,
-                showMessage
+                showMessage,
+                (url) => {
+                    setPdfUrl(url);
+                    setPdfPreviewOpen(true);
+                }
             );
 
 
@@ -227,6 +234,14 @@ export default function Pppo2000Page() {
                 </section>
 
             </div>
+
+            {/* ⭐ PDF 미리보기 */}
+
+            <Pppo2000PdfPreview
+                open={pdfPreviewOpen}
+                pdfUrl={pdfUrl}
+                onClose={() => setPdfPreviewOpen(false)}
+            />
 
         </div>
 

@@ -28,6 +28,12 @@ public class SecurityConfig {
                 .formLogin(form -> form.disable())
 
                 .httpBasic(basic -> basic.disable())
+                // ⭐ iframe 허용
+                .headers(headers ->
+                        headers.frameOptions(
+                                frame -> frame.disable()
+                        )
+                )
 
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(
@@ -52,6 +58,7 @@ public class SecurityConfig {
                                 "/api/auth/refresh",
                                 "/api/pppo2000/pdf/subscribe/**",
                                 "/api/pppo2000/pdf/download/**",
+                                "/api/pppo2000/pdf/preview/**",
                                 "/api/es/products/**",
                                 "/actuator/health"
                         ).permitAll()

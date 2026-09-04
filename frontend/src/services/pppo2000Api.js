@@ -66,7 +66,8 @@ export const requestPdfBulk = (
 // PDF 생성 상태 구독
 export const subscribePdf = (
     jobid,
-    onMessage
+    onMessage,
+    onComplete
 ) => {
 
     return new Promise((resolve, reject) => {
@@ -77,7 +78,7 @@ export const subscribePdf = (
             );
 
 
-        // ⭐ SSE 연결 성공
+        // SSE 연결 성공
         eventSource.onopen = () => {
 
             console.log(
@@ -89,7 +90,7 @@ export const subscribePdf = (
         };
 
 
-        // ⭐ PDF 완료
+        // PDF 생성 완료
         eventSource.addEventListener(
             "PDF_COMPLETE",
             (event) => {
@@ -99,33 +100,59 @@ export const subscribePdf = (
                     jobid
                 );
 
-                const data =
-                    JSON.parse(event.data);
+                try {
+
+                    const data =
+                        JSON.parse(event.data);
 
 
-                if (data.status === "COMPLETE") {
+                    if (data.status === "COMPLETE") {
 
-                    onMessage(
-                        "PDF 생성 완료. 다운로드를 시작합니다."
+                        onMessage(
+                            "PDF 생성 완료"
+                        );
+
+
+                        const pdfUrl =
+                            `${import.meta.env.VITE_API_BASE_URL}`
+                            + data.downloadUrl;
+
+
+                        console.log(
+                            "🔥 PDF URL:",
+                            pdfUrl
+                        );
+
+
+                        // React 컴포넌트로 PDF URL 전달
+                        if (onComplete) {
+
+                            onComplete(
+                                pdfUrl
+                            );
+
+                        }
+
+                    }
+
+                } catch (e) {
+
+                    console.error(
+                        "PDF_COMPLETE 처리 실패:",
+                        e
                     );
 
-                    setTimeout(() => {
+                } finally {
 
-                        window.location.href =
-                            `${import.meta.env.VITE_API_BASE_URL}`
-                            +
-                            data.downloadUrl;
+                    eventSource.close();
 
-                    }, 1000);
                 }
 
-
-                eventSource.close();
             }
         );
 
 
-        // ⭐ PDF 실패
+        // PDF 생성 실패
         eventSource.addEventListener(
             "PDF_FAIL",
             (event) => {
@@ -135,22 +162,39 @@ export const subscribePdf = (
                     jobid
                 );
 
-                const data =
-                    JSON.parse(event.data);
+                try {
+
+                    const data =
+                        JSON.parse(event.data);
 
 
-                onMessage(
-                    data.message ||
-                    "PDF 생성 실패"
-                );
+                    onMessage(
+                        data.message ||
+                        "PDF 생성 실패"
+                    );
 
+                } catch (e) {
 
-                eventSource.close();
+                    console.error(
+                        "PDF_FAIL 처리 실패:",
+                        e
+                    );
+
+                    onMessage(
+                        "PDF 생성 실패"
+                    );
+
+                } finally {
+
+                    eventSource.close();
+
+                }
+
             }
         );
 
 
-        // ⭐ 연결 실패
+        // SSE 연결 실패
         eventSource.onerror = () => {
 
             console.error(
@@ -165,6 +209,7 @@ export const subscribePdf = (
                     "SSE 연결 실패"
                 )
             );
+
         };
 
     });

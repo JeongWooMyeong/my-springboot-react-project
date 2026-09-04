@@ -250,4 +250,80 @@ public class Pppo2000Controller {
 
     }
 
+    @GetMapping("/pdf/preview/{jobid}")
+    public ResponseEntity<Resource> previewPdf(
+            @PathVariable String jobid
+    ) throws Exception {
+
+        PdfJobDto job =
+                pdfJobService.findByJobid(jobid);
+
+
+        if (job == null) {
+
+            return ResponseEntity.notFound().build();
+
+        }
+
+
+        /*
+         * DB에 저장된 MinIO Object 경로
+         */
+        String objectName =
+                job.getFilepath();
+
+
+        if (objectName == null ||
+                objectName.isBlank()) {
+
+            return ResponseEntity.notFound().build();
+
+        }
+
+
+        /*
+         * MinIO에서 파일 조회
+         */
+        InputStream resource =
+                minioStorageService.getInputStream(
+                        objectName
+                );
+
+
+        /*
+         * 파일명
+         */
+        String filename =
+                objectName.substring(
+                        objectName.lastIndexOf("/") + 1
+                );
+
+
+        /*
+         * PDF만 미리보기
+         */
+        MediaType mediaType =
+                MediaType.APPLICATION_PDF;
+
+
+        /*
+         * inline
+         *
+         * 브라우저에서 PDF 미리보기
+         */
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" +
+                                filename +
+                                "\""
+                )
+                .contentType(mediaType)
+                .body(
+                        new InputStreamResource(
+                                resource
+                        )
+                );
+    }
+
 }
