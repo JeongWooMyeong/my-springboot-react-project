@@ -30,7 +30,14 @@ export default function Pppo2000Page() {
     const [selectedOrdnos, setSelectedOrdnos] = useState([]);
     const [status, setStatus] = useState("");
     const [requestList, setRequestList] = useState([]);
+    //PDF 미리보기 URL
     const [pdfUrl, setPdfUrl] = useState(null); //260905
+
+    // Printer Agent에서 사용할 PDF 파일 경로
+    const [filePath, setFilePath] =
+        useState(null);
+
+    //PDF 미리보기 Modal
     const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false); //260905
 
     const { showMessage } = useNotification();
@@ -132,6 +139,12 @@ export default function Pppo2000Page() {
 
         try {
 
+            //기존 PDF URL 초기화
+            setPdfUrl(null);
+
+            //기존 파일 경로 초기화
+            setFilePath(null);
+
             // ⭐ jobId를 PDF 요청 전에 생성
             const jobid =
                 crypto.randomUUID();
@@ -143,6 +156,7 @@ export default function Pppo2000Page() {
                 showMessage,
                 (url) => {
                     setPdfUrl(url);
+                    setFilePath(url);
                     setPdfPreviewOpen(true);
                 }
             );
@@ -181,6 +195,15 @@ export default function Pppo2000Page() {
         }
 
     };
+
+    /*
+    PDF Preview 닫기
+     */
+    const handlePdfPreviewClose = () => {
+        setPdfPreviewOpen(false);
+        setPdfUrl(null);
+        setFilePath(null);
+    }
 
 
     return (
@@ -240,7 +263,8 @@ export default function Pppo2000Page() {
             <Pppo2000PdfPreview
                 open={pdfPreviewOpen}
                 pdfUrl={pdfUrl}
-                onClose={() => setPdfPreviewOpen(false)}
+                filePath={filePath}
+                onClose={handlePdfPreviewClose}
             />
 
         </div>
