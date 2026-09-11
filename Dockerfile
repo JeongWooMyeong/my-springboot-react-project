@@ -6,7 +6,7 @@ FROM node:24 AS frontend
 WORKDIR /app/frontend
 
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm install
 
 COPY frontend/ .
 RUN npm run build
@@ -15,7 +15,7 @@ RUN npm run build
 # =========================
 # 2. Backend Build
 # =========================
-FROM gradle:8.5-jdk21 AS build
+FROM gradle:9.3-jdk21 AS build
 
 WORKDIR /app
 
