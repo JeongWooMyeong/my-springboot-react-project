@@ -11,12 +11,6 @@ spring:
       password: pms01
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 
-    oracle:
-      jdbcUrl: jdbc:oracle:thin:@//${server-host}:1521/XEPDB1
-      username: ERP
-      password: erp1234
-      driver-class-name: oracle.jdbc.OracleDriver
-
   kafka:
     bootstrap-servers: ${server-host}:9092
     producer:

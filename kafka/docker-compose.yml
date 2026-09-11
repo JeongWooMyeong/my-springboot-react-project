@@ -16,7 +16,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
 
       # 외부(Spring Boot)에서 접근할 주소
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.1.104:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092
 
       # Controller 설정
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -83,14 +83,14 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms1g -Xmx1g"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
 
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://host.docker.internal:9200/_cluster/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -114,7 +114,7 @@ services:
     command: server /data --console-address ":9001"
 
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      test: [ "CMD", "curl", "-f", "http://host.docker.internal:9000/minio/health/live" ]
       interval: 10s
       timeout: 5s
       retries: 10
