@@ -1,16 +1,8 @@
-server-host: 192.168.1.103
+server-host: 192.168.1.102
 
 spring:
   application:
     name: SpringBootProject
-
-  data:
-    redis:
-      host: ${server-host}
-      port: 6379
-
-  cache:
-    type: redis
 
   datasource:
     primary:
@@ -24,9 +16,6 @@ spring:
       username: ERP
       password: erp1234
       driver-class-name: oracle.jdbc.OracleDriver
-
-  elasticsearch:
-    uris: http://${server-host}:9200
 
   kafka:
     bootstrap-servers: ${server-host}:9092
