@@ -125,7 +125,8 @@ export default function Sytm2000List({
                                         {/* 썸네일 */}
                                         <img
                                             src={
-                                                `${import.meta.env.VITE_API_BASE_URL}${t.thumbnailpath}`
+                                                //`${import.meta.env.VITE_API_BASE_URL}${t.thumbnailpath}`
+                                                `${t.thumbnailpath}`
                                             }
                                             alt={t.title}
                                             style={{

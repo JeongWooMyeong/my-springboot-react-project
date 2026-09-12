@@ -114,8 +114,10 @@ export const subscribePdf = (
 
 
                         const pdfUrl =
-                            `${import.meta.env.VITE_API_BASE_URL}`
-                            + data.downloadUrl;
+                            //`${import.meta.env.VITE_API_BASE_URL}`
+                            //+ data.downloadUrl;
+
+                        data.downloadUrl;
 
 
                         console.log(

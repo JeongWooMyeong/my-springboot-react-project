@@ -7,11 +7,11 @@ export default function FontPreview({ font }) {
         if (!font) return;
 
         const style = document.createElement("style");
-
+        //localhost:8081 제거
         style.innerHTML = `
             @font-face {
                 font-family: '${font.fontfamily}';
-                src: url('http://localhost:8081${font.fontfilepath}') format('truetype');
+                src: url('${font.fontfilepath}') format('truetype');
             }
         `;
 

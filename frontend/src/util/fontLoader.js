@@ -8,11 +8,11 @@ export async function loadCustomFonts(fontList) {
         const fontName = font.fontfamily;
 
         const style = document.createElement("style");
-
+        //localhost:8081 제거
         style.innerHTML = `
             @font-face {
                 font-family: "${fontName}";
-                src: url("http://localhost:8081${font.fontfilepath}") format("truetype");
+                src: url("${font.fontfilepath}") format("truetype");
                 font-weight: normal;
                 font-style: normal;
             }
@@ -82,13 +82,13 @@ export async function loadAllFonts(fontList) {
         const style =
             document.createElement("style");
 
-
+        //localhost:8081 제거
         style.innerHTML = `
             @font-face {
 
                 font-family: "${fontName}";
 
-                src: url("http://localhost:8081${font.fontfilepath}")
+                src: url("${font.fontfilepath}")
                 format("truetype");
 
                 font-weight: normal;

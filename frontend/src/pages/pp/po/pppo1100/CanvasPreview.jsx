@@ -184,9 +184,9 @@ export default function CanvasPreview({
                                     imageValue.startsWith("/")
                                 ) {
 
-                                    imageValue =
-                                        import.meta.env.VITE_API_BASE_URL +
-                                        imageValue;
+                                    //imageValue =
+                                        //import.meta.env.VITE_API_BASE_URL +
+                                        //imageValue;
 
                                 }
 

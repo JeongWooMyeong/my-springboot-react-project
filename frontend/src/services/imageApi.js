@@ -27,8 +27,8 @@ export const uploadImage = async(file)=>{
 
 
     return (
-        `${API_BASE_URL}`
-        +
+        //`${API_BASE_URL}`
+        //+
         response.data.url
     );
 

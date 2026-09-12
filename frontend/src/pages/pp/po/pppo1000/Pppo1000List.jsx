@@ -80,7 +80,8 @@ export default function Pppo1000List({ onSelect, clcd }) {
                         <img
                             src={
                                 item.thumbnailpath
-                                    ? `http://localhost:8081${item.thumbnailpath}`
+                                    ? //`http://localhost:8081${item.thumbnailpath}`
+                                    `${item.thumbnailpath}`
                                     : "/upload/thumb/noimage.png"
                             }
                             alt="thumb"
