@@ -66,6 +66,10 @@ public class SecurityConfig {
                                 "/api/auth/refresh"
                         ).permitAll()
 
+                        .requestMatchers(
+                                "/api/pppo2000/pdf/subscribe/**"
+                        ).permitAll()
+
                         // API는 인증
                         .requestMatchers("/api/**").authenticated()
 
