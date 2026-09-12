@@ -52,22 +52,25 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+                        // React 정적 리소스
                         .requestMatchers(
                                 "/",
                                 "/index.html",
                                 "/assets/**",
-                                "/statc/**",
-                                "/api/login",
-                                "/upload/**",
-                                "/api/auth/refresh",
-                                "/api/pppo2000/pdf/subscribe/**",
-                                "/api/pppo2000/pdf/download/**",
-                                "/api/pppo2000/pdf/preview/**",
-                                "/api/es/products/**",
-                                "/actuator/health",
-                                "/api/printers/**"
+                                "/upload/**"
                         ).permitAll()
-                        .anyRequest().authenticated()
+
+                        // 로그인/토큰
+                        .requestMatchers(
+                                "/api/login",
+                                "/api/auth/refresh"
+                        ).permitAll()
+
+                        // API는 인증
+                        .requestMatchers("/api/**").authenticated()
+
+                        // 그 외
+                        .anyRequest().permitAll()
                 )
 
                 .addFilterBefore(

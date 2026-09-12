@@ -1,5 +1,3 @@
-server-host: 192.168.1.102
-
 spring:
   application:
     name: SpringBootProject
