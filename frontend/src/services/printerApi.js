@@ -1,4 +1,5 @@
-import printerAxios from "../util/printerAxios";
+import axios from "../util/axios";
+
 
 // ==============================
 // 프린터 목록 조회
@@ -6,8 +7,8 @@ import printerAxios from "../util/printerAxios";
 export const getPrinters = async () => {
 
     const res =
-        await printerAxios.get(
-            "/api/printers"
+        await axios.get(
+            "/api/agent/printers"
         );
 
     return res.data;
@@ -22,8 +23,8 @@ export const getPrinterSettings = async (
 ) => {
 
     const res =
-        await printerAxios.get(
-            `/api/printers/${encodeURIComponent(
+        await axios.get(
+            `/api/agent/printers/${encodeURIComponent(
                 printerName
             )}/settings`
         );
@@ -42,8 +43,8 @@ export const printPdf = async (
 ) => {
 
     const res =
-        await printerAxios.post(
-            "/api/printers/print",
+        await axios.post(
+            "/api/agent/printers/print",
             {
                 printerName,
                 filePath,

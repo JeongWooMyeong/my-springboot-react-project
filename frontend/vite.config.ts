@@ -26,6 +26,11 @@ export default defineConfig({
         changeOrigin: true,
       },
 
+      '/api/agent': {
+        target: 'http://localhost:18080',
+        changeOrigin: true,
+      },
+
     },
   },
 })

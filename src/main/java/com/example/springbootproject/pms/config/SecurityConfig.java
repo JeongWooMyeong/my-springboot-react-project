@@ -67,7 +67,8 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers(
-                                "/api/pppo2000/pdf/subscribe/**"
+                                "/api/pppo2000/pdf/subscribe/**",
+                                "/api/pppo2000/pdf/preview/**"
                         ).permitAll()
 
                         // API는 인증
