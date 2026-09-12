@@ -15,11 +15,11 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class SpringBootProjectApplication {
 
     public static void main(String[] args) throws Exception{
-        String ip = NetWorkUtil.getWifiIp();
+        //String ip = NetWorkUtil.getWifiIp();
 
-        System.out.println("현재 서버 IP : " + ip);
+        //System.out.println("현재 서버 IP : " + ip);
 
-        System.setProperty("server-host", ip);
+        //System.setProperty("server-host", ip);
 
         SpringApplication.run(SpringBootProjectApplication.class, args);
     }
