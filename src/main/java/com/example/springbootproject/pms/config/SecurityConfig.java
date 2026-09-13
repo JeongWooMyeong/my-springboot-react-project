@@ -71,6 +71,10 @@ public class SecurityConfig {
                                 "/api/pppo2000/pdf/preview/**"
                         ).permitAll()
 
+                        .requestMatchers(
+                                "/api/printers/**"
+                        ).permitAll()
+
                         // API는 인증
                         .requestMatchers("/api/**").authenticated()
 
