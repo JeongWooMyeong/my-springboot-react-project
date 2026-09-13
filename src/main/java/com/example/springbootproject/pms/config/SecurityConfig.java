@@ -72,6 +72,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers(
+                                "/api/printers",
                                 "/api/printers/**"
                         ).permitAll()
 
