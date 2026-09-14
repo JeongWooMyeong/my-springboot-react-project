@@ -6,6 +6,7 @@ import {
     message,
     InputNumber
 } from "antd";
+
 import { useEffect, useState } from "react";
 
 import {
@@ -14,20 +15,39 @@ import {
     printPdf
 } from "../../../../services/printerApi";
 
+
 export default function Pppo2000PdfPreview({
                                                open,
                                                pdfUrl,
                                                filePath,
+
+                                               // 전체 PDF 목록
+                                               pdfFiles,
+
+                                               // 현재 PDF 위치
+                                               currentPdfIndex,
+
+                                               // 이전 / 다음
+                                               onPrevious,
+                                               onNext,
+
                                                onClose
                                            }) {
 
-    const [printers, setPrinters] = useState([]);
-    const [selectedPrinter, setSelectedPrinter] = useState(null);
-    const [printing, setPrinting] = useState(false);
+    const [printers, setPrinters] =
+        useState([]);
+
+    const [selectedPrinter, setSelectedPrinter] =
+        useState(null);
+
+    const [printing, setPrinting] =
+        useState(false);
+
 
     // 선택된 프린터 설정
     const [printerSettings, setPrinterSettings] =
         useState(null);
+
 
     // 인쇄 옵션
     const [paperSize, setPaperSize] =
@@ -47,6 +67,21 @@ export default function Pppo2000PdfPreview({
 
 
     /*
+     * 현재 PDF가 몇 번째인지
+     */
+    const fileCount =
+        pdfFiles?.length || 0;
+
+
+    /*
+     * 현재 PDF 정보
+     */
+    const currentFile =
+        pdfFiles?.[currentPdfIndex];
+
+    const showPrinterAgent = false;
+
+    /*
      * Printer Agent에서 설치된 프린터 목록 조회
      */
     useEffect(() => {
@@ -54,6 +89,7 @@ export default function Pppo2000PdfPreview({
         if (!open) {
             return;
         }
+
 
         const fetchPrinters = async () => {
 
@@ -77,6 +113,7 @@ export default function Pppo2000PdfPreview({
             }
         };
 
+
         fetchPrinters();
 
     }, [open]);
@@ -84,18 +121,19 @@ export default function Pppo2000PdfPreview({
 
     /*
      * 프린터 선택
-     *
-     * 프린터를 선택하면
-     * Printer Agent에서 해당 프린터의 설정을 조회한다.
      */
     const handlePrinterChange = async (
         printerName
     ) => {
 
-        setSelectedPrinter(printerName);
+        setSelectedPrinter(
+            printerName
+        );
 
-        // 기존 설정 초기화
-        setPrinterSettings(null);
+        setPrinterSettings(
+            null
+        );
+
 
         try {
 
@@ -104,22 +142,31 @@ export default function Pppo2000PdfPreview({
                     printerName
                 );
 
+
             console.log(
                 "프린터 설정:",
                 settings
             );
 
-            setPrinterSettings(settings);
 
-            // 프린터 기본 설정이 있다면 적용
+            setPrinterSettings(
+                settings
+            );
+
+
+            // 프린터 기본 용지 적용
             if (
                 settings?.paperSizes?.length > 0 &&
-                !settings.paperSizes.includes(paperSize)
+                !settings.paperSizes.includes(
+                    paperSize
+                )
             ) {
+
                 setPaperSize(
                     settings.paperSizes[0]
                 );
             }
+
 
         } catch (error) {
 
@@ -137,6 +184,8 @@ export default function Pppo2000PdfPreview({
 
     /*
      * PDF 인쇄
+     *
+     * 현재 Viewer에 표시된 PDF만 출력
      */
     const handlePrint = async () => {
 
@@ -149,6 +198,7 @@ export default function Pppo2000PdfPreview({
             return;
         }
 
+
         if (!filePath) {
 
             message.warning(
@@ -158,9 +208,11 @@ export default function Pppo2000PdfPreview({
             return;
         }
 
+
         try {
 
             setPrinting(true);
+
 
             const result =
                 await printPdf(
@@ -175,13 +227,15 @@ export default function Pppo2000PdfPreview({
                     }
                 );
 
+
             message.success(
                 result ||
                 "출력이 완료되었습니다."
             );
 
-            // 출력 성공 후 닫기
+
             onClose();
+
 
         } catch (error) {
 
@@ -190,10 +244,12 @@ export default function Pppo2000PdfPreview({
                 error
             );
 
+
             message.error(
                 error?.response?.data ||
                 "PDF 출력에 실패했습니다."
             );
+
 
         } finally {
 
@@ -203,6 +259,7 @@ export default function Pppo2000PdfPreview({
 
 
     return (
+
         <Modal
             title="PDF 미리보기"
             open={open}
@@ -213,19 +270,78 @@ export default function Pppo2000PdfPreview({
         >
 
             {/* =========================
+                PDF 제목 / 페이지 이동
+            ========================= */}
+
+            {fileCount > 0 && (
+
+                <div
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 12,
+                        marginBottom: 12
+                    }}
+                >
+
+                    <Button
+                        onClick={onPrevious}
+                        disabled={
+                            currentPdfIndex <= 0
+                        }
+                    >
+                        이전
+                    </Button>
+
+
+                    <span
+                        style={{
+                            minWidth: 180,
+                            textAlign: "center"
+                        }}
+                    >
+                        {currentFile?.ordno}
+
+                        {"  "}
+
+                        ({currentPdfIndex + 1} / {fileCount})
+                    </span>
+
+
+                    <Button
+                        onClick={onNext}
+                        disabled={
+                            currentPdfIndex >=
+                            fileCount - 1
+                        }
+                    >
+                        다음
+                    </Button>
+
+                </div>
+            )}
+
+
+            {/* =========================
                 PDF 미리보기
             ========================= */}
 
             {pdfUrl && (
+
                 <iframe
                     src={pdfUrl}
-                    title="PDF 미리보기"
+                    title={
+                        currentFile?.ordno ||
+                        "PDF 미리보기"
+                    }
                     style={{
                         width: "100%",
                         height: "700px",
                         border: "1px solid #ccc"
                     }}
                 />
+
             )}
 
 
@@ -241,37 +357,35 @@ export default function Pppo2000PdfPreview({
                 }}
             >
 
-                {/* =========================
-                    프린터 선택
-                ========================= */}
+                {/* 프린터 선택 */}
 
-                <Space>
-                    <span>
-                        프린터
-                    </span>
+                {showPrinterAgent && (
+                    <Space>
+                        <span>
+                            프린터
+                        </span>
 
-                    <Select
-                        style={{
-                            width: 300
-                        }}
-                        placeholder="프린터 선택"
-                        value={selectedPrinter}
-                        onChange={
-                            handlePrinterChange
-                        }
-                        options={printers.map(
-                            printer => ({
-                                value: printer,
-                                label: printer
-                            })
-                        )}
-                    />
-                </Space>
+                        <Select
+                            style={{
+                                width: 300
+                            }}
+                            placeholder="프린터 선택"
+                            value={selectedPrinter}
+                            onChange={handlePrinterChange}
+                            options={
+                                printers.map(
+                                    printer => ({
+                                        value: printer,
+                                        label: printer
+                                    })
+                                )
+                            }
+                        />
+                    </Space>
+                )}
 
 
-                {/* =========================
-                    프린터 설정
-                ========================= */}
+                {/* 프린터 설정 */}
 
                 {selectedPrinter && (
 
@@ -293,6 +407,7 @@ export default function Pppo2000PdfPreview({
                             {/* 용지 */}
 
                             <Space>
+
                                 <span>
                                     용지
                                 </span>
@@ -319,12 +434,14 @@ export default function Pppo2000PdfPreview({
                                             ) || []
                                     }
                                 />
+
                             </Space>
 
 
                             {/* 방향 */}
 
                             <Space>
+
                                 <span>
                                     방향
                                 </span>
@@ -352,12 +469,14 @@ export default function Pppo2000PdfPreview({
                                         }
                                     ]}
                                 />
+
                             </Space>
 
 
                             {/* 컬러 */}
 
                             <Space>
+
                                 <span>
                                     컬러
                                 </span>
@@ -367,7 +486,9 @@ export default function Pppo2000PdfPreview({
                                         width: 100
                                     }}
                                     value={color}
-                                    onChange={setColor}
+                                    onChange={
+                                        setColor
+                                    }
                                     disabled={
                                         printerSettings &&
                                         !printerSettings
@@ -384,12 +505,14 @@ export default function Pppo2000PdfPreview({
                                         }
                                     ]}
                                 />
+
                             </Space>
 
 
                             {/* 양면 */}
 
                             <Space>
+
                                 <span>
                                     양면
                                 </span>
@@ -399,7 +522,9 @@ export default function Pppo2000PdfPreview({
                                         width: 100
                                     }}
                                     value={duplex}
-                                    onChange={setDuplex}
+                                    onChange={
+                                        setDuplex
+                                    }
                                     disabled={
                                         printerSettings &&
                                         !printerSettings
@@ -416,12 +541,14 @@ export default function Pppo2000PdfPreview({
                                         }
                                     ]}
                                 />
+
                             </Space>
 
 
                             {/* 매수 */}
 
                             <Space>
+
                                 <span>
                                     매수
                                 </span>
@@ -437,6 +564,7 @@ export default function Pppo2000PdfPreview({
                                             )
                                     }
                                 />
+
                             </Space>
 
                         </Space>
@@ -445,9 +573,7 @@ export default function Pppo2000PdfPreview({
                 )}
 
 
-                {/* =========================
-                    버튼
-                ========================= */}
+                {/* 버튼 */}
 
                 <div
                     style={{
@@ -464,6 +590,7 @@ export default function Pppo2000PdfPreview({
                         >
                             닫기
                         </Button>
+
 
                         <Button
                             type="primary"

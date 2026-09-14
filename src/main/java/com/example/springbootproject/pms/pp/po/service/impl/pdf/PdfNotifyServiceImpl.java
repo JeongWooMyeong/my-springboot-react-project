@@ -1,11 +1,13 @@
 package com.example.springbootproject.pms.pp.po.service.impl.pdf;
 
+import com.example.springbootproject.pms.pp.po.kafka.event.PdfPreviewFile;
 import com.example.springbootproject.pms.pp.po.service.pdf.PdfNotifyService;
 import com.example.springbootproject.pms.pp.po.service.sse.SseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -23,7 +25,8 @@ public class PdfNotifyServiceImpl
     @Override
     public void sendComplete(
             String jobid,
-            String downloadUrl
+            String downloadUrl,
+            List<PdfPreviewFile> files
     ) {
 
         sseService.send(
@@ -32,7 +35,8 @@ public class PdfNotifyServiceImpl
                 Map.of(
                         "status", "COMPLETE",
                         "jobid", jobid,
-                        "downloadUrl", downloadUrl
+                        "downloadUrl", downloadUrl,
+                        "files", files
                 )
         );
     }

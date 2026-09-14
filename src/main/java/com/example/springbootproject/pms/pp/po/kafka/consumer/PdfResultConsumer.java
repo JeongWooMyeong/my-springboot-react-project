@@ -32,7 +32,8 @@ public class PdfResultConsumer {
 
             pdfNotifyService.sendComplete(
                     result.getJobid(),
-                    result.getDownloadUrl()
+                    result.getDownloadUrl(),
+                    result.getFiles()
             );
 
         } else if ("FAIL".equals(result.getStatus())) {

@@ -126,11 +126,30 @@ export const subscribePdf = (
                         );
 
 
-                        // React 컴포넌트로 PDF URL 전달
+                        /*
+                        * 중요
+                        *
+                        * 기존:
+                        *
+                        * onComplete(pdfUrl)
+                        *
+                        * 변경:
+                        *
+                        * onComplete(data)
+                        *
+                        *
+                        * Page에서
+                        *
+                        * data.downloadUrl
+                        * data.files
+                        *
+                        * 둘 다 사용할 수 있도록
+                        * SSE 응답 전체를 전달한다.
+                        */
                         if (onComplete) {
 
                             onComplete(
-                                pdfUrl
+                                data
                             );
 
                         }

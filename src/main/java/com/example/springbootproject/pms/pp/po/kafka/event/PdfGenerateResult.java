@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +18,7 @@ public class PdfGenerateResult {
     private String downloadUrl;
 
     private String message;
+
+    private List<PdfPreviewFile> files;
 
 }

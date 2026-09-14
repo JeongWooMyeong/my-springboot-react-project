@@ -326,4 +326,47 @@ public class Pppo2000Controller {
                 );
     }
 
+    @GetMapping("/pdf/preview/{jobid}/{ordno}")
+    public ResponseEntity<Resource> previewPdfOrdno(
+            @PathVariable String jobid,
+            @PathVariable String ordno
+    ) throws Exception {
+
+        String objectName =
+                "preview/"
+                        + jobid
+                        + "/"
+                        + ordno
+                        + ".pdf";
+
+
+        if (!minioStorageService.exists(objectName)) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+
+        InputStream resource =
+                minioStorageService.getInputStream(
+                        objectName
+                );
+
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"" +
+                                ordno +
+                                ".pdf\""
+                )
+                .contentType(
+                        MediaType.APPLICATION_PDF
+                )
+                .body(
+                        new InputStreamResource(resource)
+                );
+    }
+
 }

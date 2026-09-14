@@ -30,15 +30,35 @@ export default function Pppo2000Page() {
     const [selectedOrdnos, setSelectedOrdnos] = useState([]);
     const [status, setStatus] = useState("");
     const [requestList, setRequestList] = useState([]);
-    //PDF 미리보기 URL
-    const [pdfUrl, setPdfUrl] = useState(null); //260905
 
-    // Printer Agent에서 사용할 PDF 파일 경로
-    const [filePath, setFilePath] =
-        useState(null);
+    /*
+     * PDF 미리보기
+     *
+     * 단건 / 다건 모두 files 배열로 관리
+     */
+    const [pdfFiles, setPdfFiles] = useState([]);
 
-    //PDF 미리보기 Modal
-    const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false); //260905
+    /*
+     * 현재 보고 있는 PDF index
+     */
+    const [currentPdfIndex, setCurrentPdfIndex] = useState(0);
+
+    /*
+     * 기존 ZIP/PDF URL
+     *
+     * 필요하면 다운로드 용도로 사용할 수 있음
+     */
+    const [downloadUrl, setDownloadUrl] = useState(null);
+
+    /*
+     * Printer Agent에서 사용할 파일 경로
+     */
+    const [filePath, setFilePath] = useState(null);
+
+    /*
+     * PDF Preview Modal
+     */
+    const [pdfPreviewOpen, setPdfPreviewOpen] = useState(false);
 
     const { showMessage } = useNotification();
 
@@ -137,26 +157,84 @@ export default function Pppo2000Page() {
             return;
         }
 
+
         try {
 
-            //기존 PDF URL 초기화
-            setPdfUrl(null);
+            /*
+             * 기존 PDF 초기화
+             */
+            setPdfFiles([]);
 
-            //기존 파일 경로 초기화
+            setDownloadUrl(null);
+
             setFilePath(null);
 
-            // ⭐ jobId를 PDF 요청 전에 생성
+            setCurrentPdfIndex(0);
+
+
+            /*
+             * Job ID 생성
+             */
             const jobid =
                 crypto.randomUUID();
 
 
-            // ⭐ SSE 먼저 연결
+            /*
+             * SSE 먼저 연결
+             */
             subscribePdf(
                 jobid,
                 showMessage,
-                (url) => {
-                    setPdfUrl(url);
-                    setFilePath(url);
+
+                /*
+                 * 기존에는 url 하나만 받았지만
+                 * 이제 COMPLETE 결과 전체를 받도록 변경
+                 */
+                (result) => {
+
+                    console.log(
+                        "PDF 생성 완료:",
+                        result
+                    );
+
+                    console.log("PDF files:", result.files);
+
+
+                    /*
+                     * 기존 다운로드 URL
+                     */
+                    setDownloadUrl(
+                        result.downloadUrl
+                    );
+
+
+                    /*
+                     * 개별 PDF 목록
+                     */
+                    const files =
+                        result.files || [];
+
+
+                    setPdfFiles(files);
+
+                    setCurrentPdfIndex(0);
+
+
+                    /*
+                     * 첫 번째 PDF
+                     */
+                    if (files.length > 0) {
+
+                        setFilePath(
+                            files[0].url
+                        );
+
+                    }
+
+
+                    /*
+                     * Preview 열기
+                     */
                     setPdfPreviewOpen(true);
                 }
             );
@@ -167,7 +245,9 @@ export default function Pppo2000Page() {
             );
 
 
-            // ⭐ 생성한 jobId를 PDF 요청에 전달
+            /*
+             * PDF 생성 요청
+             */
             if (selectedOrdnos.length === 1) {
 
                 await requestPdf(
@@ -191,19 +271,75 @@ export default function Pppo2000Page() {
             alert(
                 "PDF 생성 요청 실패"
             );
-
         }
-
     };
 
+
     /*
-    PDF Preview 닫기
+     * 이전 PDF
+     */
+    const handlePreviousPdf = () => {
+
+        if (currentPdfIndex <= 0) {
+            return;
+        }
+
+        const newIndex =
+            currentPdfIndex - 1;
+
+        setCurrentPdfIndex(newIndex);
+
+        setFilePath(
+            pdfFiles[newIndex].url
+        );
+    };
+
+
+    /*
+     * 다음 PDF
+     */
+    const handleNextPdf = () => {
+
+        if (
+            currentPdfIndex >=
+            pdfFiles.length - 1
+        ) {
+            return;
+        }
+
+        const newIndex =
+            currentPdfIndex + 1;
+
+        setCurrentPdfIndex(newIndex);
+
+        setFilePath(
+            pdfFiles[newIndex].url
+        );
+    };
+
+
+    /*
+     * PDF Preview 닫기
      */
     const handlePdfPreviewClose = () => {
+
         setPdfPreviewOpen(false);
-        setPdfUrl(null);
+
+        setPdfFiles([]);
+
+        setCurrentPdfIndex(0);
+
+        setDownloadUrl(null);
+
         setFilePath(null);
-    }
+    };
+
+
+    /*
+     * 현재 PDF
+     */
+    const currentPdf =
+        pdfFiles[currentPdfIndex];
 
 
     return (
@@ -258,16 +394,52 @@ export default function Pppo2000Page() {
 
             </div>
 
-            {/* ⭐ PDF 미리보기 */}
+
+            {/* PDF 미리보기 */}
 
             <Pppo2000PdfPreview
                 open={pdfPreviewOpen}
-                pdfUrl={pdfUrl}
+
+                /*
+                 * 현재 선택된 PDF 하나만 Viewer에 전달
+                 */
+                pdfUrl={
+                    currentPdf?.url || null
+                }
+
+                /*
+                 * 현재 선택된 PDF
+                 */
                 filePath={filePath}
-                onClose={handlePdfPreviewClose}
+
+                /*
+                 * 전체 PDF 목록
+                 */
+                pdfFiles={pdfFiles}
+
+                /*
+                 * 현재 index
+                 */
+                currentPdfIndex={
+                    currentPdfIndex
+                }
+
+                /*
+                 * 이전 / 다음
+                 */
+                onPrevious={
+                    handlePreviousPdf
+                }
+
+                onNext={
+                    handleNextPdf
+                }
+
+                onClose={
+                    handlePdfPreviewClose
+                }
             />
 
         </div>
-
     );
 }
