@@ -369,4 +369,67 @@ public class Pppo2000Controller {
                 );
     }
 
+    @GetMapping("/pdf/print/{jobid}")
+    public ResponseEntity<Resource> printAllPdf(
+            @PathVariable String jobid
+    ) throws Exception {
+
+        PdfJobDto job =
+                pdfJobService.findByJobid(jobid);
+
+
+        if (job == null) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+
+        /*
+         * 전체 인쇄용 PDF
+         *
+         * DB:
+         * ALL_FILE_PATH
+         *
+         * 예:
+         * pdf/{jobid}/all.pdf
+         */
+        String objectName =
+                job.getAllfilepath();
+
+
+        if (objectName == null ||
+                objectName.isBlank()) {
+
+            return ResponseEntity
+                    .notFound()
+                    .build();
+        }
+
+
+        /*
+         * MinIO에서 all.pdf 조회
+         */
+        InputStream resource =
+                minioStorageService.getInputStream(
+                        objectName
+                );
+
+
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "inline; filename=\"all.pdf\""
+                )
+                .contentType(
+                        MediaType.APPLICATION_PDF
+                )
+                .body(
+                        new InputStreamResource(
+                                resource
+                        )
+                );
+    }
+
 }

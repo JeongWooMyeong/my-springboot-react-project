@@ -27,4 +27,6 @@ public class PdfJobDto {
 
     private LocalDateTime updatedate;
 
+    private String allfilepath;
+
 }

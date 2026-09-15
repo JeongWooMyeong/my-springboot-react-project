@@ -16,7 +16,8 @@ public interface PdfNotifyService {
     void sendComplete(
             String jobid,
             String downloadUrl,
-            List<PdfPreviewFile> files
+            List<PdfPreviewFile> files,
+            String allDownloadUrl
     );
 
 

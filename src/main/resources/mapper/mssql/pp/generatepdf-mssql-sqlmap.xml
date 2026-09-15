@@ -84,7 +84,8 @@
             STATUS          AS status,
             FILE_PATH       AS filepath,
             CREATE_DATE     AS createdate,
-            COMPLETE_DATE   AS completedate
+            COMPLETE_DATE   AS completedate,
+            ALL_FILE_PATH   AS allfilepath
         FROM PDF_JOB
         WHERE JOB_ID = #{jobid}
 

@@ -14,7 +14,7 @@ import {
     getPrinterSettings,
     printPdf
 } from "../../../../services/printerApi";
-
+import Pppo2000AllPdfPrintModal from "./Pppo2000AllPdfPrintModal.jsx";
 
 export default function Pppo2000PdfPreview({
                                                open,
@@ -23,6 +23,8 @@ export default function Pppo2000PdfPreview({
 
                                                // 전체 PDF 목록
                                                pdfFiles,
+                                               // 전체 인쇄용 PDF URL
+                                               allDownloadUrl,
 
                                                // 현재 PDF 위치
                                                currentPdfIndex,
@@ -80,6 +82,9 @@ export default function Pppo2000PdfPreview({
         pdfFiles?.[currentPdfIndex];
 
     const showPrinterAgent = false;
+
+    const [allPdfOpen, setAllPdfOpen] =
+        useState(false);
 
     /*
      * Printer Agent에서 설치된 프린터 목록 조회
@@ -257,360 +262,390 @@ export default function Pppo2000PdfPreview({
         }
     };
 
+    const handlePrintAll = () => {
+
+        if (!allDownloadUrl) {
+
+            message.warning(
+                "전체 인쇄용 PDF가 없습니다."
+            );
+
+            return;
+        }
+
+        setAllPdfOpen(true);
+
+    };
+
 
     return (
-
-        <Modal
-            title="PDF 미리보기"
-            open={open}
-            onCancel={onClose}
-            footer={null}
-            width={1000}
-            centered
-        >
-
-            {/* =========================
-                PDF 제목 / 페이지 이동
-            ========================= */}
-
-            {fileCount > 0 && (
-
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: 12,
-                        marginBottom: 12
-                    }}
-                >
-
-                    <Button
-                        onClick={onPrevious}
-                        disabled={
-                            currentPdfIndex <= 0
-                        }
-                    >
-                        이전
-                    </Button>
-
-
-                    <span
-                        style={{
-                            minWidth: 180,
-                            textAlign: "center"
-                        }}
-                    >
-                        {currentFile?.ordno}
-
-                        {"  "}
-
-                        ({currentPdfIndex + 1} / {fileCount})
-                    </span>
-
-
-                    <Button
-                        onClick={onNext}
-                        disabled={
-                            currentPdfIndex >=
-                            fileCount - 1
-                        }
-                    >
-                        다음
-                    </Button>
-
-                </div>
-            )}
-
-
-            {/* =========================
-                PDF 미리보기
-            ========================= */}
-
-            {pdfUrl && (
-
-                <iframe
-                    src={pdfUrl}
-                    title={
-                        currentFile?.ordno ||
-                        "PDF 미리보기"
-                    }
-                    style={{
-                        width: "100%",
-                        height: "700px",
-                        border: "1px solid #ccc"
-                    }}
-                />
-
-            )}
-
-
-            {/* =========================
-                인쇄 영역
-            ========================= */}
-
-            <div
-                style={{
-                    marginTop: 16,
-                    paddingTop: 16,
-                    borderTop: "1px solid #eee"
-                }}
+        <>
+            <Modal
+                title="PDF 미리보기"
+                open={open}
+                onCancel={onClose}
+                footer={null}
+                width={1000}
+                centered
             >
 
-                {/* 프린터 선택 */}
+                {/* =========================
+                    PDF 제목 / 페이지 이동
+                ========================= */}
 
-                {showPrinterAgent && (
-                    <Space>
-                        <span>
-                            프린터
-                        </span>
-
-                        <Select
-                            style={{
-                                width: 300
-                            }}
-                            placeholder="프린터 선택"
-                            value={selectedPrinter}
-                            onChange={handlePrinterChange}
-                            options={
-                                printers.map(
-                                    printer => ({
-                                        value: printer,
-                                        label: printer
-                                    })
-                                )
-                            }
-                        />
-                    </Space>
-                )}
-
-
-                {/* 프린터 설정 */}
-
-                {selectedPrinter && (
+                {fileCount > 0 && (
 
                     <div
                         style={{
-                            marginTop: 16,
-                            padding: 12,
-                            background: "#fafafa",
-                            border: "1px solid #eee",
-                            borderRadius: 4
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: 12,
+                            marginBottom: 12
                         }}
                     >
 
-                        <Space
-                            wrap
-                            size="large"
+                        <Button
+                            onClick={onPrevious}
+                            disabled={
+                                currentPdfIndex <= 0
+                            }
                         >
-
-                            {/* 용지 */}
-
-                            <Space>
-
-                                <span>
-                                    용지
-                                </span>
-
-                                <Select
-                                    style={{
-                                        width: 100
-                                    }}
-                                    value={paperSize}
-                                    onChange={
-                                        setPaperSize
-                                    }
-                                    loading={
-                                        !printerSettings
-                                    }
-                                    options={
-                                        printerSettings
-                                            ?.paperSizes
-                                            ?.map(
-                                                size => ({
-                                                    value: size,
-                                                    label: size
-                                                })
-                                            ) || []
-                                    }
-                                />
-
-                            </Space>
+                            이전
+                        </Button>
 
 
-                            {/* 방향 */}
+                        <span
+                            style={{
+                                minWidth: 180,
+                                textAlign: "center"
+                            }}
+                        >
+                            {currentFile?.ordno}
 
-                            <Space>
+                            {"  "}
 
-                                <span>
-                                    방향
-                                </span>
-
-                                <Select
-                                    style={{
-                                        width: 100
-                                    }}
-                                    value={orientation}
-                                    onChange={
-                                        setOrientation
-                                    }
-                                    options={[
-                                        {
-                                            value:
-                                                "PORTRAIT",
-                                            label:
-                                                "세로"
-                                        },
-                                        {
-                                            value:
-                                                "LANDSCAPE",
-                                            label:
-                                                "가로"
-                                        }
-                                    ]}
-                                />
-
-                            </Space>
+                            ({currentPdfIndex + 1} / {fileCount})
+                        </span>
 
 
-                            {/* 컬러 */}
-
-                            <Space>
-
-                                <span>
-                                    컬러
-                                </span>
-
-                                <Select
-                                    style={{
-                                        width: 100
-                                    }}
-                                    value={color}
-                                    onChange={
-                                        setColor
-                                    }
-                                    disabled={
-                                        printerSettings &&
-                                        !printerSettings
-                                            .colorSupported
-                                    }
-                                    options={[
-                                        {
-                                            value: true,
-                                            label: "컬러"
-                                        },
-                                        {
-                                            value: false,
-                                            label: "흑백"
-                                        }
-                                    ]}
-                                />
-
-                            </Space>
-
-
-                            {/* 양면 */}
-
-                            <Space>
-
-                                <span>
-                                    양면
-                                </span>
-
-                                <Select
-                                    style={{
-                                        width: 100
-                                    }}
-                                    value={duplex}
-                                    onChange={
-                                        setDuplex
-                                    }
-                                    disabled={
-                                        printerSettings &&
-                                        !printerSettings
-                                            .duplexSupported
-                                    }
-                                    options={[
-                                        {
-                                            value: false,
-                                            label: "단면"
-                                        },
-                                        {
-                                            value: true,
-                                            label: "양면"
-                                        }
-                                    ]}
-                                />
-
-                            </Space>
-
-
-                            {/* 매수 */}
-
-                            <Space>
-
-                                <span>
-                                    매수
-                                </span>
-
-                                <InputNumber
-                                    min={1}
-                                    max={999}
-                                    value={copies}
-                                    onChange={
-                                        value =>
-                                            setCopies(
-                                                value || 1
-                                            )
-                                    }
-                                />
-
-                            </Space>
-
-                        </Space>
+                        <Button
+                            onClick={onNext}
+                            disabled={
+                                currentPdfIndex >=
+                                fileCount - 1
+                            }
+                        >
+                            다음
+                        </Button>
 
                     </div>
                 )}
 
 
-                {/* 버튼 */}
+                {/* =========================
+                    PDF 미리보기
+                ========================= */}
+
+                {pdfUrl && (
+
+                    <iframe
+                        src={pdfUrl}
+                        title={
+                            currentFile?.ordno ||
+                            "PDF 미리보기"
+                        }
+                        style={{
+                            width: "100%",
+                            height: "700px",
+                            border: "1px solid #ccc"
+                        }}
+                    />
+
+                )}
+
+
+                {/* =========================
+                    인쇄 영역
+                ========================= */}
 
                 <div
                     style={{
                         marginTop: 16,
-                        display: "flex",
-                        justifyContent: "flex-end"
+                        paddingTop: 16,
+                        borderTop: "1px solid #eee"
                     }}
                 >
 
-                    <Space>
+                    {/* 프린터 선택 */}
 
-                        <Button
-                            onClick={onClose}
+                    {showPrinterAgent && (
+                        <Space>
+                            <span>
+                                프린터
+                            </span>
+
+                            <Select
+                                style={{
+                                    width: 300
+                                }}
+                                placeholder="프린터 선택"
+                                value={selectedPrinter}
+                                onChange={handlePrinterChange}
+                                options={
+                                    printers.map(
+                                        printer => ({
+                                            value: printer,
+                                            label: printer
+                                        })
+                                    )
+                                }
+                            />
+                        </Space>
+                    )}
+
+
+                    {/* 프린터 설정 */}
+
+                    {selectedPrinter && (
+
+                        <div
+                            style={{
+                                marginTop: 16,
+                                padding: 12,
+                                background: "#fafafa",
+                                border: "1px solid #eee",
+                                borderRadius: 4
+                            }}
                         >
-                            닫기
-                        </Button>
+
+                            <Space
+                                wrap
+                                size="large"
+                            >
+
+                                {/* 용지 */}
+
+                                <Space>
+
+                                    <span>
+                                        용지
+                                    </span>
+
+                                    <Select
+                                        style={{
+                                            width: 100
+                                        }}
+                                        value={paperSize}
+                                        onChange={
+                                            setPaperSize
+                                        }
+                                        loading={
+                                            !printerSettings
+                                        }
+                                        options={
+                                            printerSettings
+                                                ?.paperSizes
+                                                ?.map(
+                                                    size => ({
+                                                        value: size,
+                                                        label: size
+                                                    })
+                                                ) || []
+                                        }
+                                    />
+
+                                </Space>
 
 
-                        <Button
-                            type="primary"
-                            loading={printing}
-                            disabled={
-                                !selectedPrinter ||
-                                !filePath ||
-                                !printerSettings
-                            }
-                            onClick={handlePrint}
-                        >
-                            인쇄
-                        </Button>
+                                {/* 방향 */}
 
-                    </Space>
+                                <Space>
+
+                                    <span>
+                                        방향
+                                    </span>
+
+                                    <Select
+                                        style={{
+                                            width: 100
+                                        }}
+                                        value={orientation}
+                                        onChange={
+                                            setOrientation
+                                        }
+                                        options={[
+                                            {
+                                                value:
+                                                    "PORTRAIT",
+                                                label:
+                                                    "세로"
+                                            },
+                                            {
+                                                value:
+                                                    "LANDSCAPE",
+                                                label:
+                                                    "가로"
+                                            }
+                                        ]}
+                                    />
+
+                                </Space>
+
+
+                                {/* 컬러 */}
+
+                                <Space>
+
+                                    <span>
+                                        컬러
+                                    </span>
+
+                                    <Select
+                                        style={{
+                                            width: 100
+                                        }}
+                                        value={color}
+                                        onChange={
+                                            setColor
+                                        }
+                                        disabled={
+                                            printerSettings &&
+                                            !printerSettings
+                                                .colorSupported
+                                        }
+                                        options={[
+                                            {
+                                                value: true,
+                                                label: "컬러"
+                                            },
+                                            {
+                                                value: false,
+                                                label: "흑백"
+                                            }
+                                        ]}
+                                    />
+
+                                </Space>
+
+
+                                {/* 양면 */}
+
+                                <Space>
+
+                                    <span>
+                                        양면
+                                    </span>
+
+                                    <Select
+                                        style={{
+                                            width: 100
+                                        }}
+                                        value={duplex}
+                                        onChange={
+                                            setDuplex
+                                        }
+                                        disabled={
+                                            printerSettings &&
+                                            !printerSettings
+                                                .duplexSupported
+                                        }
+                                        options={[
+                                            {
+                                                value: false,
+                                                label: "단면"
+                                            },
+                                            {
+                                                value: true,
+                                                label: "양면"
+                                            }
+                                        ]}
+                                    />
+
+                                </Space>
+
+
+                                {/* 매수 */}
+
+                                <Space>
+
+                                    <span>
+                                        매수
+                                    </span>
+
+                                    <InputNumber
+                                        min={1}
+                                        max={999}
+                                        value={copies}
+                                        onChange={
+                                            value =>
+                                                setCopies(
+                                                    value || 1
+                                                )
+                                        }
+                                    />
+
+                                </Space>
+
+                            </Space>
+
+                        </div>
+                    )}
+
+
+                    {/* 버튼 */}
+
+                    <div
+                        style={{
+                            marginTop: 16,
+                            display: "flex",
+                            justifyContent: "flex-end"
+                        }}
+                    >
+
+                        <Space>
+
+                            <Button
+                                onClick={onClose}
+                            >
+                                닫기
+                            </Button>
+
+
+                            <Button
+                                type="primary"
+                                loading={printing}
+                                disabled={
+                                    !selectedPrinter ||
+                                    !filePath ||
+                                    !printerSettings
+                                }
+                                onClick={handlePrint}
+                            >
+                                인쇄
+                            </Button>
+
+                            <Button
+                                onClick={handlePrintAll}
+                                disabled={!allDownloadUrl}
+                            >
+                                전체 인쇄
+                            </Button>
+
+                        </Space>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </Modal>
 
-        </Modal>
+
+            <Pppo2000AllPdfPrintModal
+                open={allPdfOpen}
+                allDownloadUrl={allDownloadUrl}
+                onClose={() => setAllPdfOpen(false)}
+            />
+        </>
     );
 }

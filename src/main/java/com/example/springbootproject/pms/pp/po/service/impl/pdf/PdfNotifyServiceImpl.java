@@ -26,7 +26,8 @@ public class PdfNotifyServiceImpl
     public void sendComplete(
             String jobid,
             String downloadUrl,
-            List<PdfPreviewFile> files
+            List<PdfPreviewFile> files,
+            String allDownloadUrl
     ) {
 
         sseService.send(
@@ -36,7 +37,8 @@ public class PdfNotifyServiceImpl
                         "status", "COMPLETE",
                         "jobid", jobid,
                         "downloadUrl", downloadUrl,
-                        "files", files
+                        "files", files,
+                        "allDownloadUrl",allDownloadUrl
                 )
         );
     }

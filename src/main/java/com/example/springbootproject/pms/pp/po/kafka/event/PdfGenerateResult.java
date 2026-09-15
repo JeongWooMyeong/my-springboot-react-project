@@ -21,4 +21,9 @@ public class PdfGenerateResult {
 
     private List<PdfPreviewFile> files;
 
+    /*
+     * 다건 전체 인쇄용 all.pdf URL
+     */
+    private String allDownloadUrl;
+
 }

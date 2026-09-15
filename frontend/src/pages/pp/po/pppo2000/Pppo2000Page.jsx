@@ -62,6 +62,11 @@ export default function Pppo2000Page() {
 
     const { showMessage } = useNotification();
 
+    /*
+     * 전체 인쇄용 PDF URL
+     */
+    const [allDownloadUrl, setAllDownloadUrl] = useState(null);
+
 
     const handleSearch = async () => {
 
@@ -171,6 +176,7 @@ export default function Pppo2000Page() {
 
             setCurrentPdfIndex(0);
 
+            setAllDownloadUrl(null);
 
             /*
              * Job ID 생성
@@ -205,6 +211,13 @@ export default function Pppo2000Page() {
                      */
                     setDownloadUrl(
                         result.downloadUrl
+                    );
+
+                    /*
+                     * 전체 인쇄용 PDF URL
+                     */
+                    setAllDownloadUrl(
+                        result.allDownloadUrl
                     );
 
 
@@ -416,6 +429,11 @@ export default function Pppo2000Page() {
                  * 전체 PDF 목록
                  */
                 pdfFiles={pdfFiles}
+
+                /*
+                 * 전체 인쇄용 PDF
+                 */
+                allDownloadUrl={allDownloadUrl}
 
                 /*
                  * 현재 index

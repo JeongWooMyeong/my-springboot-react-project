@@ -68,7 +68,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/api/pppo2000/pdf/subscribe/**",
-                                "/api/pppo2000/pdf/preview/**"
+                                "/api/pppo2000/pdf/preview/**",
+                                "/api/pppo2000/pdf/print/**"
                         ).permitAll()
 
                         .requestMatchers(
