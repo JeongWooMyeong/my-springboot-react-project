@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,16 +31,18 @@ public class PdfNotifyServiceImpl
             String allDownloadUrl
     ) {
 
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("status", "COMPLETE");
+        data.put("jobid", jobid);
+        data.put("downloadUrl", downloadUrl);
+        data.put("files", files);
+        data.put("allDownloadUrl", allDownloadUrl);
+
         sseService.send(
                 jobid,
                 "PDF_COMPLETE",
-                Map.of(
-                        "status", "COMPLETE",
-                        "jobid", jobid,
-                        "downloadUrl", downloadUrl,
-                        "files", files,
-                        "allDownloadUrl",allDownloadUrl
-                )
+                data
         );
     }
 

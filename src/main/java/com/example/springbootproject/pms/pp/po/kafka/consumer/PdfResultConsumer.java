@@ -22,9 +22,11 @@ public class PdfResultConsumer {
     public void consume(PdfGenerateResult result) {
 
         log.info(
-                "PDF 결과 수신. jobId={}, status={}",
+                "PDF 결과 수신. jobId={}, status={}, downloadurl={}, alldownloadurl={}",
                 result.getJobid(),
-                result.getStatus()
+                result.getStatus(),
+                result.getDownloadUrl(),
+                result.getAllDownloadUrl()
         );
 
 
