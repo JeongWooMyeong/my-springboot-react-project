@@ -22,7 +22,11 @@ export default function PreviewText({ field, value }) {
             fontFamily={
                 field.fontFamily || "Arial"
             }
-            fontSize={getFitFontSize(value, field)}
+            fontSize={
+                field.fontSize
+                    ? field.fontSize
+                    : getFitFontSize(value, field)
+            }
             fill={field.fill || "black"}
             wrap="word"
             ellipsis={false}
