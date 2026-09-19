@@ -303,7 +303,7 @@ export default function useSytm1000(jijumcd) {
             const jobId =
                 response.data.jobId;
 
-            alert(jobId);
+            //alert(jobId);
 
             // 요청 알림
             showMessage(

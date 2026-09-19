@@ -77,6 +77,10 @@ public class SecurityConfig {
                                 "/api/printers/**"
                         ).permitAll()
 
+                        .requestMatchers(
+                                "/api/sytm1000/activate/subscribe/**"
+                        ).permitAll()
+
                         // API는 인증
                         .requestMatchers("/api/**").authenticated()
 
