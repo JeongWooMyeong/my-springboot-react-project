@@ -5,6 +5,7 @@ const initialForm = {
     productName: '',
     price: '',
     stock: '',
+    version: null,
 };
 
 const ProductForm = ({ product, onSubmit, onClose }) => {
@@ -19,6 +20,7 @@ const ProductForm = ({ product, onSubmit, onClose }) => {
                 productName: product.productName ?? '',
                 price: product.price ?? '',
                 stock: product.stock ?? '',
+                version: product.version ?? null,
             });
         } else {
             setForm(initialForm);
@@ -63,6 +65,7 @@ const ProductForm = ({ product, onSubmit, onClose }) => {
             productName: form.productName.trim(),
             price: Number(form.price),
             stock: Number(form.stock),
+            version: Number(form.version)
         });
     };
 
