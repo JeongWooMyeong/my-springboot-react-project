@@ -37,9 +37,19 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public Syep4000VO login(@RequestBody Syep4000VO vo) {
+    public ResponseEntity<?> login(@RequestBody Syep4000VO vo) {
 
         Syep4000VO userinfo = loginService.getUserInfo(vo);
+
+        if(userinfo == null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "존재하지 않는 아이디입니다. "));
+        }
+
+        if(!userinfo.getPassword().equals(vo.getPassword())){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "비밀번호가 틀렸습니다."));
+        }
 
         // Access Token 생성
         String accessToken =
@@ -59,7 +69,8 @@ public class LoginController {
         userinfo.setToken(accessToken);
         userinfo.setRefreshToken(refreshToken);
 
-        return userinfo;
+        //return userinfo;
+        return ResponseEntity.ok(userinfo);
     }
 
     @GetMapping("/verify")

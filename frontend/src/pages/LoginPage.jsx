@@ -14,6 +14,16 @@ function LoginPage() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
+        if (!userid) {
+            alert("아이디를 입력하세요.");
+            return;
+        }
+
+        if (!password) {
+            alert("비밀번호를 입력하세요.");
+            return;
+        }
+
         Cookies.set("userid", userid, { expires: 7 });
 
         try {
@@ -30,15 +40,11 @@ function LoginPage() {
 
             if (response.ok) {
                 const data = await response.json();
-
-                localStorage.setItem(
-                    "user",
-                    JSON.stringify(data)
-                );
-
+                localStorage.setItem("user", JSON.stringify(data));
                 navigate("/main");
             } else {
-                alert(t("login.fail"));
+                const errorData = await response.json();
+                alert(errorData.error || "로그인 실패");
             }
 
         } catch (error) {

@@ -34,14 +34,16 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public Syep4000VO getUserInfo(Syep4000VO vo){
         Syep4000VO test = loginMapper.getUserInfo(vo);
-        List<Sysm2000Dto> roles = sysm2000Mapper.getUserRoles(test.getUserid());
+        //user 정보 없을때 예외처리
+        if(test != null) {
+            List<Sysm2000Dto> roles = sysm2000Mapper.getUserRoles(test.getUserid());
+            for (Sysm2000Dto role : roles) {
+                List<Sysm2010Dto> perms = sysm2000Mapper.getPermissionsByRole(role.getRoleno());
+                role.setPermissions(perms);
+            }
 
-        for (Sysm2000Dto role : roles) {
-            List<Sysm2010Dto> perms = sysm2000Mapper.getPermissionsByRole(role.getRoleno());
-            role.setPermissions(perms);
+            test.setRoles(roles);
         }
-
-        test.setRoles(roles);
 
         return test;
     }
