@@ -9,9 +9,10 @@ import { componentMap } from "./pages/routes/routes.jsx";
 import { MenuProvider, useMenu } from "./context/MenuContext.jsx";
 import { UserContext } from "./context/UserContext";
 import {checkToken} from "./util/auth.jsx";
-import Sybs1000MainDetail from "./pages/sy/bs/sybs1000/Sybs1000MainDetail.jsx";
 import Toast from "./pages/components/common/Toast.jsx";
 import {NotificationProvider} from "./context/NotificationContext.jsx";
+import Sybs1000Detail from "./pages/sy/bs/sybs1000/Sybs1000Detail.jsx";
+import Sybs1000Update from "./pages/sy/bs/sybs1000/Sybs1000Update.jsx";
 
 // 실제 로그인된 화면들
 function AuthenticatedRoutes() {
@@ -34,10 +35,12 @@ function AuthenticatedRoutes() {
                 path="/sybs1000/detail"
                 element={
                     <Layout>
-                        <Sybs1000MainDetail />
+                        <Sybs1000Detail  />
                     </Layout>
                 }
             />
+
+            <Route path="/sybs1000/update" element={<Sybs1000Update />} />
 
             {routesFromDB.map(({ menuCd, dedName, xpn }) => {
 
