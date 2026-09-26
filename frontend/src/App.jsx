@@ -13,6 +13,7 @@ import Toast from "./pages/components/common/Toast.jsx";
 import {NotificationProvider} from "./context/NotificationContext.jsx";
 import Sybs1000Detail from "./pages/sy/bs/sybs1000/Sybs1000Detail.jsx";
 import Sybs1000Update from "./pages/sy/bs/sybs1000/Sybs1000Update.jsx";
+import NotFound from "./pages/routes/NotFound.jsx";
 
 // 실제 로그인된 화면들
 function AuthenticatedRoutes() {
@@ -46,6 +47,10 @@ function AuthenticatedRoutes() {
 
                 const PageComponent = componentMap[xpn];
 
+                if (!PageComponent) {
+                    return null;
+                }
+
                 const LayoutComponent =
                     menuCd.startsWith("SY")
                         ? SidebarLayout
@@ -65,6 +70,12 @@ function AuthenticatedRoutes() {
                     />
                 );
             })}
+
+            {/* 존재하지 않는 페이지 */}
+            <Route
+                path="*"
+                element={<NotFound />}
+            />
 
         </Routes>
     );
