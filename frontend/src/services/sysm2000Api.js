@@ -81,3 +81,9 @@ export const savePermissions = async (
 
     return res.data;
 };
+
+// Role No 중복확인
+export const checkRoleNoDuplicate = async (roleno) => {
+    const res = await axios.get(`/api/sysm2000/roles/${roleno}`);
+    return res.data;
+};
