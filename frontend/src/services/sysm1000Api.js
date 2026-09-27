@@ -31,3 +31,12 @@ export const deleteMenu = async (menuCd) => {
         `/api/sysm1000/menus/${menuCd}`
     );
 };
+
+// 메뉴 코드 중복확인
+export const checkMenuCdDuplicate = async (menuCd) => {
+    const res = await axios.get(
+        `/api/sysm1000/menus/${menuCd}`
+    );
+
+    return res.data;
+};
