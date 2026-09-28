@@ -51,7 +51,10 @@
 
     <!-- 등록 -->
     <insert id="insert"
-            parameterType="com.example.springbootproject.pms.sy.bs.dto.Sybs1000Dto">
+            parameterType="com.example.springbootproject.pms.sy.bs.dto.Sybs1000Dto"
+            useGeneratedKeys="true"
+            keyProperty="notice_id"
+            keyColumn="notice_id">
 
         INSERT INTO notice
         (
@@ -116,4 +119,62 @@
         ORDER BY created_at DESC
 
     </select>
+
+    <!-- 파일 정보 등록 -->
+    <insert id="insertFile"
+            parameterType="com.example.springbootproject.pms.sy.bs.dto.NoticeFileDto">
+
+        insert into notice_file (
+            notice_id,
+            original_name,
+            object_name,
+            content_type,
+            file_size
+        )
+        values (
+                   #{notice_id},
+                   #{original_name},
+                   #{object_name},
+                   #{content_type},
+                   #{file_size}
+               )
+
+    </insert>
+
+    <select id="selectFiles"
+            parameterType="long"
+            resultType="com.example.springbootproject.pms.sy.bs.dto.NoticeFileDto">
+
+        select
+            file_id,
+            notice_id,
+            original_name,
+            object_name,
+            content_type,
+            file_size,
+            created_at
+        from notice_file
+        where notice_id = #{notice_id}
+        order by file_id
+
+    </select>
+
+    <select id="select_file"
+            parameterType="long"
+            resultType="com.example.springbootproject.pms.sy.bs.dto.NoticeFileDto">
+
+        select
+            file_id,
+            notice_id,
+            original_name,
+            object_name,
+            content_type,
+            file_size,
+            created_at
+        from notice_file
+        where file_id = #{fileId}
+
+    </select>
+
+
 </mapper>

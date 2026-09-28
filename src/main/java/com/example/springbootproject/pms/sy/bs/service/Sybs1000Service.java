@@ -1,6 +1,8 @@
 package com.example.springbootproject.pms.sy.bs.service;
 
+import com.example.springbootproject.pms.sy.bs.dto.NoticeFileDto;
 import com.example.springbootproject.pms.sy.bs.dto.Sybs1000Dto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,14 +22,16 @@ public interface Sybs1000Service {
     /**
      * 공지사항 등록
      */
-    int insert(Sybs1000Dto sybs1000Dto);
+    Long insert(Sybs1000Dto sybs1000Dto, MultipartFile file) throws Exception;
 
 
     /**
      * 공지사항 수정
      */
-    int update(Sybs1000Dto sybs1000Dto);
-
+    Long update (
+            Sybs1000Dto dto,
+            MultipartFile file
+    ) throws Exception;
 
     /**
      * 공지사항 삭제
@@ -35,4 +39,6 @@ public interface Sybs1000Service {
     int delete(Long notice_id);
 
     List<Sybs1000Dto> selectMainList();
+
+    NoticeFileDto select_file(Long fileId);
 }

@@ -1,11 +1,20 @@
 package com.example.springbootproject.pms.sy.bs.controller;
 
+import com.example.springbootproject.pms.common.storage.service.MinioStorageService;
+import com.example.springbootproject.pms.sy.bs.dto.NoticeFileDto;
 import com.example.springbootproject.pms.sy.bs.dto.Sybs1000Dto;
 import com.example.springbootproject.pms.sy.bs.service.Sybs1000Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
@@ -15,6 +24,7 @@ public class Sybs1000Controller {
 
 
     private final Sybs1000Service sybs1000Service;
+    private final MinioStorageService minioStorageService;
 
 
     /**
@@ -46,13 +56,14 @@ public class Sybs1000Controller {
     /**
      * 공지사항 등록
      */
-    @PostMapping
-    public ResponseEntity<Integer> insert(
-            @RequestBody Sybs1000Dto dto
-    ) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Long> insert(
+            @RequestPart("data") Sybs1000Dto dto,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) throws Exception {
 
         return ResponseEntity.ok(
-                sybs1000Service.insert(dto)
+                sybs1000Service.insert(dto, file)
         );
     }
 
@@ -60,13 +71,20 @@ public class Sybs1000Controller {
     /**
      * 공지사항 수정
      */
-    @PutMapping
-    public ResponseEntity<Integer> update(
-            @RequestBody Sybs1000Dto dto
-    ) {
+    @PutMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<Long> update(
+            @RequestPart("data") Sybs1000Dto dto,
+            @RequestPart(value = "file", required = false)
+            MultipartFile file
+    ) throws Exception {
 
         return ResponseEntity.ok(
-                sybs1000Service.update(dto)
+                sybs1000Service.update(
+                        dto,
+                        file
+                )
         );
     }
 
@@ -91,5 +109,43 @@ public class Sybs1000Controller {
                 sybs1000Service.selectMainList()
         );
 
+    }
+
+    @GetMapping("/file/{fileId}")
+    public ResponseEntity<InputStreamResource> downloadFile(
+            @PathVariable Long fileId
+    ) throws Exception {
+
+        NoticeFileDto file =
+                sybs1000Service.select_file(fileId);
+
+        InputStream inputStream =
+                minioStorageService.getInputStream(
+                        file.getObject_name()
+                );
+
+        String encodedFileName =
+                URLEncoder.encode(
+                        file.getOriginal_name(),
+                        StandardCharsets.UTF_8
+                ).replaceAll("\\+", "%20");
+
+        return ResponseEntity.ok()
+                .contentType(
+                        MediaType.parseMediaType(
+                                file.getContent_type()
+                        )
+                )
+                .header(
+                        HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename*=UTF-8''"
+                                + encodedFileName
+                )
+                .contentLength(file.getFile_size())
+                .body(
+                        new InputStreamResource(
+                                inputStream
+                        )
+                );
     }
 }

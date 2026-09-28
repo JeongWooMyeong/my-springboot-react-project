@@ -16,11 +16,16 @@ export const selectSybs1000 = (notice_id) => {
     return axios.get(`${BASE_URL}/${notice_id}`);
 };
 
+
 /**
- * 공지사항 등록
+ * 공지사항 등록 + 파일 업로드
  */
-export const insertSybs1000 = (data) => {
-    return axios.post(BASE_URL, data);
+export const insertSybs1000 = (formData) => {
+    return axios.post(BASE_URL, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
 };
 
 /**
@@ -43,4 +48,13 @@ export const deleteSybs1000 = (notice_id) => {
 
 export const selectMainNoticeList = () => {
     return axios.get(`${BASE_URL}/mainList`);
+};
+
+export const downloadSybs1000File = (file_id) => {
+    return axios.get(
+        `${BASE_URL}/file/${file_id}`,
+        {
+            responseType: "blob"
+        }
+    );
 };

@@ -1,5 +1,6 @@
 package com.example.springbootproject.pms.sy.bs.service.dao.mssql;
 
+import com.example.springbootproject.pms.sy.bs.dto.NoticeFileDto;
 import com.example.springbootproject.pms.sy.bs.dto.Sybs1000Dto;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -39,5 +40,12 @@ public interface Sybs1000Mapper {
     int delete(Long notice_id);
 
     List<Sybs1000Dto> selectMainList();
+
+    // 파일 정보 등록
+    int insertFile(NoticeFileDto dto);
+
+    List<NoticeFileDto> selectFiles(Long noticeId);
+
+    NoticeFileDto select_file(Long fileId);
 
 }

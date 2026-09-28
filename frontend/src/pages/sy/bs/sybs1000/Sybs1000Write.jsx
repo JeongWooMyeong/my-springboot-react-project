@@ -9,6 +9,9 @@ function Sybs1000Write({setViewType}){
         writer:""
     });
 
+    const [file,setFile] = useState(null);
+
+
     const change = (e)=>{
         setForm({
             ...form,
@@ -16,14 +19,73 @@ function Sybs1000Write({setViewType}){
         });
     };
 
+
+    const fileChange = (e)=>{
+        setFile(e.target.files[0]);
+    };
+
+
     const save = async()=>{
 
-        await insertSybs1000(form);
+        try {
 
-        alert("등록되었습니다.");
+            const formData = new FormData();
 
-        setViewType("LIST");
+            // formData.append(
+            //     "title",
+            //     form.title
+            // );
+            //
+            // formData.append(
+            //     "content",
+            //     form.content
+            // );
+            //
+            // formData.append(
+            //     "writer",
+            //     form.writer
+            // );
+            //
+            //
+            // if(file){
+            //     formData.append(
+            //         "file",
+            //         file
+            //     );
+            // }
+
+            formData.append(
+                "data",
+                new Blob(
+                    [JSON.stringify(form)],
+                    {
+                        type: "application/json"
+                    }
+                )
+            );
+
+            if (file) {
+                formData.append(
+                    "file",
+                    file
+                );
+            }
+
+
+            await insertSybs1000(formData);
+
+            alert("등록되었습니다.");
+
+            setViewType("LIST");
+
+        } catch(error) {
+
+            console.error(error);
+
+            alert("등록 중 오류가 발생했습니다.");
+        }
     };
+
 
     return(
 
@@ -32,6 +94,7 @@ function Sybs1000Write({setViewType}){
             <div className="write-card">
 
                 <h2>공지사항 작성</h2>
+
 
                 <div className="form-group">
                     <label>제목</label>
@@ -44,6 +107,7 @@ function Sybs1000Write({setViewType}){
                     />
                 </div>
 
+
                 <div className="form-group">
                     <label>작성자</label>
 
@@ -54,6 +118,7 @@ function Sybs1000Write({setViewType}){
                         onChange={change}
                     />
                 </div>
+
 
                 <div className="form-group">
                     <label>내용</label>
@@ -66,6 +131,23 @@ function Sybs1000Write({setViewType}){
                     />
                 </div>
 
+
+                <div className="form-group">
+                    <label>첨부파일</label>
+
+                    <input
+                        type="file"
+                        onChange={fileChange}
+                    />
+
+                    {file && (
+                        <div>
+                            선택 파일: {file.name}
+                        </div>
+                    )}
+                </div>
+
+
                 <div className="button-area">
 
                     <button
@@ -74,6 +156,7 @@ function Sybs1000Write({setViewType}){
                     >
                         목록
                     </button>
+
 
                     <button
                         className="btn-save"
