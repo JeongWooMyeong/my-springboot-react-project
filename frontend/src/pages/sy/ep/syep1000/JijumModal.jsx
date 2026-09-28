@@ -3,7 +3,8 @@ import {
     Modal,
     Form,
     Input,
-    Button
+    Button,
+    Select
 } from "antd";
 
 export default function JijumModal({
@@ -27,7 +28,9 @@ export default function JijumModal({
                 form.setFieldsValue({
                     jijumcd: "",
                     jijumclcd: selectedJijumCd || "0",
-                    coid: selectedCoId
+                    coid: selectedCoId,
+                    useyn: "Y",
+                    delpssyn: "N"
                 });
             }
         }
@@ -98,16 +101,44 @@ export default function JijumModal({
                 <Form.Item
                     name="useyn"
                     label="사용 여부"
+                    rules={[
+                        {
+                            required: true,
+                            message: "사용 여부를 선택하세요"
+                        }
+                    ]}
                 >
-                    <Input />
+                    <Select>
+                        <Select.Option value="Y">
+                            사용
+                        </Select.Option>
+
+                        <Select.Option value="N">
+                            미사용
+                        </Select.Option>
+                    </Select>
                 </Form.Item>
 
 
                 <Form.Item
                     name="delpssyn"
                     label="삭제 가능 여부"
+                    rules={[
+                        {
+                            required: true,
+                            message: "삭제 가능 여부를 선택하세요"
+                        }
+                    ]}
                 >
-                    <Input />
+                    <Select>
+                        <Select.Option value="Y">
+                            가능
+                        </Select.Option>
+
+                        <Select.Option value="N">
+                            불가능
+                        </Select.Option>
+                    </Select>
                 </Form.Item>
 
 
