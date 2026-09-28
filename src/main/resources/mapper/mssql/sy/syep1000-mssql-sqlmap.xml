@@ -80,4 +80,11 @@
         FROM syep1000t
         WHERE coid = #{coid}
     </select>
+
+    <update id="updateUseYn">
+        UPDATE syep1000t
+        SET useyn = 'N'
+        WHERE jijumcd = #{jijumcd}
+          AND coid = #{coid}
+    </update>
 </mapper>

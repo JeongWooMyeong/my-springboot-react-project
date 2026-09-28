@@ -13,5 +13,9 @@ public interface Syep1000Mapper {
     int insert(Syep1000Dto dto);
     int update(Syep1000Dto dto);
     int delete(@Param("jijumcd") String jijumCd, @Param("coid") String coid);
-    List<Syep1000Dto> selectByCoId(String coid);   // ✅ 추가
+    List<Syep1000Dto> selectByCoId(String coid);
+    void updateUseYn(
+            @Param("jijumcd") String jijumCd,
+            @Param("coid") String coid
+    );// ✅ 추가
 }

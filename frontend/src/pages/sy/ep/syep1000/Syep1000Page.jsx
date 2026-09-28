@@ -110,12 +110,17 @@ function Syep1000Page() {
         alert("삭제 완료!");
 
 
-        setDetail(null);
+        //setDetail(null);
 
-        setSelectedJijumCd(null);
+        //setSelectedJijumCd(null);
 
 
         await reloadTree();
+
+        const data =
+            await getJijumDetail(selectedJijumCd);
+
+        setDetail(data);
 
     };
 
