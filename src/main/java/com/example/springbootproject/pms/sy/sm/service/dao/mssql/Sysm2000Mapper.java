@@ -14,6 +14,7 @@ public interface Sysm2000Mapper {
     void insert(Sysm2000Dto dto);
     void update(Sysm2000Dto dto);
     void delete(String roleno);
+    void deleteUserRole(String roleno);
     // ✅ 권한 조회 추가
     List<Sysm2010Dto> selectPermissions(@Param("roleno") String roleno,
                                         @Param("menuCds") List<String> menuCds);

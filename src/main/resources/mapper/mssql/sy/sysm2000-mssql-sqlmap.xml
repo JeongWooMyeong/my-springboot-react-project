@@ -66,6 +66,10 @@
         DELETE FROM sysm2000t WHERE RoleNo=#{roleno}
     </delete>
 
+    <delete id="deleteUserRole" parameterType="string">
+        DELETE FROM sysm2020t where RoleNo =#{roleno}
+    </delete>
+
     <!-- 권한 조회 -->
     <select id="selectPermissions" resultMap="Sysm2010Map">
         SELECT *

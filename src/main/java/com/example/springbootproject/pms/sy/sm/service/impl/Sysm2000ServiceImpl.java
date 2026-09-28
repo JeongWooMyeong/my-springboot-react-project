@@ -6,6 +6,7 @@ import com.example.springbootproject.pms.sy.sm.service.Sysm2000Service;
 import com.example.springbootproject.pms.sy.sm.service.dao.mssql.Sysm2000Mapper;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,7 +37,9 @@ public class Sysm2000ServiceImpl implements Sysm2000Service {
     }
 
     @Override
+    @Transactional
     public void deleteRole(String roleno) {
+        mapper.deleteUserRole(roleno);
         mapper.delete(roleno);
     }
 
