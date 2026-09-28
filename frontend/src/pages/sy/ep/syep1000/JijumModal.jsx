@@ -4,7 +4,7 @@ import {
     Form,
     Input,
     Button,
-    Select
+    Select, Checkbox
 } from "antd";
 
 export default function JijumModal({
@@ -18,12 +18,17 @@ export default function JijumModal({
                                    }) {
     const [form] = Form.useForm();
 
+    const [isLevel0, setIsLevel0] = React.useState(false);
+
     React.useEffect(() => {
         if (open) {
             if (isEditMode && detail) {
                 form.setFieldsValue(detail);
+                setIsLevel0(detail.jijumclcd === "0");
             } else {
                 form.resetFields();
+
+                const parentCode = selectedJijumCd || "0";
 
                 form.setFieldsValue({
                     jijumcd: "",
@@ -32,6 +37,8 @@ export default function JijumModal({
                     useyn: "Y",
                     delpssyn: "N"
                 });
+
+                setIsLevel0(parentCode === "0");
             }
         }
     }, [
@@ -83,10 +90,42 @@ export default function JijumModal({
 
 
                 <Form.Item
-                    name="jijumclcd"
-                    label="지점 분류 코드"
+                    label="지점 상위 코드"
                 >
-                    <Input />
+                    <Input.Group compact>
+                        <Form.Item
+                            name="jijumclcd"
+                            noStyle
+                        >
+                            <Input
+                                disabled
+                                style={{
+                                    width: "calc(100% - 100px)"
+                                }}
+                            />
+                        </Form.Item>
+
+                        <Checkbox
+                            style={{
+                                marginLeft: 12
+                            }}
+                            checked={isLevel0}
+                            onChange={(e) => {
+                                const checked = e.target.checked;
+
+                                setIsLevel0(checked);
+
+                                form.setFieldValue(
+                                    "jijumclcd",
+                                    checked
+                                        ? "0"
+                                        : selectedJijumCd || ""
+                                );
+                            }}
+                        >
+                            Level0
+                        </Checkbox>
+                    </Input.Group>
                 </Form.Item>
 
 
