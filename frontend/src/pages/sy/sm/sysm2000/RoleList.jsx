@@ -30,7 +30,7 @@ function RoleList({
 
         try {
 
-
+            //여기서 for문 돌려서 하나씩 지우네?
             for (const roleno of selectedRoles) {
 
 
@@ -182,11 +182,16 @@ function RoleList({
                         title: "선택",
                         dataIndex: "roleno",
                         key: "checkbox",
-                        render: (roleno) => (
+                        render: (roleno, record) => (
                             <Checkbox
                                 checked={selectedRoles.includes(roleno)}
                                 onClick={(e) => {
                                     e.stopPropagation();
+
+                                    // 체크박스 선택 시에도 row 선택과 동일하게 처리
+                                    //setSelectedRole(roleno);
+                                    // 체크박스 선택 시에도 row 선택과 동일하게 처리
+                                    setSelectedRole(record);
 
                                     setSelectedRoles(prev =>
                                         prev.includes(roleno)
