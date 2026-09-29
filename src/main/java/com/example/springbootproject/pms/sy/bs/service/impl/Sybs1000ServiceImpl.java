@@ -48,7 +48,7 @@ public class Sybs1000ServiceImpl implements Sybs1000Service {
     @Transactional
     public Long insert(
             Sybs1000Dto dto,
-            MultipartFile file
+            List<MultipartFile> files
     ) throws Exception {
 
         sybs1000Mapper.insert(dto);
@@ -57,10 +57,15 @@ public class Sybs1000ServiceImpl implements Sybs1000Service {
 
         System.out.println("notice_id = " + dto.getNotice_id());
 
-        saveFile(
-                notice_id,
-                file
-        );
+        // 다중 파일 저장
+        if (files != null) {
+
+            for (MultipartFile file : files) {
+
+                saveFile(notice_id, file);
+
+            }
+        }
 
         return notice_id;
     }
@@ -69,7 +74,7 @@ public class Sybs1000ServiceImpl implements Sybs1000Service {
     @Transactional
     public Long update(
             Sybs1000Dto sybs1000Dto,
-            MultipartFile file
+            List<MultipartFile> files
     ) throws Exception {
 
         sybs1000Mapper.update(sybs1000Dto);
@@ -77,10 +82,15 @@ public class Sybs1000ServiceImpl implements Sybs1000Service {
         Long notice_id =
                 sybs1000Dto.getNotice_id();
 
-        saveFile(
-                notice_id,
-                file
-        );
+        // 다중 파일 저장
+        if (files != null) {
+
+            for (MultipartFile file : files) {
+
+                saveFile(notice_id, file);
+
+            }
+        }
 
         return notice_id;
     }

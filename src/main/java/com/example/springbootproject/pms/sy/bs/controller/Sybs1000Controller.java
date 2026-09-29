@@ -59,11 +59,11 @@ public class Sybs1000Controller {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Long> insert(
             @RequestPart("data") Sybs1000Dto dto,
-            @RequestPart(value = "file", required = false) MultipartFile file
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) throws Exception {
 
         return ResponseEntity.ok(
-                sybs1000Service.insert(dto, file)
+                sybs1000Service.insert(dto, files)
         );
     }
 
@@ -76,14 +76,13 @@ public class Sybs1000Controller {
     )
     public ResponseEntity<Long> update(
             @RequestPart("data") Sybs1000Dto dto,
-            @RequestPart(value = "file", required = false)
-            MultipartFile file
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
     ) throws Exception {
 
         return ResponseEntity.ok(
                 sybs1000Service.update(
                         dto,
-                        file
+                        files
                 )
         );
     }

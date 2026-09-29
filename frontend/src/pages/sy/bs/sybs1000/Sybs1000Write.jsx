@@ -8,8 +8,8 @@ function Sybs1000Write({setViewType}){
         content:"",
         writer:""
     });
-
-    const [file,setFile] = useState(null);
+    //단일 파일 -> 다중 파일
+    const [files,setFiles] = useState([]);
 
 
     const change = (e)=>{
@@ -20,8 +20,15 @@ function Sybs1000Write({setViewType}){
     };
 
 
-    const fileChange = (e)=>{
-        setFile(e.target.files[0]);
+    const fileChange = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+
+        setFiles((prev) => [
+            ...prev,
+            ...selectedFiles
+        ]);
+
+        e.target.value = "";
     };
 
 
@@ -30,29 +37,6 @@ function Sybs1000Write({setViewType}){
         try {
 
             const formData = new FormData();
-
-            // formData.append(
-            //     "title",
-            //     form.title
-            // );
-            //
-            // formData.append(
-            //     "content",
-            //     form.content
-            // );
-            //
-            // formData.append(
-            //     "writer",
-            //     form.writer
-            // );
-            //
-            //
-            // if(file){
-            //     formData.append(
-            //         "file",
-            //         file
-            //     );
-            // }
 
             formData.append(
                 "data",
@@ -64,12 +48,10 @@ function Sybs1000Write({setViewType}){
                 )
             );
 
-            if (file) {
-                formData.append(
-                    "file",
-                    file
-                );
-            }
+            // 다중 파일 추가
+            files.forEach((file)=>{
+                formData.append("files", file);
+            });
 
 
             await insertSybs1000(formData);
@@ -137,12 +119,17 @@ function Sybs1000Write({setViewType}){
 
                     <input
                         type="file"
+                        multiple
                         onChange={fileChange}
                     />
 
-                    {file && (
+                    {files.length > 0 && (
                         <div>
-                            선택 파일: {file.name}
+                            {files.map((file, index) => (
+                                <div key={index}>
+                                    {index + 1}. {file.name}
+                                </div>
+                            ))}
                         </div>
                     )}
                 </div>

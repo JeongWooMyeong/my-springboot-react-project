@@ -27,7 +27,7 @@ function Sybs1000Update({
     });
 
 
-    const [file, setFile] = useState(null);
+    const [files, setFiles] = useState([]);
 
 
     useEffect(() => {
@@ -69,15 +69,15 @@ function Sybs1000Update({
 
     const handleFileChange = (e) => {
 
-        const selectedFile =
-            e.target.files[0];
+        const selectedFiles =
+            Array.from(e.target.files);
 
-        if (selectedFile) {
+        setFiles((prev) => [
+            ...prev,
+            ...selectedFiles
+        ]);
 
-            setFile(selectedFile);
-
-        }
-
+        e.target.value = "";
     };
 
 
@@ -157,14 +157,14 @@ function Sybs1000Update({
             );
 
 
-            if (file) {
+            files.forEach((file) => {
 
                 formData.append(
-                    "file",
+                    "files",
                     file
                 );
 
-            }
+            });
 
 
             await updateSybs1000(
@@ -314,20 +314,22 @@ function Sybs1000Update({
 
                     <input
                         type="file"
-                        onChange={
-                            handleFileChange
-                        }
+                        multiple
+                        onChange={handleFileChange}
                     />
 
-                    {file && (
+                    {files.length > 0 && (
 
-                        <div
-                            style={{
-                                marginTop: 8
-                            }}
-                        >
-                            선택 파일:{" "}
-                            {file.name}
+                        <div style={{ marginTop: 8 }}>
+
+                            {files.map((file, index) => (
+
+                                <div key={index}>
+                                    선택 파일: {file.name}
+                                </div>
+
+                            ))}
+
                         </div>
 
                     )}

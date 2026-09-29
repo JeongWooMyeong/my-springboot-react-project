@@ -22,7 +22,7 @@ public interface Sybs1000Service {
     /**
      * 공지사항 등록
      */
-    Long insert(Sybs1000Dto sybs1000Dto, MultipartFile file) throws Exception;
+    Long insert(Sybs1000Dto sybs1000Dto, List<MultipartFile> files) throws Exception;
 
 
     /**
@@ -30,7 +30,7 @@ public interface Sybs1000Service {
      */
     Long update (
             Sybs1000Dto dto,
-            MultipartFile file
+            List<MultipartFile> files
     ) throws Exception;
 
     /**
