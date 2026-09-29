@@ -6,6 +6,7 @@ import {
     updateSybs1000,
     downloadSybs1000File
 } from "../../../../services/sybs1000Api";
+import TiptapEditor from "../../../editor/TiptapEditor.jsx";
 
 function Sybs1000Update({
                             notice_id: propNoticeId,
@@ -246,11 +247,14 @@ function Sybs1000Update({
                         내용
                     </label>
 
-                    <textarea
-                        name="content"
+                    <TiptapEditor
                         value={form.content || ""}
-                        placeholder="내용을 입력하세요."
-                        onChange={change}
+                        onChange={(content) =>
+                            setForm({
+                                ...form,
+                                content: content
+                            })
+                        }
                     />
 
                 </div>

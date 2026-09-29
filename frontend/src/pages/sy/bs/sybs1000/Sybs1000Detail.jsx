@@ -201,11 +201,12 @@ function Sybs1000Detail({
                 </div>
 
 
-                <div className="detail-content">
-
-                    {data.content}
-
-                </div>
+                <div
+                    className="detail-content"
+                    dangerouslySetInnerHTML={{
+                        __html: data.content || ""
+                    }}
+                />
 
 
                 {/* 첨부파일 */}

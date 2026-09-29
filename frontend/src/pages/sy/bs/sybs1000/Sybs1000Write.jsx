@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {insertSybs1000} from "../../../../services/sybs1000Api";
+import TiptapEditor from "../../../editor/TiptapEditor.jsx";
 
 function Sybs1000Write({setViewType}){
 
@@ -105,11 +106,14 @@ function Sybs1000Write({setViewType}){
                 <div className="form-group">
                     <label>내용</label>
 
-                    <textarea
-                        name="content"
+                    <TiptapEditor
                         value={form.content}
-                        placeholder="내용을 입력하세요."
-                        onChange={change}
+                        onChange={(content) =>
+                            setForm({
+                                ...form,
+                                content: content
+                            })
+                        }
                     />
                 </div>
 
