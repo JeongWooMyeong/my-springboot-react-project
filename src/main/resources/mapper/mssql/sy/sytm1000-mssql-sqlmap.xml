@@ -27,6 +27,10 @@
         DELETE FROM pppo7010t WHERE ClCd=#{clCd}
     </delete>
 
+    <delete id="selectActiveByJijum">
+        DELETE FROM pppo7000t WHERE ClCd=#{clCd}
+    </delete>
+
     <select id="selectActiveByJijum" resultType="com.example.springbootproject.pms.sy.tm.dto.Sytm1010Dto">
         SELECT clcd, jijumcd, coid, ntnid, upddate, updpn
         FROM pppo7000t

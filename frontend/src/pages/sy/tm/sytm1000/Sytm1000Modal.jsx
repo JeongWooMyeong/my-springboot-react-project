@@ -1,8 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import {
     Modal,
-    Input
+    Input, Checkbox
 } from "antd";
 
 
@@ -13,6 +13,9 @@ export default function Sytm1000Modal({
                                           modalMode,
 
                                           selectedKey,
+
+                                          prdnclcd,
+                                          setPrdnclcd,
 
                                           clcd,
                                           setClcd,
@@ -30,6 +33,23 @@ export default function Sytm1000Modal({
                                           handleModalCancel
 
                                       }) {
+    const [isLevel0, setIsLevel0] = useState(
+        false
+    );
+
+    useEffect(() => {
+        if (isModalOpen && modalMode === "add") {
+
+            setIsLevel0(false);
+
+            setPrdnclcd(selectedKey || "");
+
+        }
+    }, [
+        isModalOpen,
+        modalMode,
+        selectedKey
+    ]);
 
     return (
 
@@ -49,13 +69,33 @@ export default function Sytm1000Modal({
                 &&
                 (
                     <>
+                        <Checkbox
+                            checked={isLevel0}
+                            onChange={e => {
+                                const checked = e.target.checked;
+
+                                setIsLevel0(checked);
+
+                                if (checked) {
+                                    setPrdnclcd("0");
+                                }
+                            }}
+                            style={{
+                                marginBottom: "10px"
+                            }}
+                        >
+                            최상위 분류(level 0)
+                        </Checkbox>
 
                         <Input
                             placeholder="상위 분류 코드(prdnclcd)"
-                            value={selectedKey || "0"}
+                            value={prdnclcd}
+                            onChange={e =>
+                                setPrdnclcd(e.target.value)
+                            }
                             disabled
                             style={{
-                                marginBottom:"10px"
+                                marginBottom: "10px"
                             }}
                         />
 

@@ -33,6 +33,7 @@ export default function useSytm1000(jijumcd) {
 
     const [modalMode, setModalMode] = useState("");
 
+    const[prdnclcd, setPrdnclcd] = useState("");
     // 입력값
     const [clcd, setClcd] = useState("");
 
@@ -124,6 +125,8 @@ export default function useSytm1000(jijumcd) {
 
         setModalMode("add");
 
+        setPrdnclcd(selectedKey || "0");
+
         setClcd("");
 
         setClname("");
@@ -142,10 +145,29 @@ export default function useSytm1000(jijumcd) {
      */
     const handleEdit = () => {
 
+        if (!selectedKey) {
+            alert("수정할 분류를 선택하세요.");
+            return;
+        }
+
+        const target = treeData.find(
+            item => String(item.clcd) === String(selectedKey)
+        );
+
+        if (!target) {
+            alert("선택한 분류를 찾을 수 없습니다.");
+            return;
+        }
+
         setModalMode("edit");
 
-        setIsModalOpen(true);
+        setClcd(target.clcd);
+        setPrdnclcd(target.prdnclcd);
+        setClname(target.clname);
+        setQeesqo(target.qeesqo);
+        setUseean(target.useean);
 
+        setIsModalOpen(true);
     };
 
 
@@ -363,8 +385,7 @@ export default function useSytm1000(jijumcd) {
 
         const data = {
 
-            prdnclcd:
-                selectedKey || "0",
+            prdnclcd,
 
             clcd,
 
@@ -448,6 +469,9 @@ export default function useSytm1000(jijumcd) {
 
         isModalOpen,
         modalMode,
+
+        prdnclcd,
+        setPrdnclcd,
 
         clcd,
         setClcd,

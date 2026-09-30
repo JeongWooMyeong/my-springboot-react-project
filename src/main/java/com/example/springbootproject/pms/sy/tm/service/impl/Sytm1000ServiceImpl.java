@@ -6,6 +6,7 @@ import com.example.springbootproject.pms.sy.tm.dto.TemplateActivateMessage;
 import com.example.springbootproject.pms.sy.tm.producer.TemplateProducer;
 import com.example.springbootproject.pms.sy.tm.service.Sytm1000Service;
 import com.example.springbootproject.pms.sy.tm.service.dao.mssql.Sytm1000Mapper;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,7 +39,9 @@ public class Sytm1000ServiceImpl implements Sytm1000Service {
     }
 
     @Override
+    @Transactional
     public void delete(String clCd) {
+        mapper.deleteActiveClcd(clCd);
         mapper.delete(clCd);
     }
 

@@ -13,6 +13,7 @@ public interface Sytm1000Mapper {
     void insert(Sytm1000Dto dto);
     void update(@Param("clCd") String clCd, @Param("dto") Sytm1000Dto dto);
     void delete(@Param("clCd") String clCd);
+    void deleteActiveClcd(@Param("clCd") String clCd);
 
     List<Sytm1010Dto> selectActiveByJijum(@Param("jijumcd") String jijumcd);
     void insertActive(Sytm1010Dto dto);

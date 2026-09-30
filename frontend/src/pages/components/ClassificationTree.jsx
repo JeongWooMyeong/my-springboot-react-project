@@ -6,7 +6,7 @@ import { Tree } from "antd";
 * 템플릿 분류 페이지에서 쓰이는 분류 트리
 * */
 
-const ClassificationTree = ({ data, activeKeys = [], onCheck }) => {
+const ClassificationTree = ({ data, activeKeys = [], onCheck, onSelect }) => {
     const buildTree = (data) => {
         const map = {};
 
@@ -39,6 +39,9 @@ const ClassificationTree = ({ data, activeKeys = [], onCheck }) => {
             checkedKeys={activeKeys}
             onCheck={(checkedKeys) => {
                 onCheck?.(checkedKeys);
+            }}
+            onSelect={(selectedKeys, info) => {
+                onSelect?.(selectedKeys, info);
             }}
         />
     );

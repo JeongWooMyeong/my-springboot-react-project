@@ -44,6 +44,9 @@ export default function Sytm1000Page() {
         isModalOpen,
         modalMode,
 
+        prdnclcd,
+        setPrdnclcd,
+
         clcd,
         setClcd,
 
@@ -160,6 +163,9 @@ export default function Sytm1000Page() {
                         selectedKey={
                             selectedKey
                         }
+
+                        prdnclcd = {prdnclcd}
+                        setPrdnclcd = {setPrdnclcd}
 
                         clcd={clcd}
                         setClcd={setClcd}
