@@ -27,7 +27,7 @@
         DELETE FROM pppo7010t WHERE ClCd=#{clCd}
     </delete>
 
-    <delete id="selectActiveByJijum">
+    <delete id="deleteActiveClcd">
         DELETE FROM pppo7000t WHERE ClCd=#{clCd}
     </delete>
 
@@ -137,6 +137,14 @@
 
     <delete id="deleteClassification">
         DELETE FROM pppo7010t
+        WHERE clcd IN
+        <foreach collection="clcds" item="clcd" open="(" separator="," close=")">
+            #{clcd}
+        </foreach>
+    </delete>
+
+    <delete id="deleteActiveClassification">
+        DELETE FROM pppo7000t
         WHERE clcd IN
         <foreach collection="clcds" item="clcd" open="(" separator="," close=")">
             #{clcd}

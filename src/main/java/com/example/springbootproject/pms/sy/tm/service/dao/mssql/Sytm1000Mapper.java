@@ -37,4 +37,5 @@ public interface Sytm1000Mapper {
     void insertClassification(Sytm1000Dto dto);
     void updateClassification(Sytm1000Dto dto);
     void deleteClassification(@Param("clcds") List<String> clcds);
+    void deleteActiveClassification(@Param("clcds") List<String> clcds);
 }

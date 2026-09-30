@@ -133,6 +133,7 @@ public class Sytm1000ServiceImpl implements Sytm1000Service {
 
     @Override
     public void deleteClassification(List<String> clcds) {
+        mapper.deleteActiveClassification(clcds);
         mapper.deleteClassification(clcds);
     }
 
