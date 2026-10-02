@@ -23,6 +23,55 @@ export default function Sytm2000List({
 
                                      }) {
 
+    /*
+     * 선택 삭제
+     */
+    const handleDeleteSelected = () => {
+
+        if (
+            !selectedTemplates ||
+            selectedTemplates.length === 0
+        ) {
+            alert("삭제할 템플릿을 선택해주세요.");
+            return;
+        }
+
+
+        const confirmed =
+            window.confirm(
+                `선택한 ${selectedTemplates.length}개의 템플릿을 삭제하시겠습니까?`
+            );
+
+
+        if (!confirmed) {
+            return;
+        }
+
+
+        /*
+         * 선택된 템플릿을 하나씩 삭제
+         */
+        selectedTemplates.forEach(id => {
+
+            const template =
+                (templates || []).find(
+                    t => t.id === id
+                );
+
+
+            if (template) {
+
+                handleDelete(
+                    template.id,
+                    template.clcd
+                );
+
+            }
+
+        });
+
+    };
+
     return (
 
         <div
@@ -58,13 +107,49 @@ export default function Sytm2000List({
                     템플릿 리스트
                 </h3>
 
-
-                {/* 템플릿이 없어도 항상 표시 */}
-                <button
-                    onClick={handleAdd}
+                {/* 버튼 영역 */}
+                <div
+                    style={{
+                        display: "flex",
+                        gap: "8px"
+                    }}
                 >
-                    새 템플릿 등록
-                </button>
+
+                    {/* 선택 삭제 */}
+                    <button
+                        onClick={
+                            handleDeleteSelected
+                        }
+
+                        disabled={
+                            !selectedTemplates ||
+                            selectedTemplates.length === 0
+                        }
+
+                        style={{
+                            cursor:
+                                selectedTemplates?.length
+                                    ? "pointer"
+                                    : "not-allowed",
+
+                            opacity:
+                                selectedTemplates?.length
+                                    ? 1
+                                    : 0.5
+                        }}
+                    >
+                        선택 삭제
+                    </button>
+
+
+                    {/* 새 템플릿 등록 */}
+                    <button
+                        onClick={handleAdd}
+                    >
+                        새 템플릿 등록
+                    </button>
+
+                </div>
 
             </div>
 
