@@ -111,7 +111,7 @@ public class Sytm3000ServiceImpl
 
 
         dto.setFontfilepath(
-                "/fonts/" + filename
+                "/upload/fonts/" + filename
         );
 
 

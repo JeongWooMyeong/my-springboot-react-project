@@ -1,147 +1,200 @@
-//선택한 템플릿 걸러서 보여주기 폰트
+// 선택한 템플릿 폰트 로드
 export async function loadCustomFonts(fontList) {
 
-    const promises = [];
+    const results = await Promise.all(
+        fontList.map(async (font) => {
 
-    fontList.forEach(font => {
+            const fontName =
+                font.fontfamily;
 
-        const fontName = font.fontfamily;
+            const fontUrl =
+                font.fontfilepath;
 
-        const style = document.createElement("style");
-        //localhost:8081 제거
-        style.innerHTML = `
-            @font-face {
-                font-family: "${fontName}";
-                src: url("${font.fontfilepath}") format("truetype");
-                font-weight: normal;
-                font-style: normal;
+            try {
+
+                console.log(
+                    "FONT LOAD START:",
+                    fontName,
+                    fontUrl
+                );
+
+                const fontFace =
+                    new FontFace(
+                        fontName,
+                        `url("${fontUrl}")`,
+                        {
+                            weight: "400",
+                            style: "normal"
+                        }
+                    );
+
+                await fontFace.load();
+
+                document.fonts.add(fontFace);
+
+                console.log(
+                    "FONT LOADED:",
+                    fontName,
+                    document.fonts.check(
+                        `50px "${fontName}"`
+                    )
+                );
+
+                return font;
+
+            } catch (error) {
+
+                console.error(
+                    "FONT LOAD ERROR:",
+                    fontName,
+                    fontUrl,
+                    error
+                );
+
+                return null;
             }
-        `;
 
-        document.head.appendChild(style);
-
-
-        promises.push(
-            document.fonts.load(
-                `50px "${fontName}"`
-            )
-        );
-
-    });
-
-
-    // 변경
-    await Promise.allSettled(promises);
-
-
-    await document.fonts.ready;
-
-
-    console.log(
-        "font loaded",
-        fontList.map(f => ({
-            name:f.fontfamily,
-            check:document.fonts.check(
-                `50px "${f.fontfamily}"`
-            )
-        }))
+        })
     );
 
-
-    return fontList;
+    return results.filter(Boolean);
 }
 
-//전체 에디터 폰트 로드
-/**
- * 전체 에디터 폰트 로드
- */
+
+// 전체 에디터 폰트 로드
 export async function loadAllFonts(fontList) {
 
+    const results = await Promise.all(
+        fontList.map(async (font) => {
 
-    const promises = [];
+            const fontName =
+                font.fontfamily;
 
-
-    fontList.forEach(font => {
-
-
-        const fontName =
-            font.fontfamily;
-
-
-        // 이미 등록된 폰트면 제외
-        if(
-            document.fonts.check(
-                `50px "${fontName}"`
-            )
-        ){
-            return;
-        }
+            const fontUrl =
+                font.fontfilepath;
 
 
+            console.log(
+                "========== FONT START =========="
+            );
 
-        const style =
-            document.createElement("style");
+            console.log(
+                "FONT NAME:",
+                fontName
+            );
 
-        //localhost:8081 제거
-        style.innerHTML = `
-            @font-face {
+            console.log(
+                "FONT URL:",
+                fontUrl
+            );
 
-                font-family: "${fontName}";
 
-                src: url("${font.fontfilepath}")
-                format("truetype");
+            try {
 
-                font-weight: normal;
+                /*
+                 * 이미 같은 폰트가 등록되어 있으면
+                 * 다시 등록하지 않음
+                 */
+                const alreadyLoaded =
+                    [...document.fonts].some(
+                        loadedFont =>
+                            loadedFont.family ===
+                            `"${fontName}"`
+                    );
 
-                font-style: normal;
 
-                font-display: block;
+                if (alreadyLoaded) {
 
+                    console.log(
+                        "FONT ALREADY REGISTERED:",
+                        fontName
+                    );
+
+                    return font;
+                }
+
+
+                /*
+                 * FontFace 생성
+                 */
+                const fontFace =
+                    new FontFace(
+                        fontName,
+                        `url("${fontUrl}")`,
+                        {
+                            weight: "400",
+                            style: "normal"
+                        }
+                    );
+
+
+                /*
+                 * 실제 TTF 다운로드
+                 */
+                const loadedFont =
+                    await fontFace.load();
+
+
+                /*
+                 * document.fonts 등록
+                 */
+                document.fonts.add(
+                    loadedFont
+                );
+
+
+                /*
+                 * 브라우저 등록 확인
+                 */
+                const checked =
+                    document.fonts.check(
+                        `50px "${fontName}"`
+                    );
+
+
+                console.log(
+                    "FONT LOADED:",
+                    fontName,
+                    checked
+                );
+
+
+                return font;
+
+
+            } catch (error) {
+
+                console.error(
+                    "FONT LOAD ERROR:",
+                    fontName,
+                    fontUrl,
+                    error
+                );
+
+                return null;
             }
-        `;
 
-
-        document.head.appendChild(style);
-
-
-
-        promises.push(
-
-            document.fonts.load(
-                `50px "${fontName}"`
-            )
-
-        );
-
-
-    });
-
-
-
-    await Promise.all(promises);
+        })
+    );
 
 
     await document.fonts.ready;
 
 
-
     console.log(
-        "font loaded",
-        fontList.map(font => ({
-
-            name:
-            font.fontfamily,
+        "========== ALL FONTS =========="
+    );
 
 
-            loaded:
-                document.fonts.check(
-                    `50px "${font.fontfamily}"`
-                )
-
+    console.table(
+        [...document.fonts].map(font => ({
+            family: font.family,
+            status: font.status,
+            weight: font.weight,
+            style: font.style
         }))
     );
 
 
-    return fontList;
-
+    return results.filter(Boolean);
 }

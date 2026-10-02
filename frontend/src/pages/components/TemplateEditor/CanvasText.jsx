@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Text } from "react-konva";
 
-
 export default function CanvasText({
                                        el,
                                        selectedId,
@@ -13,53 +12,51 @@ export default function CanvasText({
 
     const textRef = useRef(null);
 
+    const isSelected =
+        selectedId === el.id;
 
-    // 폰트 적용 후 Konva Text 갱신
+
+    /*
+     * 폰트가 준비되었을 때만
+     * Canvas를 다시 그린다.
+     *
+     * 폰트 자체를 여기서 다시 로드하거나
+     * node.fontFamily()를 직접 변경하지 않는다.
+     */
     useEffect(() => {
 
-        if (!fontReady) return;
+        if (!fontReady) {
+            return;
+        }
 
-        const node = textRef.current;
+        const node =
+            textRef.current;
 
-        if (!node) return;
-
+        if (!node) {
+            return;
+        }
 
         const fontName =
             el.fontFamily || "NanumGothic";
 
-
-        const refresh = async () => {
-
-            await document.fonts.load(
-                `${el.fontSize || 20}px "${fontName}"`
-            );
+        const fontSize =
+            el.fontSize || 20;
 
 
-            node.fontFamily(fontName);
-
-            node.fontSize(
-                el.fontSize || 20
-            );
-
-            node.text(
-                `${el.text} ({{${el.fieldName}}})`
-            );
+        console.log(
+            "CANVAS TEXT FONT:",
+            fontName,
+            document.fonts.check(
+                `20px "${fontName}"`
+            )
+        );
 
 
-            // Transformer 적용 후 크기 유지
-            node.width(el.width);
-            node.height(el.height);
-
-
-            node.clearCache();
-
-            node.getLayer()
-                ?.batchDraw();
-
-        };
-
-
-        refresh();
+        /*
+         * React가 fontFamily를 변경한 후
+         * Konva Layer만 다시 그린다.
+         */
+        node.getLayer()?.batchDraw();
 
     }, [
         fontReady,
@@ -68,12 +65,6 @@ export default function CanvasText({
         el.text,
         el.fieldName
     ]);
-
-
-
-    const isSelected =
-        selectedId === el.id;
-
 
 
     return (
@@ -85,46 +76,65 @@ export default function CanvasText({
                 textRef.current = node;
 
                 if (node) {
-                    nodeRefs.current[el.id] = node;
+
+                    nodeRefs.current[
+                        el.id
+                        ] = node;
+
                 }
 
             }}
 
 
-            text={`${el.text} ({{${el.fieldName}}})`}
+            text={
+                `${el.text} ({{${el.fieldName}}})`
+            }
 
 
             x={el.x}
             y={el.y}
 
+
             width={el.width}
             height={el.height}
 
 
+            /*
+             * Preview와 동일하게 사용
+             */
             fontFamily={
-                el.fontFamily || "NanumGothic"
+                el.fontFamily ||
+                "Arial"
             }
 
+
             fontSize={
-                el.fontSize || 20
+                el.fontSize ||
+                20
             }
 
 
             fill={
-                el.fill || "black"
+                el.fill ||
+                "black"
             }
+
+
+            wrap="word"
+
+            verticalAlign="top"
 
 
             draggable
 
 
-
-            // 선택
             onClick={(e) => {
 
                 e.cancelBubble = true;
 
-                setSelectedId(el.id);
+                setSelectedId(
+                    el.id
+                );
 
             }}
 
@@ -135,6 +145,7 @@ export default function CanvasText({
                     : undefined
             }
 
+
             strokeWidth={
                 isSelected
                     ? 2
@@ -142,8 +153,6 @@ export default function CanvasText({
             }
 
 
-
-            // 이동
             onDragEnd={(e) => {
 
                 updateElement(
@@ -157,15 +166,16 @@ export default function CanvasText({
             }}
 
 
-
-            // 크기 변경
             onTransformEnd={(e) => {
 
-                const node = e.target;
+                const node =
+                    e.target;
 
+                const scaleX =
+                    node.scaleX();
 
-                const scaleX = node.scaleX();
-                const scaleY = node.scaleY();
+                const scaleY =
+                    node.scaleY();
 
 
                 node.scaleX(1);
@@ -175,19 +185,25 @@ export default function CanvasText({
                 updateElement(
                     el.id,
                     {
+
                         x: node.x(),
+
                         y: node.y(),
 
                         width:
-                            node.width() * scaleX,
+                            node.width() *
+                            scaleX,
 
                         height:
-                            node.height() * scaleY,
+                            node.height() *
+                            scaleY,
 
                         fontSize:
-                            (el.fontSize || 20)
-                            *
-                            scaleY
+                            (
+                                el.fontSize ||
+                                20
+                            ) * scaleY
+
                     }
                 );
 
